@@ -40,6 +40,7 @@ export default function Home() {
   };
 
   const logoutHandler = () => nav(`/logout`);
+  const createHandler = () => nav(`/wallets/create`);
 
   useEffect(() => {
     setSendRequest(true);
@@ -67,7 +68,7 @@ export default function Home() {
           {fullName}
           <Button
             variant="contained"
-            onClick={logoutHandler}
+            onClick={createHandler}
             sx={{ mr: 1, ml: 1, p: 1 }}
             size="small"
           >

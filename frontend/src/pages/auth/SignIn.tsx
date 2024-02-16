@@ -18,7 +18,7 @@ import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 
 const theme = createTheme();
 
-interface AxiosError {
+export interface AxiosError {
   response?: {
     data?: {
       message?: string;

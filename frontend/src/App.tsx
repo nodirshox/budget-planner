@@ -8,6 +8,7 @@ import "./App.css";
 import Logout from "./pages/auth/Logout";
 import PageNotFound from "./pages/404/PageNotFound";
 import Wallet from "./pages/wallet/Wallet";
+import CreateWallet from "./pages/wallet/CreateWallet";
 
 export default function App() {
   return (
@@ -20,6 +21,7 @@ export default function App() {
             <Route index element={<Home />} />
           </Route>
           <Route path="/wallets" element={<DashboardLayout />}>
+            <Route path="create" element={<CreateWallet />} />
             <Route path=":walletId" element={<Wallet />} />
           </Route>
         </Route>
