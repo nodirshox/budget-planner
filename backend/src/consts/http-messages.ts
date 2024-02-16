@@ -1,0 +1,14 @@
+export const HTTP_MESSAGES = {
+  // Auth
+  WRONG_PASSWORD: 'Incorrect password',
+
+  // User
+  USER_NOT_FOUND: 'User not found',
+
+  // Currency
+  CURRENCY_NOT_FOUND: 'Currency not found',
+
+  // Wallet
+  WALLET_NOT_FOUND: 'Wallet not found',
+  WALLET_NOT_BELONGS_TO_USER: 'Wallet is not belongs to user',
+}
