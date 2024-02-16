@@ -72,7 +72,7 @@ export default function Home() {
             sx={{ mr: 1, ml: 1, p: 1 }}
             size="small"
           >
-            <AddIcon /> Yaratish
+            <AddIcon /> Create wallet
           </Button>
           <Button
             variant="contained"
@@ -81,34 +81,51 @@ export default function Home() {
             sx={{ p: 1 }}
           >
             <ExitToAppIcon />
-            Chiqish
+            Exit
           </Button>
         </Grid>
-        {wallets.map((wallet, index) => (
-          <Grid item xs={12} md={4} key={index}>
-            <Card>
-              <Link to={`/wallets/${wallet.id}`}>
-                <CardContent>
-                  <CardMedia
-                    component="img"
-                    height="200"
-                    image={walletImage}
-                    alt="Wallet"
-                  />
-                  <Typography variant="h6" component="div">
-                    {wallet.name}
-                  </Typography>
-                  <Typography variant="subtitle1" component="div">
-                    {wallet.currency.name}
-                  </Typography>
-                </CardContent>
-              </Link>
-            </Card>
+        {sendRequest ? (
+          <Grid item xs={12}>
+            <LoadingBar />
           </Grid>
-        ))}
+        ) : (
+          <>
+            {wallets.length > 0 ? (
+              <>
+                {wallets.map((wallet, index) => (
+                  <Grid item xs={12} md={4} key={index}>
+                    <Card>
+                      <Link to={`/wallets/${wallet.id}`}>
+                        <CardContent>
+                          <CardMedia
+                            component="img"
+                            height="200"
+                            image={walletImage}
+                            alt="Wallet"
+                          />
+                          <Typography variant="h6" component="div">
+                            {wallet.name}
+                          </Typography>
+                          <Typography variant="subtitle1" component="div">
+                            {wallet.currency.name}
+                          </Typography>
+                        </CardContent>
+                      </Link>
+                    </Card>
+                  </Grid>
+                ))}
+              </>
+            ) : (
+              <Grid item xs={12}>
+                <Typography variant="subtitle1" component="div">
+                  You don't have a wallet.
+                </Typography>
+              </Grid>
+            )}
+          </>
+        )}
         <Grid item xs={12}>
           {alert.state && <HttpErrorNotification message={alert.message} />}
-          {sendRequest && <LoadingBar />}
         </Grid>
       </Grid>
     </Paper>

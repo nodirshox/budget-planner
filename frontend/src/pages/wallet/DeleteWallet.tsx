@@ -1,28 +1,17 @@
 import React, { useState, useEffect } from "react";
 import Paper from "@mui/material/Paper";
-import {
-  Card,
-  CardContent,
-  CardMedia,
-  Grid,
-  Typography,
-  Button,
-} from "@mui/material";
+import { Grid, Button } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import AxiosClient from "../../utils/axios";
 import ErrorMessage from "../../utils/error-message";
 import LoadingBar from "../../components/loading/LoadingBar";
 import HttpErrorNotification from "../../components/notifications/HttpErrorNotification";
 import ClearIcon from "@mui/icons-material/Clear";
-import ModeEditIcon from "@mui/icons-material/ModeEdit";
+import PageTitle from "../../components/title/PageTitle";
+import CheckIcon from "@mui/icons-material/Check";
+import { AxiosError } from "../auth/SignIn";
 
-interface IWallet {
-  id: string;
-  name: string;
-  currency: string;
-}
-
-export default function Wallet() {
+export default function DeleteWallet() {
   const nav = useNavigate();
   const params = useParams();
 
@@ -35,7 +24,27 @@ export default function Wallet() {
     return result.data;
   };
 
-  const deleteHandler = () => nav(`/wallets/${params.walletId}/delete`);
+  const deleteHandler = async () => {
+    try {
+      await AxiosClient.delete(`/wallets/${params.walletId}`);
+      nav("/");
+    } catch (error) {
+      const axiosError = error as AxiosError;
+      setSendRequest(false);
+      const errorMessage =
+        axiosError.response?.data?.message ||
+        axiosError.message ||
+        "Unknown error";
+
+      setAlert({
+        state: true,
+        message: errorMessage,
+      });
+      setSendRequest(false);
+    }
+  };
+
+  const backHandler = () => nav(`/wallets/${params.walletId}`);
 
   useEffect(() => {
     setSendRequest(true);
@@ -59,19 +68,28 @@ export default function Wallet() {
     <Paper sx={{ p: 1, mt: 2 }}>
       <Grid container spacing={2} direction="row">
         <Grid item xs={12}>
-          {walletName}
-          <Button variant="contained" size="small" sx={{ mr: 1, ml: 1, p: 1 }}>
-            <ModeEditIcon />
-            Edit
+          <PageTitle title={walletName} />
+          Are you sure delete wallet?
+        </Grid>
+        <Grid item xs={12}>
+          <Button
+            variant="contained"
+            size="small"
+            sx={{ p: 1, mr: 1 }}
+            color="error"
+            onClick={deleteHandler}
+          >
+            <CheckIcon />
+            Delete
           </Button>
           <Button
             variant="contained"
             size="small"
             sx={{ p: 1 }}
-            onClick={deleteHandler}
+            onClick={backHandler}
           >
             <ClearIcon />
-            Delete
+            Back
           </Button>
         </Grid>
 
