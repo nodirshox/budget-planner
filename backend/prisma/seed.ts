@@ -1,23 +1,42 @@
 import * as bcrypt from 'bcrypt'
-import { PrismaClient } from '@prisma/client'
+import { CategoryType, PrismaClient } from '@prisma/client'
 import { PASSWORD_SALT } from '../src/consts/password-salt'
 
 const prisma = new PrismaClient()
 
 async function main() {
   return Promise.all([
-    // await prisma.user.create({
-    //   data: {
-    //     firstName: 'John',
-    //     lastName: 'Doe',
-    //     email: 'user@mail.com',
-    //     password: await bcrypt.hash('password', PASSWORD_SALT),
-    //   },
-    // }),
+    await prisma.user.create({
+      data: {
+        firstName: 'John',
+        lastName: 'Doe',
+        email: 'user@mail.com',
+        password: await bcrypt.hash('password', PASSWORD_SALT),
+      },
+    }),
     await prisma.currency.createMany({
       data: [
         {
           name: 'USD',
+        },
+        {
+          name: 'UZS',
+        },
+      ],
+    }),
+    await prisma.category.createMany({
+      data: [
+        {
+          name: 'Food & Drinks',
+          type: CategoryType.EXPENSE,
+        },
+        {
+          name: 'Transport',
+          type: CategoryType.EXPENSE,
+        },
+        {
+          name: 'Salary',
+          type: CategoryType.INCOME,
         },
       ],
     }),

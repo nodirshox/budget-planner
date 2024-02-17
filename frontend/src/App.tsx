@@ -1,6 +1,6 @@
 import * as React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import SignIn from "./pages/auth/SignIn";
+import Login from "./pages/auth/Login";
 import { ProtectRoutes } from "./utils/protected-routes";
 import DashboardLayout from "./components/layouts/Dashboard";
 import Home from "./pages/home/Home";
@@ -16,7 +16,7 @@ export default function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/login" element={<SignIn />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/logout" element={<Logout />} />
         <Route element={<ProtectRoutes />}>
           <Route path="/" element={<DashboardLayout />}>

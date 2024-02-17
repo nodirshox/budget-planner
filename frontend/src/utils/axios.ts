@@ -1,5 +1,15 @@
 import axios from "axios";
 
+export interface AxiosError {
+  response?: {
+    data?: {
+      message?: string;
+    };
+    status?: number;
+  };
+  message?: string;
+}
+
 const AxiosClient = axios.create({
   baseURL: process.env.REACT_APP_BACKEND_API,
 });

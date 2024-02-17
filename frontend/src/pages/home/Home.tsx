@@ -64,25 +64,33 @@ export default function Home() {
   return (
     <Paper sx={{ p: 1, mt: 2 }}>
       <Grid container spacing={2} direction="row">
-        <Grid item xs={12}>
-          {fullName}
-          <Button
-            variant="contained"
-            onClick={createHandler}
-            sx={{ mr: 1, ml: 1, p: 1 }}
-            size="small"
-          >
-            <AddIcon /> Create wallet
-          </Button>
-          <Button
-            variant="contained"
-            onClick={logoutHandler}
-            size="small"
-            sx={{ p: 1 }}
-          >
-            <ExitToAppIcon />
-            Exit
-          </Button>
+        <Grid
+          item
+          container
+          xs={12}
+          justifyContent="space-between"
+          alignItems="center"
+        >
+          <Typography variant="h6">{fullName}</Typography>
+          <div>
+            <Button
+              variant="outlined"
+              onClick={createHandler}
+              sx={{ mr: 1, ml: 1, p: 1 }}
+              size="small"
+            >
+              <AddIcon /> Create wallet
+            </Button>
+            <Button
+              variant="outlined"
+              onClick={logoutHandler}
+              size="small"
+              sx={{ p: 1 }}
+            >
+              <ExitToAppIcon />
+              Exit
+            </Button>
+          </div>
         </Grid>
         {sendRequest ? (
           <Grid item xs={12}>

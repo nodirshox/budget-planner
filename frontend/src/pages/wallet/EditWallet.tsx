@@ -11,14 +11,13 @@ import {
   MenuItem,
 } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
-import AxiosClient from "../../utils/axios";
+import AxiosClient, { AxiosError } from "../../utils/axios";
 import LoadingBar from "../../components/loading/LoadingBar";
 import HttpErrorNotification from "../../components/notifications/HttpErrorNotification";
 import PageTitle from "../../components/title/PageTitle";
 import * as Yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { AxiosError } from "../auth/SignIn";
 
 interface FormData {
   title: string;

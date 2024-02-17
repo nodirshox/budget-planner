@@ -10,7 +10,7 @@ import {
   createTheme,
   ThemeProvider,
 } from "@mui/material";
-import AxiosClient from "../../utils/axios";
+import AxiosClient, { AxiosError } from "../../utils/axios";
 import { useNavigate } from "react-router-dom";
 import LoadingBar from "../../components/loading/LoadingBar";
 import HttpErrorNotification from "../../components/notifications/HttpErrorNotification";
@@ -18,21 +18,15 @@ import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 
 const theme = createTheme();
 
-export interface AxiosError {
-  response?: {
-    data?: {
-      message?: string;
-    };
-    status?: number;
-  };
-  message?: string;
-}
-
-export default function SignIn() {
+export default function Login() {
   const navigate = useNavigate();
-  const [email, setEmail] = useState({ value: "", error: false, message: "" });
+  const [email, setEmail] = useState({
+    value: "user@mail.com",
+    error: false,
+    message: "",
+  });
   const [password, setPassword] = useState({
-    value: "",
+    value: "password",
     error: false,
     message: "",
   });

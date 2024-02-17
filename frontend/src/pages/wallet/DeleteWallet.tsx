@@ -2,14 +2,13 @@ import React, { useState, useEffect } from "react";
 import Paper from "@mui/material/Paper";
 import { Grid, Button } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
-import AxiosClient from "../../utils/axios";
+import AxiosClient, { AxiosError } from "../../utils/axios";
 import ErrorMessage from "../../utils/error-message";
 import LoadingBar from "../../components/loading/LoadingBar";
 import HttpErrorNotification from "../../components/notifications/HttpErrorNotification";
 import ClearIcon from "@mui/icons-material/Clear";
 import PageTitle from "../../components/title/PageTitle";
 import CheckIcon from "@mui/icons-material/Check";
-import { AxiosError } from "../auth/SignIn";
 
 export default function DeleteWallet() {
   const nav = useNavigate();
