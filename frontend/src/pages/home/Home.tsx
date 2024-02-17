@@ -107,7 +107,7 @@ export default function Home() {
                             {wallet.name}
                           </Typography>
                           <Typography variant="subtitle1" component="div">
-                            {wallet.currency.name}
+                            0 {wallet.currency.name}
                           </Typography>
                         </CardContent>
                       </Link>

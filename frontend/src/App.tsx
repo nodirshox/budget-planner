@@ -10,6 +10,7 @@ import PageNotFound from "./pages/404/PageNotFound";
 import Wallet from "./pages/wallet/Wallet";
 import CreateWallet from "./pages/wallet/CreateWallet";
 import DeleteWallet from "./pages/wallet/DeleteWallet";
+import EditWallet from "./pages/wallet/EditWallet";
 
 export default function App() {
   return (
@@ -24,6 +25,7 @@ export default function App() {
           <Route path="/wallets" element={<DashboardLayout />}>
             <Route path="create" element={<CreateWallet />} />
             <Route path=":walletId" element={<Wallet />} />
+            <Route path=":walletId/edit" element={<EditWallet />} />
             <Route path=":walletId/delete" element={<DeleteWallet />} />
           </Route>
         </Route>

@@ -36,6 +36,7 @@ export default function Wallet() {
   };
 
   const deleteHandler = () => nav(`/wallets/${params.walletId}/delete`);
+  const editHandler = () => nav(`/wallets/${params.walletId}/edit`);
 
   useEffect(() => {
     setSendRequest(true);
@@ -60,7 +61,12 @@ export default function Wallet() {
       <Grid container spacing={2} direction="row">
         <Grid item xs={12}>
           {walletName}
-          <Button variant="contained" size="small" sx={{ mr: 1, ml: 1, p: 1 }}>
+          <Button
+            variant="contained"
+            size="small"
+            sx={{ mr: 1, ml: 1, p: 1 }}
+            onClick={editHandler}
+          >
             <ModeEditIcon />
             Edit
           </Button>
