@@ -14,14 +14,10 @@ import { useNavigate, useParams } from "react-router-dom";
 import AxiosClient, { AxiosError } from "../../utils/axios";
 import LoadingBar from "../../components/loading/LoadingBar";
 import HttpErrorNotification from "../../components/notifications/HttpErrorNotification";
-import PageTitle from "../../components/title/PageTitle";
 import * as Yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-
-interface FormData {
-  title: string;
-}
+import ClearIcon from "@mui/icons-material/Clear";
 
 interface Currency {
   id: string;
@@ -48,10 +44,12 @@ export default function EditWallet() {
     resolver: yupResolver(validationSchema),
   });
 
-  const onSubmit = async ({ title }: FormData) => {
+  const deleteHandler = () => navigate(`/wallets/${params.walletId}/delete`);
+
+  const onSubmit = async (data: { title: string }) => {
     try {
       await AxiosClient.put(`/wallets/${params.walletId}`, {
-        name: title,
+        name: data.title,
         currencyId: currency,
       });
       navigate(`/wallets/${params.walletId}`);
@@ -117,8 +115,25 @@ export default function EditWallet() {
   return (
     <Paper sx={{ p: 1 }}>
       <Grid container spacing={1}>
-        <Grid item xs={12}>
-          <PageTitle title="Edit wallet" />
+        <Grid
+          container
+          item
+          xs={12}
+          justifyContent="space-between"
+          alignItems="center"
+        >
+          <Typography variant="h6">Edit wallet</Typography>
+
+          <Button
+            variant="contained"
+            size="small"
+            sx={{ p: 1 }}
+            onClick={deleteHandler}
+            color="error"
+          >
+            <ClearIcon />
+            Delete
+          </Button>
         </Grid>
         <Grid item xs={12}>
           <FormControl>

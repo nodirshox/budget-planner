@@ -19,10 +19,6 @@ import * as Yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 
-interface FormData {
-  title: string;
-}
-
 interface Currency {
   id: string;
   name: string;
@@ -46,10 +42,10 @@ export default function CreateWallet() {
     resolver: yupResolver(validationSchema),
   });
 
-  const onSubmit = async ({ title }: FormData) => {
+  const onSubmit = async (data: { title: string }) => {
     try {
       await AxiosClient.post("/wallets", {
-        name: title,
+        name: data.title,
         currencyId: currency,
       });
       navigate("/");

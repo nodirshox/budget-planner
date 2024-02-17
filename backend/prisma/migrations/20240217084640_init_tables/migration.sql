@@ -1,9 +1,6 @@
 -- CreateEnum
 CREATE TYPE "TransactionType" AS ENUM ('EXPENSE', 'INCOME');
 
--- CreateEnum
-CREATE TYPE "CategoryType" AS ENUM ('EXPENSE', 'INCOME');
-
 -- CreateTable
 CREATE TABLE "users" (
     "id" TEXT NOT NULL,
@@ -46,6 +43,7 @@ CREATE TABLE "transactions" (
     "type" "TransactionType" NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
+    "wallet_id" TEXT NOT NULL,
     "category_id" TEXT NOT NULL,
 
     CONSTRAINT "transactions_pkey" PRIMARY KEY ("id")
@@ -55,7 +53,7 @@ CREATE TABLE "transactions" (
 CREATE TABLE "categories" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
-    "type" "CategoryType" NOT NULL,
+    "type" "TransactionType" NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
@@ -70,6 +68,9 @@ ALTER TABLE "wallets" ADD CONSTRAINT "wallets_user_id_fkey" FOREIGN KEY ("user_i
 
 -- AddForeignKey
 ALTER TABLE "wallets" ADD CONSTRAINT "wallets_currency_id_fkey" FOREIGN KEY ("currency_id") REFERENCES "currencies"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "transactions" ADD CONSTRAINT "transactions_wallet_id_fkey" FOREIGN KEY ("wallet_id") REFERENCES "wallets"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "transactions" ADD CONSTRAINT "transactions_category_id_fkey" FOREIGN KEY ("category_id") REFERENCES "categories"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

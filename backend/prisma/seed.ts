@@ -1,5 +1,5 @@
 import * as bcrypt from 'bcrypt'
-import { CategoryType, PrismaClient } from '@prisma/client'
+import { PrismaClient, TransactionType } from '@prisma/client'
 import { PASSWORD_SALT } from '../src/consts/password-salt'
 
 const prisma = new PrismaClient()
@@ -28,15 +28,15 @@ async function main() {
       data: [
         {
           name: 'Food & Drinks',
-          type: CategoryType.EXPENSE,
+          type: TransactionType.EXPENSE,
         },
         {
           name: 'Transport',
-          type: CategoryType.EXPENSE,
+          type: TransactionType.EXPENSE,
         },
         {
           name: 'Salary',
-          type: CategoryType.INCOME,
+          type: TransactionType.INCOME,
         },
       ],
     }),

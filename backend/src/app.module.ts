@@ -5,6 +5,7 @@ import { CoreModule } from '@/core/core.module'
 import { WalletsModule } from '@/modules/wallets/wallets.module'
 import { CurrencyModule } from '@/modules/currency/currency.module'
 import { CategoryModule } from '@/modules/category/category.module'
+import { TransactionModule } from '@/modules/transaction/transaction.module'
 @Module({
   imports: [
     UsersModule,
@@ -13,6 +14,7 @@ import { CategoryModule } from '@/modules/category/category.module'
     WalletsModule,
     CurrencyModule,
     CategoryModule,
+    TransactionModule,
   ],
   controllers: [],
   providers: [],

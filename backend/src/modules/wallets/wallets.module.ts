@@ -10,5 +10,6 @@ import { UsersModule } from '@/modules/users/users.module'
   imports: [CoreModule, CurrencyModule, UsersModule],
   controllers: [WalletsController],
   providers: [WalletsService, WalletsRepository],
+  exports: [WalletsService],
 })
 export class WalletsModule {}

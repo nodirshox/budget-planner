@@ -8,5 +8,6 @@ import { CoreModule } from '@/core/core.module'
   imports: [CoreModule],
   controllers: [CategoryController],
   providers: [CategoryService, CategoryRepository],
+  exports: [CategoryService],
 })
 export class CategoryModule {}

@@ -9,25 +9,37 @@ import {
   TextField,
   InputLabel,
   MenuItem,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  ListItemSecondaryAction,
+  ListSubheader,
 } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import AxiosClient, { AxiosError } from "../../utils/axios";
 import ErrorMessage from "../../utils/error-message";
 import LoadingBar from "../../components/loading/LoadingBar";
 import HttpErrorNotification from "../../components/notifications/HttpErrorNotification";
-import ClearIcon from "@mui/icons-material/Clear";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import * as Yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { red, green, grey } from "@mui/material/colors";
+import PaidIcon from "@mui/icons-material/Paid";
 
 interface ICategory {
   id: string;
   name: string;
 }
 
-interface FormData {
+interface ITransaction {
+  id: string;
   amount: number;
+  type: string;
+  category: {
+    name: true;
+  };
 }
 
 export default function Wallet() {
@@ -38,49 +50,57 @@ export default function Wallet() {
   const [currency, setCurrency] = useState("");
   const [sendRequest, setSendRequest] = useState(false);
   const [alert, setAlert] = useState({ state: false, message: "" });
-  const [categories, setCategories] = useState<ICategory[]>([]);
+  const [expenceCategories, setExpenceCategories] = useState<ICategory[]>([]);
+  const [incomeCategories, setIncomeCategories] = useState<ICategory[]>([]);
   const [category, setCategory] = useState("");
+  const [transactions, setTransactions] = useState<ITransaction[]>([]);
 
   const validationSchema = Yup.object().shape({
     amount: Yup.number()
       .positive("Enter positive number")
-      .typeError("Enter amount")
+      .typeError("Enter only number")
       .required("Enter amount"),
   });
   const {
     register,
     handleSubmit,
     formState: { errors },
+
+    reset,
   } = useForm({
     resolver: yupResolver(validationSchema),
   });
 
-  const fetchWallet = async () => {
-    const wallet = await AxiosClient.get(`wallets/${params.walletId}`);
+  const fetchTransactions = async () => {
+    const transactions = await AxiosClient.post("transactions/filter", {
+      walletId: params.walletId,
+    });
 
-    const categories = await AxiosClient.get(`/categories`);
+    const categories = await AxiosClient.get(`categories`);
 
-    return { wallet: wallet.data, categories: categories.data.categories };
+    return {
+      wallet: transactions.data.wallet,
+      transactions: transactions.data.transactions,
+      categories: categories.data,
+    };
   };
 
   const handleCategoryChange = async (event: any) => {
     setCategory(event.target.value);
   };
 
-  const deleteHandler = () => nav(`/wallets/${params.walletId}/delete`);
   const editHandler = () => nav(`/wallets/${params.walletId}/edit`);
 
   useEffect(() => {
     setSendRequest(true);
-    fetchWallet()
+    fetchTransactions()
       .then(
         (data) => {
           setWalletName(data.wallet.name);
           setCurrency(data.wallet.currency.name);
-          setCategories(data.categories);
-          if (data.categories.length > 0) {
-            setCategory(data.categories[0].id);
-          }
+          setTransactions(data.transactions);
+          setExpenceCategories(data.categories.expence);
+          setIncomeCategories(data.categories.income);
         },
         (error) => {
           const message = ErrorMessage(error);
@@ -90,20 +110,32 @@ export default function Wallet() {
           });
         }
       )
-      .then(() => setSendRequest(false));
+      .finally(() => setSendRequest(false));
   }, []);
 
-  const onSubmit = async ({ amount }: FormData) => {
+  const onSubmit = async (data: { amount: number }) => {
     try {
-      await AxiosClient.post("/transaction", {
-        amount,
-        categoryId: category,
+      setSendRequest(true);
+      const newTransaction = await AxiosClient.post("transactions", {
+        amount: data.amount,
         walletId: params.walletId,
+        categoryId: category,
       });
-      nav(`/wallets/${params.walletId}`);
+      setTransactions([
+        {
+          id: newTransaction.data.id,
+          amount: data.amount,
+          type: newTransaction.data.category.type,
+          category: {
+            name: newTransaction.data.category.name,
+          },
+        },
+        ...transactions,
+      ]);
+      setCategory("");
+      reset();
     } catch (error) {
       const axiosError = error as AxiosError;
-      setSendRequest(false);
       const errorMessage =
         axiosError.response?.data?.message ||
         axiosError.message ||
@@ -113,8 +145,35 @@ export default function Wallet() {
         state: true,
         message: errorMessage,
       });
+    } finally {
       setSendRequest(false);
     }
+  };
+
+  const formatAmount = (amount: number, type: string) => {
+    const currency = "USD";
+    const numberFormat = new Intl.NumberFormat("en-US", {
+      currency,
+    });
+    let number = numberFormat.format(amount);
+
+    if (type === "EXPENSE") {
+      number = `-${number} ${currency}`;
+    } else {
+      number = `+${number} ${currency}`;
+    }
+
+    return (
+      <Typography
+        component="span"
+        style={{
+          color: type === "EXPENSE" ? red[500] : green[500],
+        }}
+        sx={{ fontWeight: 500 }}
+      >
+        {number}
+      </Typography>
+    );
   };
 
   return (
@@ -138,15 +197,6 @@ export default function Wallet() {
               <ModeEditIcon />
               Edit
             </Button>
-            <Button
-              variant="outlined"
-              size="small"
-              sx={{ p: 1 }}
-              onClick={deleteHandler}
-            >
-              <ClearIcon />
-              Delete
-            </Button>
           </div>
         </Grid>
 
@@ -154,58 +204,119 @@ export default function Wallet() {
           0 {currency}
         </Grid>
 
-        <Grid
-          container
-          alignItems="center"
-          spacing={2}
-          sx={{ pl: 2, mr: 2, mt: 1 }}
-        >
-          <Grid item xs={12} sm={6}>
-            <FormControl fullWidth>
-              <InputLabel id="category-label">Category</InputLabel>
-              <Select
-                labelId="category-label"
-                id="category"
-                value={category}
-                label="Category"
-                onChange={handleCategoryChange}
-                autoWidth
+        <form onSubmit={handleSubmit(onSubmit)} style={{ width: "100%" }}>
+          <Grid
+            container
+            alignItems="center"
+            spacing={2}
+            sx={{ pl: 2, mr: 2, mt: 1 }}
+          >
+            <Grid item xs={12} sm={6}>
+              <FormControl fullWidth>
+                <InputLabel id="category-label">Category</InputLabel>
+                <Select
+                  labelId="category-label"
+                  id="category"
+                  value={category}
+                  label="Category"
+                  onChange={handleCategoryChange}
+                  autoWidth
+                  displayEmpty
+                >
+                  <ListSubheader
+                    sx={{
+                      fontSize: "0.875rem",
+                      color: grey[50],
+                      backgroundColor: red[500],
+                    }}
+                  >
+                    Expenses
+                  </ListSubheader>
+                  {expenceCategories.map((cn, index) => (
+                    <MenuItem key={index} value={cn.id}>
+                      {cn.name}
+                    </MenuItem>
+                  ))}
+                  <ListSubheader
+                    sx={{
+                      fontSize: "0.875rem",
+                      color: grey[50],
+                      backgroundColor: green[500],
+                    }}
+                  >
+                    Income
+                  </ListSubheader>
+                  {incomeCategories.map((cn, index) => (
+                    <MenuItem key={index} value={cn.id}>
+                      {cn.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+
+            <Grid item xs={12} sm={4}>
+              <TextField
+                required
+                fullWidth
+                id="amount"
+                label="Amount"
+                type="number"
+                {...register("amount")}
+                defaultValue=""
+                error={errors.amount ? true : false}
+              />
+              <Typography variant="inherit" color="textSecondary">
+                {errors.amount?.message}
+              </Typography>
+            </Grid>
+
+            <Grid item xs={12} sm={2}>
+              <Button
+                fullWidth
+                variant="contained"
+                color="primary"
+                size="large"
+                type="submit"
               >
-                {categories.map((cn, index) => (
-                  <MenuItem key={index} value={cn.id}>
-                    {cn.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+                Save
+              </Button>
+            </Grid>
           </Grid>
-
-          <Grid item xs={12} sm={4}>
-            <TextField
-              required
-              fullWidth
-              id="amount"
-              label="Amount"
-              type="number"
-              {...register("amount")}
-              error={errors.amount ? true : false}
-            />
-            <Typography variant="inherit" color="textSecondary">
-              {errors.amount?.message}
-            </Typography>
-          </Grid>
-
-          <Grid item xs={12} sm={2}>
-            <Button
-              fullWidth
-              variant="contained"
-              color="primary"
-              size="large"
-              onClick={handleSubmit(onSubmit)}
-            >
-              Save
-            </Button>
-          </Grid>
+        </form>
+        <Grid item xs={12}>
+          <List>
+            {transactions.map((transaction) => (
+              <ListItem
+                key={transaction.id}
+                sx={{
+                  "&:hover": {
+                    backgroundColor: "action.hover",
+                  },
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <ListItemIcon>
+                  <PaidIcon color="primary" />
+                </ListItemIcon>
+                <ListItemText
+                  primary={transaction.category.name}
+                  sx={{
+                    ".MuiListItemText-multiline": {
+                      maxWidth: "60%",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    },
+                  }}
+                />
+                <ListItemSecondaryAction>
+                  {formatAmount(transaction.amount, transaction.type)}
+                </ListItemSecondaryAction>
+              </ListItem>
+            ))}
+          </List>
         </Grid>
 
         <Grid item xs={12}>

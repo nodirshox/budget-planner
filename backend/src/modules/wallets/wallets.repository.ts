@@ -64,8 +64,20 @@ export class WalletsRepository {
   }
 
   async deleteWallet(id: string) {
-    return this.prisma.wallet.delete({
+    const deleteTransactions = this.prisma.transaction.deleteMany({
+      where: {
+        walletId: id,
+      },
+    })
+    const deleteWallet = this.prisma.wallet.delete({
       where: { id },
     })
+
+    const result = await this.prisma.$transaction([
+      deleteTransactions,
+      deleteWallet,
+    ])
+
+    return result[result.length - 1]
   }
 }

@@ -11,4 +11,7 @@ export const HTTP_MESSAGES = {
   // Wallet
   WALLET_NOT_FOUND: 'Wallet not found',
   WALLET_NOT_BELONGS_TO_USER: 'Wallet is not belongs to user',
+
+  // Category
+  CATEGORY_NOT_FOUND: 'Category not found',
 }
