@@ -1,11 +1,22 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsNotEmpty, IsNumber, IsPositive, IsString } from 'class-validator'
+import {
+  IsDateString,
+  IsNotEmpty,
+  IsNumber,
+  IsPositive,
+  IsString,
+} from 'class-validator'
 
 export class CreateTransactionDto {
   @IsNumber()
   @IsPositive()
   @ApiProperty({ description: 'Transaction amount', example: 1000 })
   amount: number
+
+  @IsDateString()
+  @IsNotEmpty()
+  @ApiProperty({ description: 'Transaction date', example: new Date() })
+  date: Date
 
   @IsString()
   @IsNotEmpty()

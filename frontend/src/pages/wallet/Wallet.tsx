@@ -47,6 +47,7 @@ export default function Wallet() {
   const params = useParams();
 
   const [walletName, setWalletName] = useState("");
+  const [walletAmount, setWalletAmount] = useState("");
   const [currency, setCurrency] = useState("");
   const [sendRequest, setSendRequest] = useState(false);
   const [alert, setAlert] = useState({ state: false, message: "" });
@@ -97,6 +98,7 @@ export default function Wallet() {
       .then(
         (data) => {
           setWalletName(data.wallet.name);
+          setWalletAmount(data.wallet.amount);
           setCurrency(data.wallet.currency.name);
           setTransactions(data.transactions);
           setExpenceCategories(data.categories.expence);
@@ -120,18 +122,20 @@ export default function Wallet() {
         amount: data.amount,
         walletId: params.walletId,
         categoryId: category,
+        date: new Date(),
       });
       setTransactions([
         {
-          id: newTransaction.data.id,
+          id: newTransaction.data.transaction.id,
           amount: data.amount,
-          type: newTransaction.data.category.type,
+          type: newTransaction.data.transaction.category.type,
           category: {
-            name: newTransaction.data.category.name,
+            name: newTransaction.data.transaction.category.name,
           },
         },
         ...transactions,
       ]);
+      setWalletAmount(newTransaction.data.wallet.amount);
       setCategory("");
       reset();
     } catch (error) {
@@ -151,7 +155,6 @@ export default function Wallet() {
   };
 
   const formatAmount = (amount: number, type: string) => {
-    const currency = "USD";
     const numberFormat = new Intl.NumberFormat("en-US", {
       currency,
     });
@@ -201,7 +204,7 @@ export default function Wallet() {
         </Grid>
 
         <Grid item xs={12}>
-          0 {currency}
+          {walletAmount} {currency}
         </Grid>
 
         <form onSubmit={handleSubmit(onSubmit)} style={{ width: "100%" }}>
@@ -222,6 +225,7 @@ export default function Wallet() {
                   onChange={handleCategoryChange}
                   autoWidth
                   displayEmpty
+                  required
                 >
                   <ListSubheader
                     sx={{
@@ -265,6 +269,9 @@ export default function Wallet() {
                 {...register("amount")}
                 defaultValue=""
                 error={errors.amount ? true : false}
+                inputProps={{
+                  step: "0.01",
+                }}
               />
               <Typography variant="inherit" color="textSecondary">
                 {errors.amount?.message}

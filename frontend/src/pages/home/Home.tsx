@@ -21,6 +21,7 @@ import AddIcon from "@mui/icons-material/Add";
 interface IWallet {
   id: string;
   name: string;
+  amount: number;
   currency: {
     name: string;
   };
@@ -115,7 +116,7 @@ export default function Home() {
                             {wallet.name}
                           </Typography>
                           <Typography variant="subtitle1" component="div">
-                            0 {wallet.currency.name}
+                            {wallet.amount} {wallet.currency.name}
                           </Typography>
                         </CardContent>
                       </Link>

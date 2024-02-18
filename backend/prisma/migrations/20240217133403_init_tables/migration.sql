@@ -18,6 +18,7 @@ CREATE TABLE "users" (
 CREATE TABLE "wallets" (
     "id" TEXT NOT NULL,
     "name" VARCHAR(100) NOT NULL,
+    "amount" DOUBLE PRECISION NOT NULL DEFAULT 0,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
     "user_id" TEXT NOT NULL,
@@ -41,6 +42,8 @@ CREATE TABLE "transactions" (
     "id" TEXT NOT NULL,
     "amount" DOUBLE PRECISION NOT NULL,
     "type" "TransactionType" NOT NULL,
+    "date" TIMESTAMP(3) NOT NULL,
+    "notes" VARCHAR(100) NOT NULL DEFAULT '',
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
     "wallet_id" TEXT NOT NULL,

@@ -24,6 +24,7 @@ model User {
 model Wallet {
   id        String   @id @default(uuid())
   name      String   @db.VarChar(100)
+  amount    Float    @default(0)
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
@@ -51,6 +52,8 @@ model Transaction {
   id        String          @id @default(uuid())
   amount    Float
   type      TransactionType
+  date      DateTime
+  notes     String          @default("") @db.VarChar(100)
   createdAt DateTime        @default(now()) @map("created_at")
   updatedAt DateTime        @updatedAt @map("updated_at")
 

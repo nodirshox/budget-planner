@@ -8,11 +8,21 @@ import { FindTransactionsDto } from '@/modules/transaction/dto/find-transactions
 export class TransactionRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async createTransaction(body: CreateTransactionDto, type: TransactionType) {
-    return this.prisma.transaction.create({
+  async createTransaction(
+    body: CreateTransactionDto,
+    type: TransactionType,
+    walletAmount: number,
+  ) {
+    const wallet = this.prisma.wallet.update({
+      where: { id: body.walletId },
+      data: { amount: walletAmount },
+    })
+
+    const transaction = this.prisma.transaction.create({
       data: {
         amount: body.amount,
         type,
+        date: new Date(body.date),
         wallet: {
           connect: {
             id: body.walletId,
@@ -28,6 +38,10 @@ export class TransactionRepository {
         category: true,
       },
     })
+
+    const result = await this.prisma.$transaction([wallet, transaction])
+
+    return result[result.length - 1]
   }
 
   async filterTransactions(body: FindTransactionsDto) {
@@ -36,13 +50,13 @@ export class TransactionRepository {
         walletId: body.walletId,
       },
       orderBy: {
-        createdAt: 'desc',
+        date: 'asc',
       },
       select: {
         id: true,
         amount: true,
         type: true,
-        createdAt: true,
+        date: true,
         category: {
           select: {
             id: true,

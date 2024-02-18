@@ -45,6 +45,7 @@ export default function EditWallet() {
   });
 
   const deleteHandler = () => navigate(`/wallets/${params.walletId}/delete`);
+  const backHandler = () => navigate(`/wallets/${params.walletId}`);
 
   const onSubmit = async (data: { title: string }) => {
     try {
@@ -173,10 +174,18 @@ export default function EditWallet() {
         <Grid item xs={12}>
           <Button
             variant="contained"
-            color="primary"
+            color="success"
             onClick={handleSubmit(onSubmit)}
           >
             Update
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={backHandler}
+            sx={{ ml: 1 }}
+          >
+            Back
           </Button>
         </Grid>
         <Grid item xs={12}>

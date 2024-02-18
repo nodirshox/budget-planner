@@ -25,4 +25,14 @@ export class CategoryService {
 
     return category
   }
+
+  async findCategoryByName(name: string, type: TransactionType) {
+    const categories = await this.repository.findCategoryByName(name, type)
+
+    if (categories.length === 0) {
+      throw new Error(`Category not found: ${name}, ${type}`)
+    }
+
+    return categories[0]
+  }
 }

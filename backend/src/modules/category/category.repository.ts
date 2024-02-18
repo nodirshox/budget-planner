@@ -20,4 +20,10 @@ export class CategoryRepository {
       where: { id },
     })
   }
+
+  async findCategoryByName(name: string, type: TransactionType) {
+    return this.prisma.category.findMany({
+      where: { name, type },
+    })
+  }
 }

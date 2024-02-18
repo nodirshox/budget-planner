@@ -43,7 +43,7 @@ export default function DeleteWallet() {
     }
   };
 
-  const backHandler = () => nav(`/wallets/${params.walletId}`);
+  const backHandler = () => nav(`/wallets/${params.walletId}/edit`);
 
   useEffect(() => {
     setSendRequest(true);
@@ -68,7 +68,7 @@ export default function DeleteWallet() {
       <Grid container spacing={2} direction="row">
         <Grid item xs={12}>
           <PageTitle title={walletName} />
-          Are you sure delete wallet?
+          Are you sure delete wallet? All <b>transactions</b> will be deleted.
         </Grid>
         <Grid item xs={12}>
           <Button
@@ -87,7 +87,6 @@ export default function DeleteWallet() {
             sx={{ p: 1 }}
             onClick={backHandler}
           >
-            <ClearIcon />
             Back
           </Button>
         </Grid>
