@@ -5,6 +5,7 @@ import {
   IsNumber,
   IsPositive,
   IsString,
+  MaxLength,
 } from 'class-validator'
 
 export class CreateTransactionDto {
@@ -17,6 +18,11 @@ export class CreateTransactionDto {
   @IsNotEmpty()
   @ApiProperty({ description: 'Transaction date', example: new Date() })
   date: Date
+
+  @MaxLength(100)
+  @IsString()
+  @ApiProperty({ description: 'Note', example: '' })
+  notes: string
 
   @IsString()
   @IsNotEmpty()

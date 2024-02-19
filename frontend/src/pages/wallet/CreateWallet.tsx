@@ -42,6 +42,8 @@ export default function CreateWallet() {
     resolver: yupResolver(validationSchema),
   });
 
+  const backHandler = () => navigate("/");
+
   const onSubmit = async (data: { title: string }) => {
     try {
       await AxiosClient.post("/wallets", {
@@ -149,6 +151,9 @@ export default function CreateWallet() {
             onClick={handleSubmit(onSubmit)}
           >
             Create
+          </Button>
+          <Button variant="outlined" onClick={backHandler} sx={{ ml: 1 }}>
+            Back
           </Button>
         </Grid>
         <Grid item xs={12}>

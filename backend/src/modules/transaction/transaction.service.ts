@@ -29,8 +29,8 @@ export class TransactionService {
       category.type,
       finalWalletAmount,
     )
-    wallet.amount = finalWalletAmount
-    return { transaction, wallet }
+
+    return transaction
   }
 
   async filterTransactions(userId: string, body: FindTransactionsDto) {

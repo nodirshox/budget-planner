@@ -78,11 +78,10 @@ export default function DeleteWallet() {
             color="error"
             onClick={deleteHandler}
           >
-            <CheckIcon />
-            Delete
+            <CheckIcon />I confirm to delete wallet
           </Button>
           <Button
-            variant="contained"
+            variant="outlined"
             size="small"
             sx={{ p: 1 }}
             onClick={backHandler}

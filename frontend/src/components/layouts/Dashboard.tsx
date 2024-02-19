@@ -15,7 +15,7 @@ function DashboardContent() {
         styles={{ ul: { margin: 0, padding: 0, listStyle: "none" } }}
       />
       <CssBaseline />
-      <AppBar
+      {/* <AppBar
         position="static"
         elevation={0}
         sx={{
@@ -36,13 +36,13 @@ function DashboardContent() {
             </Typography>
           </Link>
         </Toolbar>
-      </AppBar>
+      </AppBar> */}
 
       <Container component="main" disableGutters={true} sx={{ pl: 1, pr: 1 }}>
         <Outlet />
       </Container>
 
-      <Footer sx={{ pt: 2 }} />
+      {/* <Footer sx={{ pt: 2 }} /> */}
     </React.Fragment>
   );
 }

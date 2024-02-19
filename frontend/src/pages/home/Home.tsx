@@ -17,6 +17,7 @@ import LoadingBar from "../../components/loading/LoadingBar";
 import HttpErrorNotification from "../../components/notifications/HttpErrorNotification";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import AddIcon from "@mui/icons-material/Add";
+import { red, green } from "@mui/material/colors";
 
 interface IWallet {
   id: string;
@@ -62,6 +63,32 @@ export default function Home() {
       .then(() => setSendRequest(false));
   }, []);
 
+  const formatAmount = (wallet: IWallet) => {
+    const numberFormat = new Intl.NumberFormat("en-US", {
+      currency: wallet.currency.name,
+    });
+    let number = numberFormat.format(wallet.amount);
+
+    if (wallet.amount > 0) {
+      number = `+${number} ${wallet.currency.name}`;
+    } else {
+      number = `${number} ${wallet.currency.name}`;
+    }
+
+    return (
+      <Typography
+        style={{
+          color: wallet.amount < 0 ? red[500] : green[500],
+        }}
+        sx={{ fontWeight: 500 }}
+        variant="subtitle1"
+        component="div"
+      >
+        {number}
+      </Typography>
+    );
+  };
+
   return (
     <Paper sx={{ p: 1, mt: 2 }}>
       <Grid container spacing={2} direction="row">
@@ -89,7 +116,6 @@ export default function Home() {
               sx={{ p: 1 }}
             >
               <ExitToAppIcon />
-              Exit
             </Button>
           </div>
         </Grid>
@@ -115,9 +141,7 @@ export default function Home() {
                           <Typography variant="h6" component="div">
                             {wallet.name}
                           </Typography>
-                          <Typography variant="subtitle1" component="div">
-                            {wallet.amount} {wallet.currency.name}
-                          </Typography>
+                          {formatAmount(wallet)}
                         </CardContent>
                       </Link>
                     </Card>

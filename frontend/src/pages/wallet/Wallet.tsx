@@ -1,37 +1,28 @@
 import React, { useState, useEffect } from "react";
-import Paper from "@mui/material/Paper";
 import {
   Grid,
-  FormControl,
   Typography,
   Button,
-  Select,
-  TextField,
-  InputLabel,
-  MenuItem,
   List,
   ListItem,
   ListItemIcon,
   ListItemText,
   ListItemSecondaryAction,
-  ListSubheader,
+  Paper,
 } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
-import AxiosClient, { AxiosError } from "../../utils/axios";
+import AxiosClient from "../../utils/axios";
 import ErrorMessage from "../../utils/error-message";
 import LoadingBar from "../../components/loading/LoadingBar";
 import HttpErrorNotification from "../../components/notifications/HttpErrorNotification";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
-import * as Yup from "yup";
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { red, green, grey } from "@mui/material/colors";
+import { red, green } from "@mui/material/colors";
 import PaidIcon from "@mui/icons-material/Paid";
-
-interface ICategory {
-  id: string;
-  name: string;
-}
+import AddIcon from "@mui/icons-material/Add";
+import Divider from "@mui/material/Divider";
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+import { useTheme } from "@mui/material/styles";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 interface ITransaction {
   id: string;
@@ -43,54 +34,45 @@ interface ITransaction {
 }
 
 export default function Wallet() {
+  const theme = useTheme();
+
+  const isXSmall = useMediaQuery(theme.breakpoints.down("xs"));
+  const isSmall = useMediaQuery(theme.breakpoints.up("sm"));
+  const isMedium = useMediaQuery(theme.breakpoints.up("md"));
+
+  const maxHeight = isXSmall
+    ? "150px"
+    : isSmall
+    ? "300px"
+    : isMedium
+    ? "450px"
+    : "600px";
+
   const nav = useNavigate();
   const params = useParams();
 
   const [walletName, setWalletName] = useState("");
-  const [walletAmount, setWalletAmount] = useState("");
-  const [currency, setCurrency] = useState("");
+  const [walletAmount, setWalletAmount] = useState(0);
+  const [currency, setCurrency] = useState("USD");
   const [sendRequest, setSendRequest] = useState(false);
   const [alert, setAlert] = useState({ state: false, message: "" });
-  const [expenceCategories, setExpenceCategories] = useState<ICategory[]>([]);
-  const [incomeCategories, setIncomeCategories] = useState<ICategory[]>([]);
-  const [category, setCategory] = useState("");
   const [transactions, setTransactions] = useState<ITransaction[]>([]);
-
-  const validationSchema = Yup.object().shape({
-    amount: Yup.number()
-      .positive("Enter positive number")
-      .typeError("Enter only number")
-      .required("Enter amount"),
-  });
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-
-    reset,
-  } = useForm({
-    resolver: yupResolver(validationSchema),
-  });
 
   const fetchTransactions = async () => {
     const transactions = await AxiosClient.post("transactions/filter", {
       walletId: params.walletId,
     });
 
-    const categories = await AxiosClient.get(`categories`);
-
     return {
       wallet: transactions.data.wallet,
       transactions: transactions.data.transactions,
-      categories: categories.data,
     };
   };
 
-  const handleCategoryChange = async (event: any) => {
-    setCategory(event.target.value);
-  };
-
   const editHandler = () => nav(`/wallets/${params.walletId}/edit`);
+  const backHandler = () => nav(`/`);
+  const addTransactionHandler = () =>
+    nav(`/wallets/${params.walletId}/transaction`);
 
   useEffect(() => {
     setSendRequest(true);
@@ -101,8 +83,6 @@ export default function Wallet() {
           setWalletAmount(data.wallet.amount);
           setCurrency(data.wallet.currency.name);
           setTransactions(data.transactions);
-          setExpenceCategories(data.categories.expence);
-          setIncomeCategories(data.categories.income);
         },
         (error) => {
           const message = ErrorMessage(error);
@@ -114,45 +94,6 @@ export default function Wallet() {
       )
       .finally(() => setSendRequest(false));
   }, []);
-
-  const onSubmit = async (data: { amount: number }) => {
-    try {
-      setSendRequest(true);
-      const newTransaction = await AxiosClient.post("transactions", {
-        amount: data.amount,
-        walletId: params.walletId,
-        categoryId: category,
-        date: new Date(),
-      });
-      setTransactions([
-        {
-          id: newTransaction.data.transaction.id,
-          amount: data.amount,
-          type: newTransaction.data.transaction.category.type,
-          category: {
-            name: newTransaction.data.transaction.category.name,
-          },
-        },
-        ...transactions,
-      ]);
-      setWalletAmount(newTransaction.data.wallet.amount);
-      setCategory("");
-      reset();
-    } catch (error) {
-      const axiosError = error as AxiosError;
-      const errorMessage =
-        axiosError.response?.data?.message ||
-        axiosError.message ||
-        "Unknown error";
-
-      setAlert({
-        state: true,
-        message: errorMessage,
-      });
-    } finally {
-      setSendRequest(false);
-    }
-  };
 
   const formatAmount = (amount: number, type: string) => {
     const numberFormat = new Intl.NumberFormat("en-US", {
@@ -179,6 +120,32 @@ export default function Wallet() {
     );
   };
 
+  const formatwalletAmount = () => {
+    const numberFormat = new Intl.NumberFormat("en-US", {
+      currency,
+    });
+    let number = numberFormat.format(walletAmount);
+
+    if (walletAmount > 0) {
+      number = `+${number} ${currency}`;
+    } else {
+      number = `${number} ${currency}`;
+    }
+
+    return (
+      <Typography
+        style={{
+          color: walletAmount < 0 ? red[500] : green[500],
+        }}
+        sx={{ fontWeight: 500 }}
+        variant="subtitle1"
+        component="div"
+      >
+        {number}
+      </Typography>
+    );
+  };
+
   return (
     <Paper sx={{ p: 1, mt: 2 }}>
       <Grid container spacing={2} direction="row">
@@ -198,101 +165,40 @@ export default function Wallet() {
               onClick={editHandler}
             >
               <ModeEditIcon />
-              Edit
+            </Button>
+            <Button
+              variant="outlined"
+              size="small"
+              sx={{ mr: 1, p: 1 }}
+              onClick={backHandler}
+            >
+              <ArrowBackIosNewIcon />
             </Button>
           </div>
         </Grid>
 
-        <Grid item xs={12}>
-          {walletAmount} {currency}
+        <Grid
+          container
+          item
+          xs={12}
+          justifyContent="space-between"
+          alignItems="center"
+        >
+          {formatwalletAmount()}
+          <div>
+            <Button
+              variant="contained"
+              size="small"
+              sx={{ mr: 1, p: 1 }}
+              onClick={addTransactionHandler}
+            >
+              <AddIcon />
+            </Button>
+          </div>
         </Grid>
-
-        <form onSubmit={handleSubmit(onSubmit)} style={{ width: "100%" }}>
-          <Grid
-            container
-            alignItems="center"
-            spacing={2}
-            sx={{ pl: 2, mr: 2, mt: 1 }}
-          >
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth>
-                <InputLabel id="category-label">Category</InputLabel>
-                <Select
-                  labelId="category-label"
-                  id="category"
-                  value={category}
-                  label="Category"
-                  onChange={handleCategoryChange}
-                  autoWidth
-                  displayEmpty
-                  required
-                >
-                  <ListSubheader
-                    sx={{
-                      fontSize: "0.875rem",
-                      color: grey[50],
-                      backgroundColor: red[500],
-                    }}
-                  >
-                    Expenses
-                  </ListSubheader>
-                  {expenceCategories.map((cn, index) => (
-                    <MenuItem key={index} value={cn.id}>
-                      {cn.name}
-                    </MenuItem>
-                  ))}
-                  <ListSubheader
-                    sx={{
-                      fontSize: "0.875rem",
-                      color: grey[50],
-                      backgroundColor: green[500],
-                    }}
-                  >
-                    Income
-                  </ListSubheader>
-                  {incomeCategories.map((cn, index) => (
-                    <MenuItem key={index} value={cn.id}>
-                      {cn.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
-
-            <Grid item xs={12} sm={4}>
-              <TextField
-                required
-                fullWidth
-                id="amount"
-                label="Amount"
-                type="number"
-                {...register("amount")}
-                defaultValue=""
-                error={errors.amount ? true : false}
-                inputProps={{
-                  step: "0.01",
-                }}
-              />
-              <Typography variant="inherit" color="textSecondary">
-                {errors.amount?.message}
-              </Typography>
-            </Grid>
-
-            <Grid item xs={12} sm={2}>
-              <Button
-                fullWidth
-                variant="contained"
-                color="primary"
-                size="large"
-                type="submit"
-              >
-                Save
-              </Button>
-            </Grid>
-          </Grid>
-        </form>
         <Grid item xs={12}>
-          <List>
+          <Divider />
+          <List sx={{ maxHeight: maxHeight, overflowY: "auto" }}>
             {transactions.map((transaction) => (
               <ListItem
                 key={transaction.id}

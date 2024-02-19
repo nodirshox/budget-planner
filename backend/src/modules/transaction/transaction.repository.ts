@@ -23,6 +23,7 @@ export class TransactionRepository {
         amount: body.amount,
         type,
         date: new Date(body.date),
+        notes: body.notes,
         wallet: {
           connect: {
             id: body.walletId,
@@ -50,13 +51,14 @@ export class TransactionRepository {
         walletId: body.walletId,
       },
       orderBy: {
-        date: 'asc',
+        date: 'desc',
       },
       select: {
         id: true,
         amount: true,
         type: true,
         date: true,
+        notes: true,
         category: {
           select: {
             id: true,

@@ -174,17 +174,12 @@ export default function EditWallet() {
         <Grid item xs={12}>
           <Button
             variant="contained"
-            color="success"
+            color="primary"
             onClick={handleSubmit(onSubmit)}
           >
             Update
           </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={backHandler}
-            sx={{ ml: 1 }}
-          >
+          <Button variant="outlined" onClick={backHandler} sx={{ ml: 1 }}>
             Back
           </Button>
         </Grid>
