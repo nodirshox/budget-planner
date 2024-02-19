@@ -6,9 +6,9 @@ import { TransactionType } from '@prisma/client'
 export class CategoryRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getCategoriesByType(type: TransactionType) {
+  async getCategoriesByType(userId: string, type: TransactionType) {
     return this.prisma.category.findMany({
-      where: { type },
+      where: { userId, type },
       orderBy: {
         createdAt: 'asc',
       },
@@ -21,9 +21,13 @@ export class CategoryRepository {
     })
   }
 
-  async findCategoryByName(name: string, type: TransactionType) {
+  async findCategoryByName(
+    userId: string,
+    name: string,
+    type: TransactionType,
+  ) {
     return this.prisma.category.findMany({
-      where: { name, type },
+      where: { userId, name, type },
     })
   }
 }

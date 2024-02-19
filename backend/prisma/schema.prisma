@@ -16,7 +16,8 @@ model User {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  wallets Wallet[]
+  wallets    Wallet[]
+  categories Category[]
 
   @@map("users")
 }
@@ -71,6 +72,9 @@ model Category {
   type      TransactionType
   createdAt DateTime        @default(now()) @map("created_at")
   updatedAt DateTime        @updatedAt @map("updated_at")
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @map("user_id")
 
   transactions Transaction[]
 

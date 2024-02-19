@@ -7,27 +7,43 @@ import { TransactionType } from '@prisma/client'
 export class CategoryService {
   constructor(private readonly repository: CategoryRepository) {}
 
-  async getCategories() {
+  async getCategories(userId: string) {
     return {
       expence: await this.repository.getCategoriesByType(
+        userId,
         TransactionType.EXPENSE,
       ),
-      income: await this.repository.getCategoriesByType(TransactionType.INCOME),
+      income: await this.repository.getCategoriesByType(
+        userId,
+        TransactionType.INCOME,
+      ),
     }
   }
 
-  async getCategory(id: string) {
+  async getCategory(userId: string, id: string) {
     const category = await this.repository.getCategory(id)
 
     if (!category) {
       throw new BadRequestException(HTTP_MESSAGES.CATEGORY_NOT_FOUND)
     }
 
+    if (category.userId !== userId) {
+      throw new BadRequestException(HTTP_MESSAGES.CATEGORY_NOT_BELONGS_TO_USER)
+    }
+
     return category
   }
 
-  async findCategoryByName(name: string, type: TransactionType) {
-    const categories = await this.repository.findCategoryByName(name, type)
+  async findCategoryByName(
+    userId: string,
+    name: string,
+    type: TransactionType,
+  ) {
+    const categories = await this.repository.findCategoryByName(
+      userId,
+      name,
+      type,
+    )
 
     if (categories.length === 0) {
       throw new Error(`Category not found: ${name}, ${type}`)

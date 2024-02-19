@@ -8,14 +8,14 @@ import { FindTransactionsDto } from '@/modules/transaction/dto/find-transactions
 export class TransactionRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async createTransaction(
-    body: CreateTransactionDto,
-    type: TransactionType,
-    walletAmount: number,
-  ) {
-    const wallet = this.prisma.wallet.update({
+  async createTransaction(body: CreateTransactionDto, type: TransactionType) {
+    const updateWallet = this.prisma.wallet.update({
       where: { id: body.walletId },
-      data: { amount: walletAmount },
+      data: {
+        amount: {
+          increment: this.calculateWalletAmount(type, body.amount),
+        },
+      },
     })
 
     const transaction = this.prisma.transaction.create({
@@ -40,7 +40,7 @@ export class TransactionRepository {
       },
     })
 
-    const result = await this.prisma.$transaction([wallet, transaction])
+    const result = await this.prisma.$transaction([updateWallet, transaction])
 
     return result[result.length - 1]
   }
@@ -67,5 +67,24 @@ export class TransactionRepository {
         },
       },
     })
+  }
+
+  calculateWalletAmount(type: TransactionType, amount: number): number {
+    let finalAmount = 0
+    switch (type) {
+      case TransactionType.EXPENSE: {
+        finalAmount -= amount
+        break
+      }
+      case TransactionType.INCOME: {
+        finalAmount += amount
+        break
+      }
+      default: {
+        throw new Error('Transaction type not found')
+      }
+    }
+
+    return Number(finalAmount.toFixed(2))
   }
 }

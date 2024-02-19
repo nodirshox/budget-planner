@@ -4,74 +4,79 @@ import { PASSWORD_SALT } from '../src/consts/password-salt'
 
 const prisma = new PrismaClient()
 
-/*
-const categories = [
-  { name: 'Transport', type: TransactionType.EXPENSE },
-  { name: 'Personal', type: TransactionType.EXPENSE },
-  { name: 'Home', type: TransactionType.EXPENSE },
-  { name: 'Qarz', type: TransactionType.EXPENSE },
-  { name: 'Food & Drink', type: TransactionType.EXPENSE },
-  { name: 'Water', type: TransactionType.EXPENSE },
-  { name: 'Other', type: TransactionType.EXPENSE },
-  { name: 'Cash out', type: TransactionType.EXPENSE },
-  { name: 'Office', type: TransactionType.EXPENSE },
-  { name: 'Groceries', type: TransactionType.EXPENSE },
-  { name: 'Entertainment', type: TransactionType.EXPENSE },
-  { name: 'Bills & Fees', type: TransactionType.EXPENSE },
-  { name: 'Electricity', type: TransactionType.EXPENSE },
-  { name: 'Gifts', type: TransactionType.EXPENSE },
-  { name: 'Beauty', type: TransactionType.EXPENSE },
-  { name: 'Healthcare', type: TransactionType.EXPENSE },
-  { name: 'Gas', type: TransactionType.EXPENSE },
-  { name: 'Shopping', type: TransactionType.EXPENSE },
-  { name: 'Tax', type: TransactionType.EXPENSE },
-  { name: 'Education', type: TransactionType.EXPENSE },
-  { name: 'Housing', type: TransactionType.EXPENSE },
-  { name: 'Loan', type: TransactionType.EXPENSE },
-  { name: 'Salary', type: TransactionType.INCOME },
-  { name: 'Extra Income', type: TransactionType.INCOME },
-  { name: 'Other', type: TransactionType.INCOME },
-  { name: 'Loan', type: TransactionType.INCOME },
-]
-*/
-
 async function main() {
-  return Promise.all([
-    await prisma.user.create({
-      data: {
-        firstName: 'John',
-        lastName: 'Doe',
-        email: 'user@mail.com',
-        password: await bcrypt.hash('password', PASSWORD_SALT),
+  const user = await prisma.user.create({
+    data: {
+      firstName: 'John',
+      lastName: 'Doe',
+      email: 'user@mail.com',
+      password: await bcrypt.hash('password', PASSWORD_SALT),
+    },
+  })
+
+  await prisma.currency.createMany({
+    data: [
+      {
+        name: 'USD',
       },
-    }),
-    await prisma.currency.createMany({
-      data: [
-        {
-          name: 'USD',
-        },
-        {
-          name: 'UZS',
-        },
-      ],
-    }),
-    await prisma.category.createMany({
-      data: [
-        {
-          name: 'Food & Drinks',
-          type: TransactionType.EXPENSE,
-        },
-        {
-          name: 'Transport',
-          type: TransactionType.EXPENSE,
-        },
-        {
-          name: 'Salary',
-          type: TransactionType.INCOME,
-        },
-      ],
-    }),
-  ]).catch((error) => console.error(error))
+      {
+        name: 'UZS',
+      },
+    ],
+  })
+  await prisma.category.createMany({
+    data: [
+      {
+        name: 'Food & Drinks',
+        type: TransactionType.EXPENSE,
+        userId: user.id,
+      },
+      {
+        name: 'Transport',
+        type: TransactionType.EXPENSE,
+        userId: user.id,
+      },
+      {
+        name: 'Salary',
+        type: TransactionType.INCOME,
+        userId: user.id,
+      },
+    ],
+  })
+
+  /*
+  const categories = [
+    { name: 'Transport', type: TransactionType.EXPENSE, userId: user.id },
+    { name: 'Personal', type: TransactionType.EXPENSE, userId: user.id },
+    { name: 'Home', type: TransactionType.EXPENSE, userId: user.id },
+    { name: 'Qarz', type: TransactionType.EXPENSE, userId: user.id },
+    { name: 'Food & Drink', type: TransactionType.EXPENSE, userId: user.id },
+    { name: 'Water', type: TransactionType.EXPENSE, userId: user.id },
+    { name: 'Other', type: TransactionType.EXPENSE, userId: user.id },
+    { name: 'Cash out', type: TransactionType.EXPENSE, userId: user.id },
+    { name: 'Office', type: TransactionType.EXPENSE, userId: user.id },
+    { name: 'Groceries', type: TransactionType.EXPENSE, userId: user.id },
+    { name: 'Entertainment', type: TransactionType.EXPENSE, userId: user.id },
+    { name: 'Bills & Fees', type: TransactionType.EXPENSE, userId: user.id },
+    { name: 'Electricity', type: TransactionType.EXPENSE, userId: user.id },
+    { name: 'Gifts', type: TransactionType.EXPENSE, userId: user.id },
+    { name: 'Beauty', type: TransactionType.EXPENSE, userId: user.id },
+    { name: 'Healthcare', type: TransactionType.EXPENSE, userId: user.id },
+    { name: 'Gas', type: TransactionType.EXPENSE, userId: user.id },
+    { name: 'Shopping', type: TransactionType.EXPENSE, userId: user.id },
+    { name: 'Tax', type: TransactionType.EXPENSE, userId: user.id },
+    { name: 'Education', type: TransactionType.EXPENSE, userId: user.id },
+    { name: 'Housing', type: TransactionType.EXPENSE, userId: user.id },
+    { name: 'Loan', type: TransactionType.EXPENSE, userId: user.id },
+    { name: 'Salary', type: TransactionType.INCOME, userId: user.id },
+    { name: 'Extra Income', type: TransactionType.INCOME, userId: user.id },
+    { name: 'Other', type: TransactionType.INCOME, userId: user.id },
+    { name: 'Loan', type: TransactionType.INCOME, userId: user.id },
+  ]
+  await prisma.category.createMany({
+    data: categories,
+  })
+  */
 }
 main()
   .then(async () => {

@@ -9,6 +9,7 @@ import {
   ListItemText,
   ListItemSecondaryAction,
   Paper,
+  ListSubheader,
 } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import AxiosClient from "../../utils/axios";
@@ -25,8 +26,14 @@ import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 interface ITransaction {
+  day: Date;
+  transactions: GroupTransactions[];
+}
+
+interface GroupTransactions {
   id: string;
   amount: number;
+  notes: string;
   type: string;
   category: {
     name: true;
@@ -119,6 +126,35 @@ export default function Wallet() {
       </Typography>
     );
   };
+  const formatDate = (input: Date) => {
+    const date = new Date(input);
+    const today = new Date();
+    const monthNames = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
+
+    today.setHours(0, 0, 0, 0);
+
+    if (date.setHours(0, 0, 0, 0) === today.getTime()) {
+      return "Today";
+    }
+
+    const month = monthNames[date.getMonth()];
+    const day = date.getDate();
+
+    return `${month} ${day}`;
+  };
 
   const formatwalletAmount = () => {
     const numberFormat = new Intl.NumberFormat("en-US", {
@@ -199,35 +235,45 @@ export default function Wallet() {
         <Grid item xs={12}>
           <Divider />
           <List sx={{ maxHeight: maxHeight, overflowY: "auto" }}>
-            {transactions.map((transaction) => (
-              <ListItem
-                key={transaction.id}
-                sx={{
-                  "&:hover": {
-                    backgroundColor: "action.hover",
-                  },
-                  display: "flex",
-                  alignItems: "center",
-                }}
-              >
-                <ListItemIcon>
-                  <PaidIcon color="primary" />
-                </ListItemIcon>
-                <ListItemText
-                  primary={transaction.category.name}
-                  sx={{
-                    ".MuiListItemText-multiline": {
-                      maxWidth: "60%",
-                      whiteSpace: "nowrap",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                    },
-                  }}
-                />
-                <ListItemSecondaryAction>
-                  {formatAmount(transaction.amount, transaction.type)}
-                </ListItemSecondaryAction>
-              </ListItem>
+            {transactions.map((group, groupIndex) => (
+              <li key={`section-${groupIndex}`}>
+                <ul>
+                  <ListItem style={{ background: "#EEEEEE", color: "#5D6E7B" }}>
+                    <ListItemText primary={formatDate(group.day)} />
+                  </ListItem>
+                  {group.transactions.map((transaction, trnasactionIndex) => (
+                    <ListItem
+                      sx={{
+                        "&:hover": {
+                          backgroundColor: "action.hover",
+                        },
+                        display: "flex",
+                        alignItems: "center",
+                      }}
+                      key={`${groupIndex}-${trnasactionIndex}`}
+                    >
+                      <ListItemIcon>
+                        <PaidIcon color="primary" />
+                      </ListItemIcon>
+                      <ListItemText
+                        primary={transaction.category.name}
+                        sx={{
+                          ".MuiListItemText-multiline": {
+                            maxWidth: "60%",
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                          },
+                        }}
+                        secondary={transaction.notes}
+                      />
+                      <ListItemSecondaryAction>
+                        {formatAmount(transaction.amount, transaction.type)}
+                      </ListItemSecondaryAction>
+                    </ListItem>
+                  ))}
+                </ul>
+              </li>
             ))}
           </List>
         </Grid>

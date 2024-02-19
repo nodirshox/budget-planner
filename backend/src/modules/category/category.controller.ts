@@ -2,6 +2,8 @@ import { Controller, Get, Param, UseGuards } from '@nestjs/common'
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger'
 import { CategoryService } from '@/modules/category/category.service'
 import { JwtAuthGuard } from '@/modules/auth/jwt-auth.guard'
+import { User } from '@/decorators/user.decorator'
+import { IUser } from '@/modules/users/dto/user.interface'
 
 @ApiBearerAuth()
 @ApiTags('Category')
@@ -12,13 +14,13 @@ export class CategoryController {
 
   @Get()
   @ApiOperation({ summary: 'Get categories' })
-  async getCategories() {
-    return this.service.getCategories()
+  async getCategories(@User() user: IUser) {
+    return this.service.getCategories(user.id)
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get category' })
-  async getCategory(@Param('id') id: string) {
-    return this.service.getCategory(id)
+  async getCategory(@User() user: IUser, @Param('id') id: string) {
+    return this.service.getCategory(user.id, id)
   }
 }

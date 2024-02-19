@@ -1,13 +1,15 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, OnModuleInit } from '@nestjs/common'
 import { TransactionRepository } from '@/modules/transaction/transaction.repository'
 import { CreateTransactionDto } from '@/modules/transaction/dto/create-transaction.dto'
 import { WalletsService } from '@/modules/wallets/wallets.service'
 import { CategoryService } from '@/modules/category/category.service'
 import { FindTransactionsDto } from '@/modules/transaction/dto/find-transactions.dto'
 import { TransactionType } from '@prisma/client'
+import { createReadStream } from 'fs'
+import * as csv from 'csv-parser'
 
 @Injectable()
-export class TransactionService {
+export class TransactionService implements OnModuleInit {
   constructor(
     private readonly repository: TransactionRepository,
     private readonly walletService: WalletsService,
@@ -15,19 +17,15 @@ export class TransactionService {
   ) {}
 
   async createTransaction(userId: string, body: CreateTransactionDto) {
-    const wallet = await this.walletService.getWallet(userId, body.walletId)
-    const category = await this.categoryService.getCategory(body.categoryId)
-
-    const finalWalletAmount = this.calculateWalletAmount(
-      wallet.amount,
-      category.type,
-      body.amount,
+    await this.walletService.getWallet(userId, body.walletId)
+    const category = await this.categoryService.getCategory(
+      userId,
+      body.categoryId,
     )
 
     const transaction = await this.repository.createTransaction(
       body,
       category.type,
-      finalWalletAmount,
     )
 
     return transaction
@@ -37,81 +35,67 @@ export class TransactionService {
     const wallet = await this.walletService.getWallet(userId, body.walletId)
     const transactions = await this.repository.filterTransactions(body)
 
-    return { wallet, transactions }
+    return { wallet, transactions: this.groupByDay(transactions) }
   }
 
-  calculateWalletAmount(
-    walletAmount: number,
-    type: TransactionType,
-    amount: number,
-  ): number {
-    let finalAmount: number = walletAmount
-    switch (type) {
-      case TransactionType.EXPENSE: {
-        finalAmount -= amount
-        break
-      }
-      case TransactionType.INCOME: {
-        finalAmount += amount
-        break
-      }
-      default: {
-        throw new Error('Transaction type not found')
-      }
-    }
+  groupByDay(transactions) {
+    const groups = {}
 
-    return Number(finalAmount.toFixed(2))
+    transactions.forEach((transaction) => {
+      const day = new Date(transaction.date).toISOString().split('T')[0]
+      if (!groups[day]) {
+        groups[day] = []
+      }
+      groups[day].push(transaction)
+    })
+
+    const groupedByDay = Object.keys(groups).map((day) => ({
+      day: new Date(day),
+      transactions: groups[day],
+    }))
+
+    return groupedByDay
   }
 
   // Temp function to import csv to database
-  /*
-    import { createReadStream } from 'fs'
-    import * as csv from 'csv-parser'
-
-    async onModuleInit() {
+  async onModuleInit() {
     const csvFilePath = './data.csv'
     const userId = 'uuid'
     const walletId = 'uuid'
-    const transactions = []
+    /*
     createReadStream(csvFilePath)
       .pipe(csv())
       .on('data', async (row) => {
-        const category = await this.categoryService.findCategoryByName(
-          row['Category name'],
+        const categoryType =
           row['Type'] === 'Income'
             ? TransactionType.INCOME
-            : TransactionType.EXPENSE,
-        )
+            : TransactionType.EXPENSE
+        const categoryName = row['Category name']
+        const date = new Date(row['Date'])
+        const notes = row['Note']
+
         const amount = Math.floor(Math.abs(parseFloat(row['Amount'])))
-        transactions.push({ amount, type: category.type, date: row['Date'] })
-        await this.createTransaction(userId, {
-          amount,
-          date: new Date(row['Date']),
-          walletId,
-          categoryId: category.id,
-        })
+
+        const category = await this.categoryService.findCategoryByName(
+          userId,
+          categoryName,
+          categoryType,
+        )
+
+        await this.repository.createTransaction(
+          {
+            amount,
+            date,
+            notes,
+            walletId,
+            categoryId: category.id,
+          },
+          category.type,
+        )
       })
       .on('end', async () => {
         console.log('CSV file successfully processed')
-
-        const newTransactions = await this.filterTransactions(userId, {
-          walletId,
-        })
-        console.log('transactions', transactions.length)
-        console.log('new transactions', newTransactions.transactions.length)
-        for (let i = 0; i < transactions.length; i++) {
-          if (
-            transactions[i].amount !== newTransactions.transactions[i].amount
-          ) {
-            console.log(`${JSON.stringify(transactions[i])}`)
-            console.log(newTransactions.transactions[i])
-            // throw new Error('Does not match')
-            i = transactions.length
-          } else {
-            console.log('correct')
-          }
-        }
       })
+      */
   }
-  */
 }
