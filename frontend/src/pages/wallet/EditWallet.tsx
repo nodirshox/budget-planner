@@ -17,7 +17,6 @@ import HttpErrorNotification from "../../components/notifications/HttpErrorNotif
 import * as Yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import ClearIcon from "@mui/icons-material/Clear";
 
 interface Currency {
   id: string;

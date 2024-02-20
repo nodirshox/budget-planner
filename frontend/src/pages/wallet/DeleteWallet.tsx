@@ -69,6 +69,7 @@ export default function DeleteWallet() {
         <Grid item xs={12}>
           <PageTitle title={walletName} />
           Are you sure delete wallet? All <b>transactions</b> will be deleted.
+          This action cannot be undone.
         </Grid>
         <Grid item xs={12}>
           <Button

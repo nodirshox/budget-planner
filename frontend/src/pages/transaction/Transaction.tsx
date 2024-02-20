@@ -34,16 +34,14 @@ interface ICategory {
 export default function Transaction() {
   const nav = useNavigate();
   const params = useParams();
+  const isEditMode = !!params.transactionId;
 
-  const [open, setOpen] = useState(false);
   const [sendRequest, setSendRequest] = useState(false);
   const [alert, setAlert] = useState({ state: false, message: "" });
   const [expenceCategories, setExpenceCategories] = useState<ICategory[]>([]);
   const [incomeCategories, setIncomeCategories] = useState<ICategory[]>([]);
   const [category, setCategory] = useState("");
   const [date, setDate] = useState(new Date());
-
-  const isEditMode = !!params.transactionId;
 
   const validationSchema = Yup.object().shape({
     amount: Yup.number()
@@ -81,9 +79,9 @@ export default function Transaction() {
   }
 
   const fetchCategories = async () => {
-    const categories = await AxiosClient.get(`categories`);
+    const { data } = await AxiosClient.get(`categories`);
 
-    return categories.data;
+    return data;
   };
 
   const fetchTransaction = async (transactionId: string) => {
@@ -166,20 +164,15 @@ export default function Transaction() {
   };
 
   // delete transactions
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
+  const [open, setOpen] = useState(false);
+  const handleClickOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
   const handleDelete = async () => {
     try {
       setSendRequest(true);
       await AxiosClient.delete(`transactions/${params.transactionId}`);
-      nav(`/wallets/${params.walletId}`); // Adjust the route as needed
+      nav(`/wallets/${params.walletId}`);
     } catch (error) {
       const axiosError = error as AxiosError;
       const errorMessage =
@@ -208,7 +201,7 @@ export default function Transaction() {
 
         {isEditMode && (
           <Button variant="outlined" color="error" onClick={handleClickOpen}>
-            Delete Transaction
+            Delete
           </Button>
         )}
         <Dialog
@@ -217,16 +210,15 @@ export default function Transaction() {
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
         >
-          <DialogTitle id="alert-dialog-title">{"Confirm Delete"}</DialogTitle>
+          <DialogTitle id="alert-dialog-title">Confirm Delete</DialogTitle>
           <DialogContent>
             <DialogContentText id="alert-dialog-description">
-              Are you sure you want to delete this transaction? This action
-              cannot be undone.
+              Are you sure you want to delete this transaction?
             </DialogContentText>
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleClose}>Cancel</Button>
-            <Button onClick={handleDelete} autoFocus color="secondary">
+            <Button onClick={handleClose}>Back</Button>
+            <Button onClick={handleDelete} autoFocus color="error">
               Delete
             </Button>
           </DialogActions>
