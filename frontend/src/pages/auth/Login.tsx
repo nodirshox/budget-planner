@@ -21,12 +21,12 @@ const theme = createTheme();
 export default function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState({
-    value: "user@mail.com",
+    value: "",
     error: false,
     message: "",
   });
   const [password, setPassword] = useState({
-    value: "password",
+    value: "",
     error: false,
     message: "",
   });
