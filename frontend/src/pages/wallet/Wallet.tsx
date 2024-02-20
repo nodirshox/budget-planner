@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Grid,
   Typography,
@@ -9,7 +9,6 @@ import {
   ListItemText,
   ListItemSecondaryAction,
   Paper,
-  ListSubheader,
 } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import AxiosClient from "../../utils/axios";
@@ -46,7 +45,6 @@ export default function Wallet() {
   const isXSmall = useMediaQuery(theme.breakpoints.down("xs"));
   const isSmall = useMediaQuery(theme.breakpoints.up("sm"));
   const isMedium = useMediaQuery(theme.breakpoints.up("md"));
-
   const maxHeight = isXSmall
     ? "150px"
     : isSmall
@@ -65,9 +63,13 @@ export default function Wallet() {
   const [alert, setAlert] = useState({ state: false, message: "" });
   const [transactions, setTransactions] = useState<ITransaction[]>([]);
 
+  const listRef = useRef<HTMLUListElement | null>(null);
+  const [month, setMonth] = useState(new Date());
+
   const fetchTransactions = async () => {
     const transactions = await AxiosClient.post("transactions/filter", {
       walletId: params.walletId,
+      month,
     });
 
     return {
@@ -100,7 +102,12 @@ export default function Wallet() {
         }
       )
       .finally(() => setSendRequest(false));
-  }, []);
+
+    // scroll to the top when month changes
+    if (listRef.current) {
+      listRef.current.scrollTop = 0;
+    }
+  }, [month]);
 
   const formatAmount = (amount: number, type: string) => {
     const numberFormat = new Intl.NumberFormat("en-US", {
@@ -182,6 +189,18 @@ export default function Wallet() {
     );
   };
 
+  function formatMonth(date: any) {
+    const d = new Date(date),
+      month = "" + (d.getMonth() + 1),
+      year = d.getFullYear();
+
+    return [year, month.padStart(2, "0")].join("-");
+  }
+
+  const handleMonthChange = (event: any) => {
+    setMonth(new Date(event.target.value));
+  };
+
   return (
     <Paper sx={{ p: 1, mt: 2 }}>
       <Grid container spacing={2} direction="row">
@@ -233,8 +252,17 @@ export default function Wallet() {
           </div>
         </Grid>
         <Grid item xs={12}>
+          <input
+            type="month"
+            value={formatMonth(month)}
+            onChange={handleMonthChange}
+            className="mui-style-date-input"
+            max={formatMonth(new Date())}
+          />
+        </Grid>
+        <Grid item xs={12}>
           <Divider />
-          <List sx={{ maxHeight: maxHeight, overflowY: "auto" }}>
+          <List sx={{ maxHeight: maxHeight, overflowY: "auto" }} ref={listRef}>
             {transactions.map((group, groupIndex) => (
               <li key={`section-${groupIndex}`}>
                 <ul>

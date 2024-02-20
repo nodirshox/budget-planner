@@ -3,17 +3,21 @@ import { Injectable } from '@nestjs/common'
 import { CreateTransactionDto } from '@/modules/transaction/dto/create-transaction.dto'
 import { TransactionType } from '@prisma/client'
 import { FindTransactionsDto } from '@/modules/transaction/dto/find-transactions.dto'
+import { UtilsService } from '@/core/utils/utils.service'
 
 @Injectable()
 export class TransactionRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly utils: UtilsService,
+  ) {}
 
   async createTransaction(body: CreateTransactionDto, type: TransactionType) {
     const updateWallet = this.prisma.wallet.update({
       where: { id: body.walletId },
       data: {
         amount: {
-          increment: this.calculateWalletAmount(type, body.amount),
+          increment: this.utils.calculateWalletAmount(type, body.amount),
         },
       },
     })
@@ -46,9 +50,16 @@ export class TransactionRepository {
   }
 
   async filterTransactions(body: FindTransactionsDto) {
+    const { currentMonth, nextMonth } = this.utils.getMonths(
+      new Date(body.month),
+    )
     return this.prisma.transaction.findMany({
       where: {
         walletId: body.walletId,
+        date: {
+          gte: currentMonth,
+          lt: nextMonth,
+        },
       },
       orderBy: {
         date: 'desc',
@@ -67,24 +78,5 @@ export class TransactionRepository {
         },
       },
     })
-  }
-
-  calculateWalletAmount(type: TransactionType, amount: number): number {
-    let finalAmount = 0
-    switch (type) {
-      case TransactionType.EXPENSE: {
-        finalAmount -= amount
-        break
-      }
-      case TransactionType.INCOME: {
-        finalAmount += amount
-        break
-      }
-      default: {
-        throw new Error('Transaction type not found')
-      }
-    }
-
-    return Number(finalAmount.toFixed(2))
   }
 }
