@@ -26,7 +26,7 @@ interface ICategory {
   name: string;
 }
 
-export default function AddTransaction() {
+export default function Transaction() {
   const nav = useNavigate();
   const params = useParams();
 
@@ -36,6 +36,8 @@ export default function AddTransaction() {
   const [incomeCategories, setIncomeCategories] = useState<ICategory[]>([]);
   const [category, setCategory] = useState("");
   const [date, setDate] = useState(new Date());
+
+  const isEditMode = !!params.transactionId;
 
   const validationSchema = Yup.object().shape({
     amount: Yup.number()
@@ -47,16 +49,11 @@ export default function AddTransaction() {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(validationSchema),
   });
-
-  const fetchCategories = async () => {
-    const categories = await AxiosClient.get(`categories`);
-
-    return categories.data;
-  };
 
   const handleChange = (event: any) => {
     setDate(new Date(event.target.value));
@@ -65,6 +62,8 @@ export default function AddTransaction() {
   const handleCategoryChange = async (event: any) => {
     setCategory(event.target.value);
   };
+
+  const backHandler = () => nav(`/wallets/${params.walletId}`);
 
   function formatDate(date: any) {
     const d = new Date(date),
@@ -75,7 +74,16 @@ export default function AddTransaction() {
     return [year, month.padStart(2, "0"), day.padStart(2, "0")].join("-");
   }
 
-  const backHandler = () => nav(`/wallets/${params.walletId}`);
+  const fetchCategories = async () => {
+    const categories = await AxiosClient.get(`categories`);
+
+    return categories.data;
+  };
+
+  const fetchTransaction = async (transactionId: string) => {
+    const transaction = await AxiosClient.get(`transactions/${transactionId}`);
+    return transaction.data;
+  };
 
   useEffect(() => {
     setSendRequest(true);
@@ -84,6 +92,22 @@ export default function AddTransaction() {
         (data) => {
           setExpenceCategories(data.expence);
           setIncomeCategories(data.income);
+          if (isEditMode) {
+            fetchTransaction(params.transactionId!)
+              .then((data) => {
+                setCategory(data.categoryId);
+                setDate(new Date(data.date));
+                setValue("amount", data.amount);
+                setValue("notes", data.notes);
+              })
+              .catch((error) => {
+                const message = ErrorMessage(error);
+                setAlert({
+                  state: true,
+                  message,
+                });
+              });
+          }
         },
         (error) => {
           const message = ErrorMessage(error);
@@ -99,13 +123,25 @@ export default function AddTransaction() {
   const onSubmit = async (data: { amount: number; notes?: string }) => {
     try {
       setSendRequest(true);
-      await AxiosClient.post("transactions", {
-        amount: data.amount,
-        walletId: params.walletId,
-        categoryId: category,
-        date,
-        notes: data.notes,
-      });
+
+      if (isEditMode) {
+        await AxiosClient.put(`transactions/${params.transactionId}`, {
+          amount: data.amount,
+          walletId: params.walletId,
+          categoryId: category,
+          date,
+          notes: data.notes,
+        });
+      } else {
+        await AxiosClient.post("transactions", {
+          amount: data.amount,
+          walletId: params.walletId,
+          categoryId: category,
+          date,
+          notes: data.notes,
+        });
+      }
+
       nav(`/wallets/${params.walletId}`);
     } catch (error) {
       const axiosError = error as AxiosError;
@@ -125,6 +161,7 @@ export default function AddTransaction() {
 
   return (
     <Paper sx={{ p: 1, mt: 2 }}>
+      <Typography variant="h6">Transaction</Typography>
       <Grid container spacing={2} direction="row">
         <form onSubmit={handleSubmit(onSubmit)} style={{ width: "100%" }}>
           <Grid
@@ -191,6 +228,7 @@ export default function AddTransaction() {
                 inputProps={{
                   step: "0.01",
                 }}
+                InputLabelProps={{ shrink: true }}
               />
               <Typography variant="inherit" color="textSecondary">
                 {errors.amount?.message}
@@ -203,6 +241,7 @@ export default function AddTransaction() {
                 {...register("notes")}
                 error={errors.notes ? true : false}
                 fullWidth
+                InputLabelProps={{ shrink: true }}
               />
               <Typography variant="inherit" color="textSecondary">
                 {errors.notes?.message}
@@ -225,7 +264,7 @@ export default function AddTransaction() {
                 size="large"
                 type="submit"
               >
-                Add Transaction
+                {isEditMode ? "Save Transaction" : "Add Transaction"}
               </Button>
             </Grid>
             <Grid item xs={12}>

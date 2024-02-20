@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
+import { TransactionType } from '@prisma/client'
 import {
   IsDateString,
   IsNotEmpty,
@@ -35,4 +36,8 @@ export class CreateTransactionDto {
   categoryId: string
 }
 
-export class UpdateTransactionDto extends CreateTransactionDto {}
+export class UpdateTransactionDto extends CreateTransactionDto {
+  oldType: TransactionType
+  type: TransactionType
+  oldAmount: number
+}

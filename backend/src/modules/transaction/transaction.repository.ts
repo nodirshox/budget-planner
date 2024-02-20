@@ -1,6 +1,9 @@
 import { PrismaService } from '@/core/prisma/prisma.service'
 import { Injectable } from '@nestjs/common'
-import { CreateTransactionDto } from '@/modules/transaction/dto/create-transaction.dto'
+import {
+  CreateTransactionDto,
+  UpdateTransactionDto,
+} from '@/modules/transaction/dto/create-transaction.dto'
 import { TransactionType } from '@prisma/client'
 import { FindTransactionsDto } from '@/modules/transaction/dto/find-transactions.dto'
 import { UtilsService } from '@/core/utils/utils.service'
@@ -78,5 +81,42 @@ export class TransactionRepository {
         },
       },
     })
+  }
+
+  async getTransaction(id: string) {
+    return this.prisma.transaction.findUnique({ where: { id } })
+  }
+
+  async updateTranasction(id: string, body: UpdateTransactionDto) {
+    const updateWallet = this.prisma.wallet.update({
+      where: { id: body.walletId },
+      data: {
+        amount: {
+          increment:
+            -1 *
+              this.utils.calculateWalletAmount(body.oldType, body.oldAmount) +
+            this.utils.calculateWalletAmount(body.type, body.amount),
+        },
+      },
+    })
+
+    const transaction = this.prisma.transaction.update({
+      where: { id },
+      data: {
+        amount: body.amount,
+        type: body.type,
+        date: new Date(body.date),
+        notes: body.notes,
+        category: {
+          connect: {
+            id: body.categoryId,
+          },
+        },
+      },
+    })
+
+    const result = await this.prisma.$transaction([updateWallet, transaction])
+
+    return result[result.length - 1]
   }
 }

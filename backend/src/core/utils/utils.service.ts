@@ -49,4 +49,23 @@ export class UtilsService {
 
     return { currentMonth, nextMonth }
   }
+
+  groupByDay(transactions) {
+    const groups = {}
+
+    transactions.forEach((transaction) => {
+      const day = new Date(transaction.date).toISOString().split('T')[0]
+      if (!groups[day]) {
+        groups[day] = []
+      }
+      groups[day].push(transaction)
+    })
+
+    const groupedByDay = Object.keys(groups).map((day) => ({
+      day: new Date(day),
+      transactions: groups[day],
+    }))
+
+    return groupedByDay
+  }
 }

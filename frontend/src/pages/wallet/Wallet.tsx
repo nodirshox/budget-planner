@@ -81,7 +81,10 @@ export default function Wallet() {
   const editHandler = () => nav(`/wallets/${params.walletId}/edit`);
   const backHandler = () => nav(`/`);
   const addTransactionHandler = () =>
-    nav(`/wallets/${params.walletId}/transaction`);
+    nav(`/wallets/${params.walletId}/transactions`);
+
+  const transactionHandler = (id: string) =>
+    nav(`/wallets/${params.walletId}/transactions/${id}`);
 
   useEffect(() => {
     setSendRequest(true);
@@ -277,8 +280,10 @@ export default function Wallet() {
                         },
                         display: "flex",
                         alignItems: "center",
+                        cursor: "pointer",
                       }}
                       key={`${groupIndex}-${trnasactionIndex}`}
+                      onClick={() => transactionHandler(transaction.id)}
                     >
                       <ListItemIcon>
                         <PaidIcon color="primary" />
@@ -295,7 +300,12 @@ export default function Wallet() {
                         }}
                         secondary={transaction.notes}
                       />
-                      <ListItemSecondaryAction>
+                      <ListItemSecondaryAction
+                        sx={{
+                          cursor: "pointer",
+                        }}
+                        onClick={() => transactionHandler(transaction.id)}
+                      >
                         {formatAmount(transaction.amount, transaction.type)}
                       </ListItemSecondaryAction>
                     </ListItem>

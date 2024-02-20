@@ -15,4 +15,7 @@ export const HTTP_MESSAGES = {
   // Category
   CATEGORY_NOT_FOUND: 'Category not found',
   CATEGORY_NOT_BELONGS_TO_USER: 'Category is not belongs to user',
+
+  // Transaction
+  TRANSACTION_NOT_FOUND: 'Transaction not found',
 }
