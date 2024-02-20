@@ -10,6 +10,11 @@ import {
   InputLabel,
   MenuItem,
   ListSubheader,
+  Dialog,
+  DialogTitle,
+  DialogContentText,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import AxiosClient, { AxiosError } from "../../utils/axios";
@@ -30,6 +35,7 @@ export default function Transaction() {
   const nav = useNavigate();
   const params = useParams();
 
+  const [open, setOpen] = useState(false);
   const [sendRequest, setSendRequest] = useState(false);
   const [alert, setAlert] = useState({ state: false, message: "" });
   const [expenceCategories, setExpenceCategories] = useState<ICategory[]>([]);
@@ -159,9 +165,73 @@ export default function Transaction() {
     }
   };
 
+  // delete transactions
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleDelete = async () => {
+    try {
+      setSendRequest(true);
+      await AxiosClient.delete(`transactions/${params.transactionId}`);
+      nav(`/wallets/${params.walletId}`); // Adjust the route as needed
+    } catch (error) {
+      const axiosError = error as AxiosError;
+      const errorMessage =
+        axiosError.response?.data?.message ||
+        axiosError.message ||
+        "Unknown error";
+      setAlert({
+        state: true,
+        message: errorMessage,
+      });
+    } finally {
+      setSendRequest(false);
+    }
+  };
+
   return (
     <Paper sx={{ p: 1, mt: 2 }}>
-      <Typography variant="h6">Transaction</Typography>
+      <Grid
+        container
+        item
+        xs={12}
+        justifyContent="space-between"
+        alignItems="center"
+      >
+        <Typography variant="h6">Transaction</Typography>
+
+        {isEditMode && (
+          <Button variant="outlined" color="error" onClick={handleClickOpen}>
+            Delete Transaction
+          </Button>
+        )}
+        <Dialog
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">{"Confirm Delete"}</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              Are you sure you want to delete this transaction? This action
+              cannot be undone.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose}>Cancel</Button>
+            <Button onClick={handleDelete} autoFocus color="secondary">
+              Delete
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </Grid>
       <Grid container spacing={2} direction="row">
         <form onSubmit={handleSubmit(onSubmit)} style={{ width: "100%" }}>
           <Grid

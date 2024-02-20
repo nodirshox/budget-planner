@@ -70,11 +70,28 @@ export class TransactionService implements OnModuleInit {
       userId,
       body.categoryId,
     )
+    body.walletId = oldTransaction.walletId
     body.oldType = oldCategory.type
     body.type = category.type
     body.oldAmount = oldTransaction.amount
 
     return this.repository.updateTranasction(id, body)
+  }
+
+  async deleteTransaction(userId: string, id: string) {
+    const transaction = await this.repository.getTransaction(id)
+
+    if (!transaction) {
+      throw new BadRequestException(HTTP_MESSAGES.TRANSACTION_NOT_FOUND)
+    }
+    await this.walletService.getWallet(userId, transaction.walletId)
+
+    return this.repository.deleteTransaction(
+      id,
+      transaction.walletId,
+      transaction.type,
+      transaction.amount,
+    )
   }
 
   // Temp function to import csv to database

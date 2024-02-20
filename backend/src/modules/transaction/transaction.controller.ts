@@ -5,6 +5,7 @@ import {
   Param,
   Post,
   Put,
+  Delete,
   UseGuards,
 } from '@nestjs/common'
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger'
@@ -51,5 +52,11 @@ export class TransactionController {
     @Body() body: UpdateTransactionDto,
   ) {
     return this.service.updateTransaction(user.id, id, body)
+  }
+
+  @Delete(':id')
+  @ApiOperation({ summary: 'Delete transaction' })
+  deleteTransaction(@User() user: IUser, @Param('id') id: string) {
+    return this.service.deleteTransaction(user.id, id)
   }
 }

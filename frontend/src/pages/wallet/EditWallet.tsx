@@ -126,14 +126,13 @@ export default function EditWallet() {
           <Typography variant="h6">Edit wallet</Typography>
 
           <Button
-            variant="contained"
+            variant="outlined"
             size="small"
             sx={{ p: 1 }}
             onClick={deleteHandler}
             color="error"
           >
-            <ClearIcon />
-            Delete
+            Delete wallet
           </Button>
         </Grid>
         <Grid item xs={12}>

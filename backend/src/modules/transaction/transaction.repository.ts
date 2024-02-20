@@ -119,4 +119,31 @@ export class TransactionRepository {
 
     return result[result.length - 1]
   }
+
+  async deleteTransaction(
+    id: string,
+    walletId: string,
+    type: TransactionType,
+    amount: number,
+  ) {
+    const updateWallet = this.prisma.wallet.update({
+      where: { id: walletId },
+      data: {
+        amount: {
+          increment: -1 * this.utils.calculateWalletAmount(type, amount),
+        },
+      },
+    })
+
+    const deleteTransaction = this.prisma.transaction.delete({
+      where: { id },
+    })
+
+    const result = await this.prisma.$transaction([
+      updateWallet,
+      deleteTransaction,
+    ])
+
+    return result[result.length - 1]
+  }
 }
