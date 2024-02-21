@@ -13,10 +13,10 @@ services:
       - "2000:5432"
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.postgres.rule=Host(`${POSTGRES_DOMAIN}`)"
-      - "traefik.http.routers.postgres.entrypoints=websecure"
-      - "traefik.http.routers.postgres.tls.certresolver=letsencrypt"
-      - "traefik.http.services.postgres.loadbalancer.server.port=5432"
+      - "traefik.http.routers.budget-planner-postgres.rule=Host(`${POSTGRES_DOMAIN}`)"
+      - "traefik.http.routers.budget-planner-postgres.entrypoints=websecure"
+      - "traefik.http.routers.budget-planner-postgres.tls.certresolver=letsencrypt"
+      - "traefik.http.services.budget-planner-postgres.loadbalancer.server.port=5432"
       - "traefik.docker.network=ta_default"
     volumes:
       - budget-planner-db:/var/lib/postgresql/data
@@ -33,10 +33,10 @@ services:
       - "2001:4000"
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.backend.rule=Host(`${BACKEND_DOMAIN}`)"
-      - "traefik.http.routers.backend.entrypoints=websecure"
-      - "traefik.http.routers.backend.tls.certresolver=letsencrypt"
-      - "traefik.http.services.backend.loadbalancer.server.port=4000"
+      - "traefik.http.routers.budget-planner-backend.rule=Host(`${BACKEND_DOMAIN}`)"
+      - "traefik.http.routers.budget-planner-backend.entrypoints=websecure"
+      - "traefik.http.routers.budget-planner-backend.tls.certresolver=letsencrypt"
+      - "traefik.http.services.budget-planner-backend.loadbalancer.server.port=4000"
       - "traefik.docker.network=ta_default"
     networks:
      - common_network
