@@ -1,7 +1,7 @@
 version: "3.1"
 
 services:
-  postgres:
+  budget-planner-postgres:
     container_name: budget-planner-postgres
     image: postgres:15-alpine
     restart: always
@@ -22,7 +22,7 @@ services:
       - budget-planner-db:/var/lib/postgresql/data
     networks:
      - common_network
-  backend:
+  budget-planner-backend:
     container_name: budget-planner-backend
     image: nodirshox/budget-planner-backend:latest
     restart: always
