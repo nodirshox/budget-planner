@@ -41,6 +41,11 @@ async function main() {
         type: TransactionType.INCOME,
         userId: user.id,
       },
+      {
+        name: 'Extra',
+        type: TransactionType.INCOME,
+        userId: user.id,
+      },
     ],
   })
 

@@ -21,10 +21,9 @@ import AxiosClient, { AxiosError } from "../../utils/axios";
 import ErrorMessage from "../../utils/error-message";
 import LoadingBar from "../../components/loading/LoadingBar";
 import HttpErrorNotification from "../../components/notifications/HttpErrorNotification";
-import * as Yup from "yup";
 import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
 import { red, green, grey } from "@mui/material/colors";
+import { NumericFormat } from "react-number-format";
 
 interface ICategory {
   id: string;
@@ -42,22 +41,10 @@ export default function Transaction() {
   const [incomeCategories, setIncomeCategories] = useState<ICategory[]>([]);
   const [category, setCategory] = useState("");
   const [date, setDate] = useState(new Date());
+  const [amount, setAmount] = useState("");
+  const [notes, setNotes] = useState("");
 
-  const validationSchema = Yup.object().shape({
-    amount: Yup.number()
-      .positive("Enter positive number")
-      .typeError("Enter only number")
-      .required("Enter amount"),
-    notes: Yup.string().max(100),
-  });
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    formState: { errors },
-  } = useForm({
-    resolver: yupResolver(validationSchema),
-  });
+  const { handleSubmit } = useForm();
 
   const handleChange = (event: any) => {
     setDate(new Date(event.target.value));
@@ -101,8 +88,8 @@ export default function Transaction() {
               .then((data) => {
                 setCategory(data.categoryId);
                 setDate(new Date(data.date));
-                setValue("amount", data.amount);
-                setValue("notes", data.notes);
+                setAmount(data.amount);
+                setNotes(data.notes);
               })
               .catch((error) => {
                 const message = ErrorMessage(error);
@@ -124,25 +111,25 @@ export default function Transaction() {
       .finally(() => setSendRequest(false));
   }, []);
 
-  const onSubmit = async (data: { amount: number; notes?: string }) => {
+  const onSubmit = async () => {
     try {
       setSendRequest(true);
 
       if (isEditMode) {
         await AxiosClient.put(`transactions/${params.transactionId}`, {
-          amount: data.amount,
+          amount: Number(amount),
           walletId: params.walletId,
           categoryId: category,
           date,
-          notes: data.notes,
+          notes,
         });
       } else {
         await AxiosClient.post("transactions", {
-          amount: data.amount,
+          amount: Number(amount),
           walletId: params.walletId,
           categoryId: category,
           date,
-          notes: data.notes,
+          notes,
         });
       }
 
@@ -276,38 +263,31 @@ export default function Transaction() {
                 </Select>
               </FormControl>
             </Grid>
-
             <Grid item xs={12}>
-              <TextField
+              <NumericFormat
+                thousandSeparator
+                customInput={TextField}
+                value={amount}
+                onValueChange={(values) => setAmount(values.value)}
+                allowNegative={false}
+                decimalScale={2}
                 required
                 fullWidth
                 id="amount"
                 label="Amount"
-                type="number"
-                {...register("amount")}
-                defaultValue=""
-                error={errors.amount ? true : false}
-                inputProps={{
-                  step: "0.01",
-                }}
                 InputLabelProps={{ shrink: true }}
+                type="tel"
               />
-              <Typography variant="inherit" color="textSecondary">
-                {errors.amount?.message}
-              </Typography>
             </Grid>
             <Grid item xs={12}>
               <TextField
                 id="notes"
                 label="Notes"
-                {...register("notes")}
-                error={errors.notes ? true : false}
+                value={notes}
                 fullWidth
                 InputLabelProps={{ shrink: true }}
+                onChange={(event) => setNotes(event.target.value)}
               />
-              <Typography variant="inherit" color="textSecondary">
-                {errors.notes?.message}
-              </Typography>
             </Grid>
             <Grid item xs={12}>
               <input

@@ -20,7 +20,9 @@ export class CreateTransactionDto {
   @ApiProperty({ description: 'Transaction date', example: new Date() })
   date: Date
 
-  @MaxLength(100)
+  @MaxLength(100, {
+    message: 'Notes must be shorter than or equal to 100 characters',
+  })
   @IsString()
   @ApiProperty({ description: 'Note', example: '' })
   notes: string
