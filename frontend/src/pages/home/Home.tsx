@@ -19,6 +19,7 @@ import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import AddIcon from "@mui/icons-material/Add";
 import { red, green } from "@mui/material/colors";
 import { Wealth } from "./Wealth";
+import AttachMoneyOutlinedIcon from "@mui/icons-material/AttachMoneyOutlined";
 
 interface IWallet {
   id: string;
@@ -32,6 +33,7 @@ interface IWallet {
 export default function Home() {
   const nav = useNavigate();
 
+  const [showWealth, setShowWealth] = useState(false);
   const [fullName, setFullName] = useState("");
   const [wallets, setWallets] = useState<IWallet[]>([]);
   const [sendRequest, setSendRequest] = useState(false);
@@ -98,6 +100,9 @@ export default function Home() {
         {number}
       </Typography>
     );
+  };
+  const toggleWealthVisibility = () => {
+    setShowWealth(!showWealth);
   };
 
   return (
@@ -172,7 +177,20 @@ export default function Home() {
           {alert.state && <HttpErrorNotification message={alert.message} />}
         </Grid>
       </Grid>
-      {/* <Wealth usd={usd} uzs={uzs} /> */}
+      <Grid>
+        <div style={{ marginBottom: "20px" }}>
+          <Button variant="outlined" onClick={toggleWealthVisibility}>
+            <AttachMoneyOutlinedIcon />
+            {showWealth ? "Hide" : "Check"}
+          </Button>
+        </div>
+
+        {showWealth && (
+          <div>
+            <Wealth usd={usd} uzs={uzs} />
+          </div>
+        )}
+      </Grid>
     </Paper>
   );
 }
