@@ -18,6 +18,7 @@ import HttpErrorNotification from "../../components/notifications/HttpErrorNotif
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import AddIcon from "@mui/icons-material/Add";
 import { red, green } from "@mui/material/colors";
+import { Wealth } from "./Wealth";
 
 interface IWallet {
   id: string;
@@ -35,6 +36,8 @@ export default function Home() {
   const [wallets, setWallets] = useState<IWallet[]>([]);
   const [sendRequest, setSendRequest] = useState(false);
   const [alert, setAlert] = useState({ state: false, message: "" });
+  const [usd, setUsd] = useState(0);
+  const [uzs, setUzs] = useState(0);
 
   const fetchUserInformation = async () => {
     const result = await AxiosClient.get("wallets");
@@ -51,6 +54,14 @@ export default function Home() {
         (data) => {
           setFullName(`${data.user.firstName} ${data.user.lastName}`);
           setWallets(data.wallets);
+
+          data.wallets.forEach((wallet: IWallet) => {
+            if (wallet.currency.name === "UZS") {
+              setUzs(wallet.amount);
+            } else if (wallet.currency.name === "USD") {
+              setUsd(wallet.amount);
+            }
+          });
         },
         (error) => {
           const message = ErrorMessage(error);
@@ -161,6 +172,7 @@ export default function Home() {
           {alert.state && <HttpErrorNotification message={alert.message} />}
         </Grid>
       </Grid>
+      {/* <Wealth usd={usd} uzs={uzs} /> */}
     </Paper>
   );
 }
