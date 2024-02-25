@@ -119,11 +119,12 @@ export default function Home() {
           <div>
             <Button
               variant="outlined"
-              onClick={createHandler}
-              sx={{ mr: 1, ml: 1, p: 1 }}
+              onClick={toggleWealthVisibility}
               size="small"
+              sx={{ mr: 1, ml: 1, p: 1 }}
             >
-              <AddIcon /> Create wallet
+              <AttachMoneyOutlinedIcon />
+              {showWealth ? "Hide" : "Check"}
             </Button>
             <Button
               variant="outlined"
@@ -135,6 +136,11 @@ export default function Home() {
             </Button>
           </div>
         </Grid>
+        {showWealth && (
+          <Grid item xs={12}>
+            <Wealth usd={usd} uzs={uzs} />
+          </Grid>
+        )}
         {sendRequest ? (
           <Grid item xs={12}>
             <LoadingBar />
@@ -178,18 +184,14 @@ export default function Home() {
         </Grid>
       </Grid>
       <Grid>
-        <div style={{ marginBottom: "20px" }}>
-          <Button variant="outlined" onClick={toggleWealthVisibility}>
-            <AttachMoneyOutlinedIcon />
-            {showWealth ? "Hide" : "Check"}
-          </Button>
-        </div>
-
-        {showWealth && (
-          <div>
-            <Wealth usd={usd} uzs={uzs} />
-          </div>
-        )}
+        <Button
+          variant="outlined"
+          onClick={createHandler}
+          sx={{ p: 1 }}
+          size="small"
+        >
+          <AddIcon /> New wallet
+        </Button>
       </Grid>
     </Paper>
   );
