@@ -4,6 +4,7 @@ import Login from "./pages/auth/Login";
 import { ProtectRoutes } from "./utils/protected-routes";
 import DashboardLayout from "./components/layouts/Dashboard";
 import Home from "./pages/home/Home";
+import Settings from "./pages/home/Settings";
 import "./App.css";
 import Logout from "./pages/auth/Logout";
 import PageNotFound from "./pages/404/PageNotFound";
@@ -22,6 +23,7 @@ export default function App() {
         <Route element={<ProtectRoutes />}>
           <Route path="/" element={<DashboardLayout />}>
             <Route index element={<Home />} />
+            <Route path="settings" element={<Settings />} />
           </Route>
           <Route path="/wallets" element={<DashboardLayout />}>
             <Route path="create" element={<CreateWallet />} />

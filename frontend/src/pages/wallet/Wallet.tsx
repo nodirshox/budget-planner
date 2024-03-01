@@ -20,9 +20,9 @@ import { red, green } from "@mui/material/colors";
 import PaidIcon from "@mui/icons-material/Paid";
 import AddIcon from "@mui/icons-material/Add";
 import Divider from "@mui/material/Divider";
-import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import HomeIcon from "@mui/icons-material/Home";
 
 interface ITransaction {
   day: Date;
@@ -230,7 +230,7 @@ export default function Wallet() {
               sx={{ mr: 1, p: 1 }}
               onClick={backHandler}
             >
-              <ArrowBackIosNewIcon />
+              <HomeIcon />
             </Button>
           </div>
         </Grid>
