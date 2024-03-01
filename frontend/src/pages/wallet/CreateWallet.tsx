@@ -42,7 +42,7 @@ export default function CreateWallet() {
     resolver: yupResolver(validationSchema),
   });
 
-  const backHandler = () => navigate("/");
+  const backHandler = () => navigate("/settings");
 
   const onSubmit = async (data: { title: string }) => {
     try {

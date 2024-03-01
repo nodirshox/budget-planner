@@ -15,11 +15,10 @@ import AxiosClient from "../../utils/axios";
 import ErrorMessage from "../../utils/error-message";
 import LoadingBar from "../../components/loading/LoadingBar";
 import HttpErrorNotification from "../../components/notifications/HttpErrorNotification";
-import ExitToAppIcon from "@mui/icons-material/ExitToApp";
-import AddIcon from "@mui/icons-material/Add";
 import { red, green } from "@mui/material/colors";
 import { Wealth } from "./Wealth";
 import AttachMoneyOutlinedIcon from "@mui/icons-material/AttachMoneyOutlined";
+import SettingsIcon from "@mui/icons-material/Settings";
 
 interface IWallet {
   id: string;
@@ -46,8 +45,7 @@ export default function Home() {
     return result.data;
   };
 
-  const logoutHandler = () => nav(`/logout`);
-  const createHandler = () => nav(`/wallets/create`);
+  const settingsHandler = () => nav(`/settings`);
 
   useEffect(() => {
     setSendRequest(true);
@@ -128,11 +126,11 @@ export default function Home() {
             </Button>
             <Button
               variant="outlined"
-              onClick={logoutHandler}
+              onClick={settingsHandler}
               size="small"
               sx={{ p: 1 }}
             >
-              <ExitToAppIcon />
+              <SettingsIcon />
             </Button>
           </div>
         </Grid>
@@ -173,7 +171,7 @@ export default function Home() {
             ) : (
               <Grid item xs={12}>
                 <Typography variant="subtitle1" component="div">
-                  You don't have a wallet.
+                  To create new wallet, go to <b>"Settings"</b> page.
                 </Typography>
               </Grid>
             )}
@@ -182,16 +180,6 @@ export default function Home() {
         <Grid item xs={12}>
           {alert.state && <HttpErrorNotification message={alert.message} />}
         </Grid>
-      </Grid>
-      <Grid>
-        <Button
-          variant="outlined"
-          onClick={createHandler}
-          sx={{ p: 1 }}
-          size="small"
-        >
-          <AddIcon /> New wallet
-        </Button>
       </Grid>
     </Paper>
   );
