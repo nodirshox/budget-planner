@@ -24,11 +24,7 @@ import HttpErrorNotification from "../../components/notifications/HttpErrorNotif
 import { useForm } from "react-hook-form";
 import { red, green, grey } from "@mui/material/colors";
 import { NumericFormat } from "react-number-format";
-
-interface ICategory {
-  id: string;
-  name: string;
-}
+import { ICategory } from "../category/Category";
 
 export default function Transaction() {
   const nav = useNavigate();
@@ -37,7 +33,7 @@ export default function Transaction() {
 
   const [sendRequest, setSendRequest] = useState(false);
   const [alert, setAlert] = useState({ state: false, message: "" });
-  const [expenceCategories, setExpenceCategories] = useState<ICategory[]>([]);
+  const [expenseCategories, setExpenseCategories] = useState<ICategory[]>([]);
   const [incomeCategories, setIncomeCategories] = useState<ICategory[]>([]);
   const [category, setCategory] = useState("");
   const [date, setDate] = useState(new Date());
@@ -81,7 +77,7 @@ export default function Transaction() {
     fetchCategories()
       .then(
         (data) => {
-          setExpenceCategories(data.expence);
+          setExpenseCategories(data.expense);
           setIncomeCategories(data.income);
           if (isEditMode) {
             fetchTransaction(params.transactionId!)
@@ -241,7 +237,7 @@ export default function Transaction() {
                   >
                     Expenses
                   </ListSubheader>
-                  {expenceCategories.map((cn, index) => (
+                  {expenseCategories.map((cn, index) => (
                     <MenuItem key={index} value={cn.id}>
                       {cn.name}
                     </MenuItem>

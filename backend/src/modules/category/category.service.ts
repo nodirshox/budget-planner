@@ -2,14 +2,26 @@ import { BadRequestException, Injectable } from '@nestjs/common'
 import { CategoryRepository } from '@/modules/category/category.repository'
 import { HTTP_MESSAGES } from '@/consts/http-messages'
 import { TransactionType } from '@prisma/client'
+import { CreateCategoryDto } from '@/modules/category/dto/create-category.dto'
+import { UpdateCategoryDto } from '@/modules/category/dto/update-category.dto'
 
 @Injectable()
 export class CategoryService {
   constructor(private readonly repository: CategoryRepository) {}
 
+  async createCategory(userId: string, body: CreateCategoryDto) {
+    return this.repository.createCategory(userId, body)
+  }
+
+  async updateCategory(userId: string, id: string, body: UpdateCategoryDto) {
+    await this.getCategory(userId, id)
+
+    return this.repository.updateCategory(id, body)
+  }
+
   async getCategories(userId: string) {
     return {
-      expence: await this.repository.getCategoriesByType(
+      expense: await this.repository.getCategoriesByType(
         userId,
         TransactionType.EXPENSE,
       ),

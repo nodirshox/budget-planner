@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import HomeIcon from "@mui/icons-material/Home";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
+import ReorderIcon from "@mui/icons-material/Reorder";
 
 export default function Settings() {
   const nav = useNavigate();
@@ -41,6 +42,16 @@ export default function Settings() {
             size="small"
           >
             <AccountBalanceWalletIcon /> New wallet
+          </Button>
+        </Grid>
+        <Grid item xs={12}>
+          <Button
+            variant="outlined"
+            onClick={() => logoutHandler("/categories")}
+            sx={{ p: 1 }}
+            size="small"
+          >
+            <ReorderIcon /> Categories
           </Button>
         </Grid>
         <Grid item xs={12}>

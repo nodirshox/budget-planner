@@ -1,16 +1,41 @@
 import { PrismaService } from '@/core/prisma/prisma.service'
 import { Injectable } from '@nestjs/common'
 import { TransactionType } from '@prisma/client'
+import { CreateCategoryDto } from '@/modules/category/dto/create-category.dto'
+import { UpdateCategoryDto } from '@/modules/category/dto/update-category.dto'
 
 @Injectable()
 export class CategoryRepository {
   constructor(private readonly prisma: PrismaService) {}
 
+  async createCategory(userId: string, body: CreateCategoryDto) {
+    return this.prisma.category.create({
+      data: {
+        name: body.name,
+        type: body.type,
+        user: {
+          connect: {
+            id: userId,
+          },
+        },
+      },
+    })
+  }
+
+  async updateCategory(id: string, body: UpdateCategoryDto) {
+    return this.prisma.category.update({
+      where: { id },
+      data: {
+        name: body.name,
+      },
+    })
+  }
+
   async getCategoriesByType(userId: string, type: TransactionType) {
     return this.prisma.category.findMany({
       where: { userId, type },
       orderBy: {
-        createdAt: 'asc',
+        name: 'asc',
       },
     })
   }

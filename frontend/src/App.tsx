@@ -13,6 +13,9 @@ import CreateWallet from "./pages/wallet/CreateWallet";
 import DeleteWallet from "./pages/wallet/DeleteWallet";
 import EditWallet from "./pages/wallet/EditWallet";
 import Transaction from "./pages/transaction/Transaction";
+import Category from "./pages/category/Category";
+import CreateCategory from "./pages/category/CreateCategory";
+import EditCategory from "./pages/category/EditCategory";
 
 export default function App() {
   return (
@@ -35,6 +38,11 @@ export default function App() {
               path=":walletId/transactions/:transactionId"
               element={<Transaction />}
             />
+          </Route>
+          <Route path="/categories" element={<DashboardLayout />}>
+            <Route index element={<Category />} />
+            <Route path="create" element={<CreateCategory />} />
+            <Route path=":categoryId/edit" element={<EditCategory />} />
           </Route>
         </Route>
         <Route path="*" element={<PageNotFound />} />

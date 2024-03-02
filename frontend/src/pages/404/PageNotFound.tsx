@@ -26,11 +26,7 @@ export default function PageNotFound() {
         >
           <ErrorIcon sx={{ fontSize: 100, mb: 3 }} />
           <Typography variant="h4" component="h4">
-            404 - Sorry, this page couldn't be found!
-          </Typography>
-          <Typography variant="body1">
-            The page you're looking for might have been removed or the URL might
-            be incorrect.
+            404 - Page not found
           </Typography>
           <Button
             variant="contained"
