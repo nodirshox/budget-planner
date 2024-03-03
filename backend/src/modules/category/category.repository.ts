@@ -46,6 +46,21 @@ export class CategoryRepository {
     })
   }
 
+  async countCategoryTransactions(id: string): Promise<number> {
+    const result = await this.prisma.category.findUnique({
+      where: { id },
+      select: {
+        _count: {
+          select: {
+            transactions: true,
+          },
+        },
+      },
+    })
+
+    return result._count.transactions
+  }
+
   async findCategoryByName(
     userId: string,
     name: string,
@@ -53,6 +68,12 @@ export class CategoryRepository {
   ) {
     return this.prisma.category.findMany({
       where: { userId, name, type },
+    })
+  }
+
+  async deleteCategory(id: string) {
+    return this.prisma.category.delete({
+      where: { id },
     })
   }
 }

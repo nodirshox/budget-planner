@@ -9,23 +9,23 @@ import HttpErrorNotification from "../../components/notifications/HttpErrorNotif
 import PageTitle from "../../components/title/PageTitle";
 import CheckIcon from "@mui/icons-material/Check";
 
-export default function DeleteWallet() {
+export default function DeleteCategory() {
   const nav = useNavigate();
   const params = useParams();
 
-  const [walletName, setWalletName] = useState("");
+  const [categoryName, setCategoryName] = useState("");
   const [sendRequest, setSendRequest] = useState(false);
   const [alert, setAlert] = useState({ state: false, message: "" });
 
-  const fetchWallet = async () => {
-    const result = await AxiosClient.get(`wallets/${params.walletId}`);
-    return result.data;
+  const fetchCategory = async () => {
+    const { data } = await AxiosClient.get(`categories/${params.categoryId}`);
+    return data;
   };
 
   const deleteHandler = async () => {
     try {
-      await AxiosClient.delete(`/wallets/${params.walletId}`);
-      nav("/");
+      await AxiosClient.delete(`/categories/${params.categoryId}`);
+      nav("/categories");
     } catch (error) {
       const axiosError = error as AxiosError;
       setSendRequest(false);
@@ -42,14 +42,14 @@ export default function DeleteWallet() {
     }
   };
 
-  const backHandler = () => nav(`/wallets/${params.walletId}/edit`);
+  const backHandler = () => nav(`/categories/${params.categoryId}/edit`);
 
   useEffect(() => {
     setSendRequest(true);
-    fetchWallet()
+    fetchCategory()
       .then(
         (data) => {
-          setWalletName(data.name);
+          setCategoryName(data.name);
         },
         (error) => {
           const message = ErrorMessage(error);
@@ -66,9 +66,8 @@ export default function DeleteWallet() {
     <Paper sx={{ p: 1, mt: 2 }}>
       <Grid container spacing={2} direction="row">
         <Grid item xs={12}>
-          <PageTitle title={walletName} />
-          Are you sure delete wallet? All <b>transactions</b> will be deleted.
-          This action cannot be undone.
+          <PageTitle title={categoryName} />
+          Are you sure delete category?
         </Grid>
         <Grid item xs={12}>
           <Button
@@ -78,7 +77,8 @@ export default function DeleteWallet() {
             color="error"
             onClick={deleteHandler}
           >
-            <CheckIcon />I confirm to delete wallet
+            <CheckIcon />
+            Delete category
           </Button>
           <Button
             variant="outlined"

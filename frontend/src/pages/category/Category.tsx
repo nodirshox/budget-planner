@@ -22,6 +22,7 @@ export interface ICategory {
   id: string;
   name: string;
   type: string;
+  transactionsCount: number;
 }
 
 export default function Category() {

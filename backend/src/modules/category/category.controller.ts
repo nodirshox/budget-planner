@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -48,5 +49,11 @@ export class CategoryController {
   @ApiOperation({ summary: 'Get category' })
   async getCategory(@User() user: IUser, @Param('id') id: string) {
     return this.service.getCategory(user.id, id)
+  }
+
+  @Delete(':id')
+  @ApiOperation({ summary: 'Delete category' })
+  async deleteCategory(@User() user: IUser, @Param('id') id: string) {
+    return this.service.deleteCategory(user.id, id)
   }
 }

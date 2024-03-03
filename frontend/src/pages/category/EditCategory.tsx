@@ -10,7 +10,6 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import PageTitle from "../../components/title/PageTitle";
 import * as Yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -32,6 +31,7 @@ export default function EditCategory() {
 
   const [alert, setAlert] = useState({ state: false, message: "" });
   const [sendRequest, setSendRequest] = useState(false);
+  const [canDelete, setCanDelete] = useState(true);
   const [types] = useState<CategoryType[]>([
     {
       id: "EXPENSE",
@@ -91,14 +91,34 @@ export default function EditCategory() {
     fetchCategory().then((data: ICategory) => {
       setType(data.type);
       setValue("name", data.name);
+      setCanDelete(data.transactionsCount > 0);
     });
   }, []);
 
   return (
     <Paper sx={{ p: 1 }}>
       <Grid container spacing={1}>
-        <Grid item xs={12}>
-          <PageTitle title="Edit category" />
+        <Grid
+          container
+          item
+          xs={12}
+          justifyContent="space-between"
+          alignItems="center"
+        >
+          <Typography variant="h6">Edit category</Typography>
+
+          <Button
+            variant="outlined"
+            size="small"
+            sx={{ p: 1 }}
+            onClick={() =>
+              navigateHandler(`/categories/${params.categoryId}/delete`)
+            }
+            color="error"
+            disabled={canDelete}
+          >
+            Delete
+          </Button>
         </Grid>
         <Grid item xs={12}>
           <FormControl>

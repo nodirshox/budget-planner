@@ -43,7 +43,10 @@ export class CategoryService {
       throw new BadRequestException(HTTP_MESSAGES.CATEGORY_NOT_BELONGS_TO_USER)
     }
 
-    return category
+    return {
+      ...category,
+      transactionsCount: await this.repository.countCategoryTransactions(id),
+    }
   }
 
   async findCategoryByName(
@@ -62,5 +65,15 @@ export class CategoryService {
     }
 
     return categories[0]
+  }
+
+  async deleteCategory(userId: string, id: string) {
+    const category = await this.getCategory(userId, id)
+
+    if (category.transactionsCount > 0) {
+      throw new BadRequestException(HTTP_MESSAGES.CAN_NOT_DELETE_CATEGORY)
+    }
+
+    return this.repository.deleteCategory(id)
   }
 }

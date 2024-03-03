@@ -16,6 +16,7 @@ import Transaction from "./pages/transaction/Transaction";
 import Category from "./pages/category/Category";
 import CreateCategory from "./pages/category/CreateCategory";
 import EditCategory from "./pages/category/EditCategory";
+import DeleteCategory from "./pages/category/DeleteCategory";
 
 export default function App() {
   return (
@@ -43,6 +44,7 @@ export default function App() {
             <Route index element={<Category />} />
             <Route path="create" element={<CreateCategory />} />
             <Route path=":categoryId/edit" element={<EditCategory />} />
+            <Route path=":categoryId/delete" element={<DeleteCategory />} />
           </Route>
         </Route>
         <Route path="*" element={<PageNotFound />} />
