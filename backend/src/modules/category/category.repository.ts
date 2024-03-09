@@ -40,6 +40,18 @@ export class CategoryRepository {
     })
   }
 
+  async getCategoriesByIds(ids: string[]) {
+    return this.prisma.category.findMany({
+      where: {
+        id: { in: ids },
+      },
+      select: {
+        id: true,
+        name: true,
+      },
+    })
+  }
+
   async getCategory(id: string) {
     return this.prisma.category.findUnique({
       where: { id },

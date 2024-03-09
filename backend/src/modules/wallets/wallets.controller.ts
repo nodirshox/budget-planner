@@ -17,6 +17,7 @@ import {
 import { JwtAuthGuard } from '@/modules/auth/jwt-auth.guard'
 import { User } from '@/decorators/user.decorator'
 import { IUser } from '@/modules/users/dto/user.interface'
+import { WalletOverviewDto } from '@/modules/wallets/dto/wallet-overview.dto'
 
 @ApiBearerAuth()
 @ApiTags('Wallet')
@@ -57,5 +58,15 @@ export class WalletsController {
   @ApiOperation({ summary: 'Delete wallet' })
   deleteWallet(@User() user: IUser, @Param('id') id: string) {
     return this.service.deleteWallet(user.id, id)
+  }
+
+  @Put(':id/overview')
+  @ApiOperation({ summary: 'Wallet overview' })
+  walletOverview(
+    @User() user: IUser,
+    @Param('id') id: string,
+    @Body() body: WalletOverviewDto,
+  ) {
+    return this.service.walletOverview(user.id, id, body)
   }
 }

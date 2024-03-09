@@ -32,6 +32,10 @@ export class CategoryService {
     }
   }
 
+  async getCategoriesByIds(ids: string[]) {
+    return this.repository.getCategoriesByIds(ids)
+  }
+
   async getCategory(userId: string, id: string) {
     const category = await this.repository.getCategory(id)
 

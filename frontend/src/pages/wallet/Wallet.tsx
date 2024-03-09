@@ -8,6 +8,7 @@ import {
   ListItemIcon,
   ListItemText,
   ListItemSecondaryAction,
+  Divider,
   Paper,
 } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
@@ -19,10 +20,10 @@ import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import { red, green } from "@mui/material/colors";
 import PaidIcon from "@mui/icons-material/Paid";
 import AddIcon from "@mui/icons-material/Add";
-import Divider from "@mui/material/Divider";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import HomeIcon from "@mui/icons-material/Home";
+import DonutSmallIcon from "@mui/icons-material/DonutSmall";
 
 interface ITransaction {
   day: Date;
@@ -38,6 +39,35 @@ interface GroupTransactions {
     name: true;
   };
 }
+
+export const formatAmount = (
+  amount: number,
+  type: string,
+  currency: string
+) => {
+  const numberFormat = new Intl.NumberFormat("en-US", {
+    currency,
+  });
+  let number = numberFormat.format(amount);
+
+  if (type === "EXPENSE") {
+    number = `-${number} ${currency}`;
+  } else {
+    number = `+${number} ${currency}`;
+  }
+
+  return (
+    <Typography
+      component="span"
+      style={{
+        color: type === "EXPENSE" ? red[500] : green[500],
+      }}
+      sx={{ fontWeight: 500 }}
+    >
+      {number}
+    </Typography>
+  );
+};
 
 export default function Wallet() {
   const theme = useTheme();
@@ -80,6 +110,12 @@ export default function Wallet() {
 
   const editHandler = () => nav(`/wallets/${params.walletId}/edit`);
   const backHandler = () => nav(`/`);
+  const overviewHandler = () => {
+    const day = "01";
+    const monthDate = `${month.getMonth() + 1}`.padStart(2, "0");
+    const year = month.getFullYear();
+    nav(`/wallets/${params.walletId}/overview/${year}-${monthDate}-${day}`);
+  };
   const addTransactionHandler = () =>
     nav(`/wallets/${params.walletId}/transactions`);
 
@@ -112,30 +148,6 @@ export default function Wallet() {
     }
   }, [month]);
 
-  const formatAmount = (amount: number, type: string) => {
-    const numberFormat = new Intl.NumberFormat("en-US", {
-      currency,
-    });
-    let number = numberFormat.format(amount);
-
-    if (type === "EXPENSE") {
-      number = `-${number} ${currency}`;
-    } else {
-      number = `+${number} ${currency}`;
-    }
-
-    return (
-      <Typography
-        component="span"
-        style={{
-          color: type === "EXPENSE" ? red[500] : green[500],
-        }}
-        sx={{ fontWeight: 500 }}
-      >
-        {number}
-      </Typography>
-    );
-  };
   const formatDate = (input: Date) => {
     const date = new Date(input);
     const today = new Date();
@@ -263,6 +275,24 @@ export default function Wallet() {
             max={formatMonth(new Date())}
           />
         </Grid>
+        <Grid
+          container
+          xs={12}
+          style={{
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Button
+            variant="text"
+            size="small"
+            sx={{ mt: 1 }}
+            onClick={overviewHandler}
+            startIcon={<DonutSmallIcon />}
+          >
+            Overview
+          </Button>
+        </Grid>
         <Grid item xs={12}>
           <Divider />
           <List sx={{ maxHeight: maxHeight, overflowY: "auto" }} ref={listRef}>
@@ -306,7 +336,11 @@ export default function Wallet() {
                         }}
                         onClick={() => transactionHandler(transaction.id)}
                       >
-                        {formatAmount(transaction.amount, transaction.type)}
+                        {formatAmount(
+                          transaction.amount,
+                          transaction.type,
+                          currency
+                        )}
                       </ListItemSecondaryAction>
                     </ListItem>
                   ))}
