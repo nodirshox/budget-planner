@@ -4,7 +4,7 @@ import {
   CreateWalletDto,
   UpdateWalletDto,
 } from '@/modules/wallets/dto/create-wallet.dto'
-import { Prisma } from '@prisma/client'
+import { Prisma, TransactionType } from '@prisma/client'
 
 @Injectable()
 export class WalletsRepository {
@@ -79,5 +79,31 @@ export class WalletsRepository {
     ])
 
     return result[result.length - 1]
+  }
+
+  async getWalletOverview(
+    walletId: string,
+    transactionType: TransactionType,
+    month: Date,
+    nextMonth: Date,
+  ) {
+    const result = await this.prisma.transaction.groupBy({
+      by: ['categoryId'],
+      where: {
+        walletId,
+        type: transactionType,
+        date: {
+          gte: month,
+          lt: nextMonth,
+        },
+      },
+      _sum: {
+        amount: true,
+      },
+      _count: {
+        id: true,
+      },
+    })
+    return result.sort((a, b) => b._sum.amount - a._sum.amount)
   }
 }
