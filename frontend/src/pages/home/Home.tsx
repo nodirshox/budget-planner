@@ -34,6 +34,7 @@ export default function Home() {
 
   const [showWealth, setShowWealth] = useState(false);
   const [fullName, setFullName] = useState("");
+  const [userId, setUserId] = useState("");
   const [wallets, setWallets] = useState<IWallet[]>([]);
   const [sendRequest, setSendRequest] = useState(false);
   const [alert, setAlert] = useState({ state: false, message: "" });
@@ -53,6 +54,7 @@ export default function Home() {
       .then(
         (data) => {
           setFullName(`${data.user.firstName} ${data.user.lastName}`);
+          setUserId(data.user.id);
           setWallets(data.wallets);
 
           data.wallets.forEach((wallet: IWallet) => {
@@ -136,7 +138,7 @@ export default function Home() {
         </Grid>
         {showWealth && (
           <Grid item xs={12}>
-            <Wealth usd={usd} uzs={uzs} />
+            <Wealth usd={usd} uzs={uzs} userId={userId} />
           </Grid>
         )}
         {sendRequest ? (

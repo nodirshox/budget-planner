@@ -29,6 +29,10 @@ services:
     environment:
       - DATABASE_URL=${DATABASE_URL}
       - JWT_SECRET=${JWT_SECRET}
+      - PHONE_NUMBER=${PHONE_NUMBER}
+      - DEVICE_ID=${DEVICE_ID}
+      - PASSWORD=${PASSWORD}
+      - ACCOUNT_ID=${ACCOUNT_ID}
     ports:
       - "2001:4000"
     labels:

@@ -9,6 +9,8 @@ import { CategoryService } from '@/modules/category/category.service'
 import { FindTransactionsDto } from '@/modules/transaction/dto/find-transactions.dto'
 import { UtilsService } from '@/core/utils/utils.service'
 import { HTTP_MESSAGES } from '@/consts/http-messages'
+import axios from 'axios'
+import { v4 as uuidv4 } from 'uuid'
 import { TransactionType } from '@prisma/client'
 import { createReadStream } from 'fs'
 import * as csv from 'csv-parser'
@@ -134,5 +136,51 @@ export class TransactionService implements OnModuleInit {
         console.log('CSV file successfully processed')
       })
       */
+  }
+
+  async getClickBalance(userId: string) {
+    if (userId !== '63801aa8-2b4c-41c3-aedb-cde71179eeca') {
+      return { balance: 0 }
+    }
+
+    const URL = 'https://api.click.uz/evo'
+    const phoneNumber = process.env.PHONE_NUMBER
+    const deviceId = process.env.DEVICE_ID
+    const password = process.env.PASSWORD
+    const accountId = Number(process.env.ACCOUNT_ID)
+
+    const authResponse = await axios.post(URL, {
+      jsonrpc: '2.0',
+      id: uuidv4(),
+      method: 'login',
+      params: {
+        phone_number: phoneNumber,
+        device_id: deviceId,
+        password: password,
+        datetime: 1711045989,
+        app_version: '1.0',
+      },
+    })
+    console.log('authResponse', authResponse.data)
+    const balanceResponse = await axios({
+      method: 'POST',
+      url: URL,
+      data: {
+        jsonrpc: '2.0',
+        id: uuidv4(),
+        method: 'get.balance',
+        params: {
+          account_id: [accountId],
+        },
+      },
+      headers: {
+        'Device-Id': deviceId,
+        'Session-Key': authResponse.data?.result?.session_key,
+      },
+    })
+    console.log('balanceResponse', balanceResponse.data)
+    return {
+      balance: Math.floor(balanceResponse.data.result[0]?.balance) || 0,
+    }
   }
 }

@@ -26,6 +26,12 @@ import { FindTransactionsDto } from '@/modules/transaction/dto/find-transactions
 export class TransactionController {
   constructor(private readonly service: TransactionService) {}
 
+  @Get('click')
+  @ApiOperation({ summary: 'Click' })
+  click(@User() user) {
+    return this.service.getClickBalance(user.id)
+  }
+
   @Post()
   @ApiOperation({ summary: 'Create transaction' })
   createTransaction(@User() user: IUser, @Body() body: CreateTransactionDto) {

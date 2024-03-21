@@ -1,13 +1,16 @@
-import { Grid, TextField, Alert } from "@mui/material";
+import { Grid, TextField, Alert, Button } from "@mui/material";
 import React, { useState, useEffect } from "react";
 import { NumericFormat } from "react-number-format";
+import RefreshIcon from "@mui/icons-material/Refresh";
+import AxiosClient from "../../utils/axios";
 
 interface WealthProps {
+  userId: string;
   usd: number;
   uzs: number;
 }
 
-export function Wealth({ usd, uzs }: WealthProps) {
+export function Wealth({ usd, uzs, userId }: WealthProps) {
   const [card, setCard] = useState(() => getInitialValue("card", 0));
   const [cash, setCash] = useState(() => getInitialValue("cash", 0));
   const [totalUzs, setTotalUzs] = useState(0);
@@ -54,6 +57,11 @@ export function Wealth({ usd, uzs }: WealthProps) {
     return value !== null ? Number(value) : fallbackValue;
   }
 
+  const fetchClickBalance = async () => {
+    const { data } = await AxiosClient.get("transactions/click");
+    setCardAmount(data.balance);
+  };
+
   return (
     <Grid
       container
@@ -97,6 +105,16 @@ export function Wealth({ usd, uzs }: WealthProps) {
       </Grid>
       <Grid item xs={12}>
         Total
+        {userId === "63801aa8-2b4c-41c3-aedb-cde71179eeca" && (
+          <Button
+            variant="outlined"
+            size="small"
+            sx={{ marginLeft: 1 }}
+            onClick={fetchClickBalance}
+          >
+            <RefreshIcon />
+          </Button>
+        )}
         <br />
         <b>{formatNumberWithSeparator(totalUzs)} UZS</b>
         {totalUzs !== uzs && (
