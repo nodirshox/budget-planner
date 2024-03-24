@@ -14,22 +14,7 @@ export class UtilsService {
   }
 
   calculateWalletAmount(type: TransactionType, amount: number): number {
-    let finalAmount = 0
-    switch (type) {
-      case TransactionType.EXPENSE: {
-        finalAmount -= amount
-        break
-      }
-      case TransactionType.INCOME: {
-        finalAmount += amount
-        break
-      }
-      default: {
-        throw new Error('Transaction type not found')
-      }
-    }
-
-    return finalAmount
+    return type === TransactionType.EXPENSE ? -1 * amount : amount
   }
 
   getMonths(date: Date) {
