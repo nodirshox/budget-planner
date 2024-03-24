@@ -103,8 +103,21 @@ export default function Wallet() {
     });
 
     return {
-      wallet: transactions.data.wallet,
-      transactions: transactions.data.transactions,
+      wallet: {
+        ...transactions.data.wallet,
+        amount: transactions.data.wallet.amount / 100,
+      },
+      transactions: transactions.data.transactions.map((transaction: any) => {
+        return {
+          ...transaction,
+          transactions: transaction.transactions.map((tr: any) => {
+            return {
+              ...tr,
+              amount: tr.amount / 100,
+            };
+          }),
+        };
+      }),
     };
   };
 
@@ -131,6 +144,7 @@ export default function Wallet() {
           setWalletAmount(data.wallet.amount);
           setCurrency(data.wallet.currency.name);
           setTransactions(data.transactions);
+          console.log(data.transactions);
         },
         (error) => {
           const message = ErrorMessage(error);

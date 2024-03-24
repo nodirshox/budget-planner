@@ -70,7 +70,16 @@ export default function Overview() {
         month: new Date(`${params.date}`),
       }
     );
-    return data;
+    return {
+      ...data,
+      total: data.total / 100,
+      overview: data.overview.map((ov: any) => {
+        return {
+          ...ov,
+          total: ov.total / 100,
+        };
+      }),
+    };
   };
 
   useEffect(() => {

@@ -29,7 +29,7 @@ export class UtilsService {
       }
     }
 
-    return Number(finalAmount.toFixed(2))
+    return finalAmount
   }
 
   getMonths(date: Date) {
