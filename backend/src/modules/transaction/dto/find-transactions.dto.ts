@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsDateString, IsNotEmpty, IsString } from 'class-validator'
+import { IsDateString, IsNotEmpty, IsOptional, IsString } from 'class-validator'
 
 export class FindTransactionsDto {
   @IsString()
@@ -10,4 +10,9 @@ export class FindTransactionsDto {
   @IsDateString()
   @ApiProperty({ description: 'Month', example: new Date() })
   month: string
+
+  @IsString()
+  @IsOptional()
+  @ApiProperty({ description: 'Category Id', required: false, example: 'uuid' })
+  categoryId: string
 }

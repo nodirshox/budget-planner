@@ -11,7 +11,7 @@ import {
   Divider,
   Paper,
 } from "@mui/material";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import AxiosClient from "../../utils/axios";
 import ErrorMessage from "../../utils/error-message";
 import LoadingBar from "../../components/loading/LoadingBar";
@@ -83,6 +83,7 @@ export default function Wallet() {
     ? "450px"
     : "600px";
 
+  const [searchParams] = useSearchParams();
   const nav = useNavigate();
   const params = useParams();
 
@@ -92,6 +93,7 @@ export default function Wallet() {
   const [sendRequest, setSendRequest] = useState(false);
   const [alert, setAlert] = useState({ state: false, message: "" });
   const [transactions, setTransactions] = useState<ITransaction[]>([]);
+  const [categoryId] = useState(searchParams.get("categoryId"));
 
   const listRef = useRef<HTMLUListElement | null>(null);
   const [month, setMonth] = useState(new Date());
@@ -100,6 +102,9 @@ export default function Wallet() {
     const transactions = await AxiosClient.post("transactions/filter", {
       walletId: params.walletId,
       month,
+      ...(categoryId && {
+        categoryId,
+      }),
     });
 
     return {
@@ -144,7 +149,6 @@ export default function Wallet() {
           setWalletAmount(data.wallet.amount);
           setCurrency(data.wallet.currency.name);
           setTransactions(data.transactions);
-          console.log(data.transactions);
         },
         (error) => {
           const message = ErrorMessage(error);
@@ -290,12 +294,11 @@ export default function Wallet() {
           />
         </Grid>
         <Grid
-          container
+          item
           xs={12}
-          style={{
-            justifyContent: "center",
-            alignItems: "center",
-          }}
+          justifyContent="center"
+          alignItems="center"
+          container
         >
           <Button
             variant="text"

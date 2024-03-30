@@ -63,6 +63,9 @@ export class TransactionRepository {
           gte: currentMonth,
           lt: nextMonth,
         },
+        ...(body.categoryId && {
+          categoryId: body.categoryId,
+        }),
       },
       orderBy: {
         date: 'desc',

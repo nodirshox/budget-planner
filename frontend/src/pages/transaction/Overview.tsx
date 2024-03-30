@@ -174,7 +174,22 @@ export default function Overview() {
       <Grid item xs={12}>
         <List>
           {categories.map((category, index) => (
-            <ListItem key={index}>
+            <ListItem
+              key={index}
+              onClick={() =>
+                navigationHandler(
+                  `/wallets/${params.walletId}?categoryId=${category.categoryId}`
+                )
+              }
+              sx={{
+                "&:hover": {
+                  backgroundColor: "action.hover",
+                },
+                display: "flex",
+                alignItems: "center",
+                cursor: "pointer",
+              }}
+            >
               <ListItemIcon>
                 <PaidIcon color="primary" />
               </ListItemIcon>
