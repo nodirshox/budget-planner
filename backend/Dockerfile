@@ -4,8 +4,8 @@ COPY package.json .
 COPY package-lock.json .
 RUN npm install
 COPY . .
-RUN npx prisma generate
 RUN npm run build
+RUN npm run migrate
 
 FROM node:18-slim
 RUN apt update && apt install libssl-dev dumb-init -y --no-install-recommends
