@@ -1,5 +1,7 @@
 FROM node:18 as build
 WORKDIR /usr/src/app
+ARG DATABASE_URL
+ENV DATABASE_URL=${DATABASE_URL}
 COPY package.json .
 COPY package-lock.json .
 RUN npm install
