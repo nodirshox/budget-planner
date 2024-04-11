@@ -17,12 +17,12 @@ import {
   Select,
   MenuItem,
 } from "@mui/material";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import AxiosClient from "../../utils/axios";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import PaidIcon from "@mui/icons-material/Paid";
-import { formatAmount } from "../wallet/Wallet";
+import { formatAmount, formatMonth } from "../wallet/Wallet";
 import LoadingBar from "../../components/loading/LoadingBar";
 
 ChartJS.register(ArcElement, Tooltip, Legend, ChartDataLabels);
@@ -37,6 +37,7 @@ interface IOverview {
 export default function Overview() {
   const nav = useNavigate();
   const params = useParams();
+  const [searchParams] = useSearchParams();
   const navigationHandler = (path: string) => nav(path);
   const [categories, setCategories] = useState<IOverview[]>([]);
   const [backgroundColors, setBackgroundColors] = useState<string[]>([]);
@@ -44,6 +45,13 @@ export default function Overview() {
   const [transactionType, setTransactiontype] = useState("EXPENSE");
   const [currency, setCurrency] = useState("USD");
   const [sendRequest, setSendRequest] = useState(false);
+
+  const monthParam = searchParams.get("month");
+  let date = new Date();
+  if (monthParam) {
+    date = new Date(monthParam);
+  }
+  const [month, setMonth] = useState(date);
 
   const handleChange = (event: any) => {
     setTransactiontype(event.target.value as string);
@@ -67,7 +75,7 @@ export default function Overview() {
       `wallets/${params.walletId}/overview`,
       {
         categoryType: transactionType,
-        month: new Date(`${params.date}`),
+        month: new Date(`${month}`),
       }
     );
     return {
@@ -92,7 +100,7 @@ export default function Overview() {
         setCurrency(data.wallet.currency.name);
       })
       .finally(() => setSendRequest(false));
-  }, [transactionType]);
+  }, [transactionType, month]);
 
   const data = {
     labels: categories.map((ov: any) => ov.categoryName),
@@ -121,6 +129,10 @@ export default function Overview() {
     return `${transactions} ${text}`;
   };
 
+  const handleMonthChange = (event: any) => {
+    setMonth(new Date(event.target.value));
+  };
+
   return (
     <Paper sx={{ p: 1, mt: 2 }}>
       <Grid container spacing={2} direction="row">
@@ -135,7 +147,9 @@ export default function Overview() {
           <div>
             <Button
               variant="outlined"
-              onClick={() => navigationHandler(`/wallets/${params.walletId}`)}
+              onClick={() =>
+                navigationHandler(`/wallets/${params.walletId}?month=${month}`)
+              }
               size="small"
               sx={{ p: 1 }}
             >
@@ -150,6 +164,15 @@ export default function Overview() {
         </Grid>
         <Grid item xs={12}>
           {sendRequest && <LoadingBar />}
+        </Grid>
+        <Grid item xs={12}>
+          <input
+            type="month"
+            value={formatMonth(month)}
+            onChange={handleMonthChange}
+            className="mui-style-date-input"
+            max={formatMonth(new Date())}
+          />
         </Grid>
         <Grid item xs={12}>
           <FormControl fullWidth>
@@ -178,7 +201,7 @@ export default function Overview() {
               key={index}
               onClick={() =>
                 navigationHandler(
-                  `/wallets/${params.walletId}?categoryId=${category.categoryId}`
+                  `/wallets/${params.walletId}?categoryId=${category.categoryId}&month=${month}`
                 )
               }
               sx={{

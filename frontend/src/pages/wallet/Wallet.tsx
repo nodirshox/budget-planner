@@ -69,6 +69,14 @@ export const formatAmount = (
   );
 };
 
+export function formatMonth(date: any) {
+  const d = new Date(date),
+    month = "" + (d.getMonth() + 1),
+    year = d.getFullYear();
+
+  return [year, month.padStart(2, "0")].join("-");
+}
+
 export default function Wallet() {
   const theme = useTheme();
 
@@ -96,7 +104,14 @@ export default function Wallet() {
   const [categoryId] = useState(searchParams.get("categoryId"));
 
   const listRef = useRef<HTMLUListElement | null>(null);
-  const [month, setMonth] = useState(new Date());
+
+  const monthParam = searchParams.get("month");
+  let date = new Date();
+  if (monthParam) {
+    date = new Date(monthParam);
+  }
+
+  const [month, setMonth] = useState(date);
 
   const fetchTransactions = async () => {
     const transactions = await AxiosClient.post("transactions/filter", {
@@ -132,7 +147,9 @@ export default function Wallet() {
     const day = "01";
     const monthDate = `${month.getMonth() + 1}`.padStart(2, "0");
     const year = month.getFullYear();
-    nav(`/wallets/${params.walletId}/overview/${year}-${monthDate}-${day}`);
+    nav(
+      `/wallets/${params.walletId}/overview?month=${year}-${monthDate}-${day}`
+    );
   };
   const addTransactionHandler = () =>
     nav(`/wallets/${params.walletId}/transactions`);
@@ -221,14 +238,6 @@ export default function Wallet() {
       </Typography>
     );
   };
-
-  function formatMonth(date: any) {
-    const d = new Date(date),
-      month = "" + (d.getMonth() + 1),
-      year = d.getFullYear();
-
-    return [year, month.padStart(2, "0")].join("-");
-  }
 
   const handleMonthChange = (event: any) => {
     setMonth(new Date(event.target.value));

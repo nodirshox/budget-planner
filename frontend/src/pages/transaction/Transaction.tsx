@@ -50,7 +50,15 @@ export default function Transaction() {
     setCategory(event.target.value);
   };
 
-  const backHandler = () => nav(`/wallets/${params.walletId}`);
+  const nextPageDay = "01";
+  const nextPageYear = date.getFullYear();
+  const nextPageMonth = `${date.getMonth() + 1}`.padStart(2, "0");
+
+  const backHandler = () => {
+    nav(
+      `/wallets/${params.walletId}?month=${nextPageYear}-${nextPageMonth}-${nextPageDay}`
+    );
+  };
 
   function formatDate(date: any) {
     const d = new Date(date),
@@ -129,7 +137,9 @@ export default function Transaction() {
         });
       }
 
-      nav(`/wallets/${params.walletId}`);
+      nav(
+        `/wallets/${params.walletId}?month=${nextPageYear}-${nextPageMonth}-${nextPageDay}`
+      );
     } catch (error) {
       const axiosError = error as AxiosError;
       const errorMessage =

@@ -36,7 +36,7 @@ export default function App() {
             <Route path=":walletId/edit" element={<EditWallet />} />
             <Route path=":walletId/delete" element={<DeleteWallet />} />
             <Route path=":walletId/transactions" element={<Transaction />} />
-            <Route path=":walletId/overview/:date" element={<Overview />} />
+            <Route path=":walletId/overview" element={<Overview />} />
             <Route
               path=":walletId/transactions/:transactionId"
               element={<Transaction />}
