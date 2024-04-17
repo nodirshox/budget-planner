@@ -2,6 +2,7 @@ import * as bcrypt from 'bcrypt'
 import { Injectable } from '@nestjs/common'
 import { PASSWORD_SALT } from '@/consts/password-salt'
 import { TransactionType } from '@prisma/client'
+import { ITransactionWithCategory } from '@/modules/transaction/transaction.repository'
 
 @Injectable()
 export class UtilsService {
@@ -35,22 +36,28 @@ export class UtilsService {
     return { currentMonth, nextMonth }
   }
 
-  groupByDay(transactions) {
+  groupByDay(transactions: ITransactionWithCategory[]) {
     const groups = {}
 
     transactions.forEach((transaction) => {
       const day = new Date(transaction.date).toISOString().split('T')[0]
       if (!groups[day]) {
-        groups[day] = []
+        groups[day] = { transactions: [], total: 0 }
       }
-      groups[day].push(transaction)
+      if (transaction.type === TransactionType.EXPENSE) {
+        groups[day].total -= transaction.amount
+      } else if (transaction.type === TransactionType.INCOME) {
+        groups[day].total += transaction.amount
+      }
+
+      groups[day].transactions.push(transaction)
     })
 
     const groupedByDay = Object.keys(groups).map((day) => ({
       day: new Date(day),
-      transactions: groups[day],
+      transactions: groups[day].transactions,
+      total: groups[day].total,
     }))
-
     return groupedByDay
   }
 }

@@ -38,7 +38,7 @@ jobs:
           script: |
             cd budget-planner/backend
             git pull
-            docker compose down
+            docker compose down budget-planner-backend
             docker rmi ${{ secrets.DOCKERHUB_REPOSITORY }}
             docker pull ${{ secrets.DOCKERHUB_REPOSITORY }}
-            docker compose up -d
+            docker compose up -d budget-planner-backend

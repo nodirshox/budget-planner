@@ -17,7 +17,7 @@ import ErrorMessage from "../../utils/error-message";
 import LoadingBar from "../../components/loading/LoadingBar";
 import HttpErrorNotification from "../../components/notifications/HttpErrorNotification";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
-import { red, green } from "@mui/material/colors";
+import { red, green, grey } from "@mui/material/colors";
 import PaidIcon from "@mui/icons-material/Paid";
 import AddIcon from "@mui/icons-material/Add";
 import { useTheme } from "@mui/material/styles";
@@ -27,6 +27,7 @@ import DonutSmallIcon from "@mui/icons-material/DonutSmall";
 
 interface ITransaction {
   day: Date;
+  total: number;
   transactions: GroupTransactions[];
 }
 
@@ -53,7 +54,7 @@ export const formatAmount = (
   if (type === "EXPENSE") {
     number = `-${number} ${currency}`;
   } else {
-    number = `+${number} ${currency}`;
+    number = `${number} ${currency}`;
   }
 
   return (
@@ -63,6 +64,27 @@ export const formatAmount = (
         color: type === "EXPENSE" ? red[500] : green[500],
       }}
       sx={{ fontWeight: 500 }}
+    >
+      {number}
+    </Typography>
+  );
+};
+
+export const formatDayTotal = (amount: number, currency: string) => {
+  const numberFormat = new Intl.NumberFormat("en-US", {
+    currency,
+  });
+  let number = numberFormat.format(amount / 100);
+
+  number = `${number} ${currency}`;
+
+  return (
+    <Typography
+      component="span"
+      style={{
+        color: grey[500],
+      }}
+      sx={{ fontWeight: 400 }}
     >
       {number}
     </Typography>
@@ -219,11 +241,7 @@ export default function Wallet() {
     });
     let number = numberFormat.format(walletAmount);
 
-    if (walletAmount > 0) {
-      number = `+${number} ${currency}`;
-    } else {
-      number = `${number} ${currency}`;
-    }
+    number = `${number} ${currency}`;
 
     return (
       <Typography
@@ -327,6 +345,9 @@ export default function Wallet() {
                 <ul>
                   <ListItem style={{ background: "#EEEEEE", color: "#5D6E7B" }}>
                     <ListItemText primary={formatDate(group.day)} />
+                    <ListItemSecondaryAction>
+                      {formatDayTotal(group.total, currency)}
+                    </ListItemSecondaryAction>
                   </ListItem>
                   {group.transactions.map((transaction, trnasactionIndex) => (
                     <ListItem

@@ -11,7 +11,6 @@ import { UtilsService } from '@/core/utils/utils.service'
 import { HTTP_MESSAGES } from '@/consts/http-messages'
 import axios from 'axios'
 import { v4 as uuidv4 } from 'uuid'
-import { TransactionType } from '@prisma/client'
 import { createReadStream } from 'fs'
 import * as csv from 'csv-parser'
 

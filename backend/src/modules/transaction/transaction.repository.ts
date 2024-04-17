@@ -4,9 +4,25 @@ import {
   CreateTransactionDto,
   UpdateTransactionDto,
 } from '@/modules/transaction/dto/create-transaction.dto'
-import { TransactionType } from '@prisma/client'
+import { Prisma, TransactionType } from '@prisma/client'
 import { FindTransactionsDto } from '@/modules/transaction/dto/find-transactions.dto'
 import { UtilsService } from '@/core/utils/utils.service'
+
+export type ITransactionWithCategory = Prisma.TransactionGetPayload<{
+  select: {
+    id: true
+    amount: true
+    type: true
+    date: true
+    notes: true
+    category: {
+      select: {
+        id: true
+        name: true
+      }
+    }
+  }
+}>
 
 @Injectable()
 export class TransactionRepository {
@@ -52,7 +68,9 @@ export class TransactionRepository {
     return result[result.length - 1]
   }
 
-  async filterTransactions(body: FindTransactionsDto) {
+  async filterTransactions(
+    body: FindTransactionsDto,
+  ): Promise<ITransactionWithCategory[]> {
     const { currentMonth, nextMonth } = this.utils.getMonths(
       new Date(body.month),
     )

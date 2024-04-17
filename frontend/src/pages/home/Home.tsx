@@ -91,11 +91,7 @@ export default function Home() {
     });
     let number = numberFormat.format(wallet.amount);
 
-    if (wallet.amount > 0) {
-      number = `+${number} ${wallet.currency.name}`;
-    } else {
-      number = `${number} ${wallet.currency.name}`;
-    }
+    number = `${number} ${wallet.currency.name}`;
 
     return (
       <Typography
