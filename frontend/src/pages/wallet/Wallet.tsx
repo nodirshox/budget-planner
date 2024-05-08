@@ -24,6 +24,7 @@ import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import HomeIcon from "@mui/icons-material/Home";
 import DonutSmallIcon from "@mui/icons-material/DonutSmall";
+import { superUserId } from "../../utils/super-user";
 
 interface ITransaction {
   day: Date;
@@ -124,7 +125,7 @@ export default function Wallet() {
   const [alert, setAlert] = useState({ state: false, message: "" });
   const [transactions, setTransactions] = useState<ITransaction[]>([]);
   const [categoryId] = useState(searchParams.get("categoryId"));
-
+  const [userId, setUserId] = useState(null);
   const listRef = useRef<HTMLUListElement | null>(null);
 
   const monthParam = searchParams.get("month");
@@ -163,6 +164,7 @@ export default function Wallet() {
     };
   };
 
+  const navigateHandler = (path: string) => nav(path);
   const editHandler = () => nav(`/wallets/${params.walletId}/edit`);
   const backHandler = () => nav(`/`);
   const overviewHandler = () => {
@@ -188,6 +190,7 @@ export default function Wallet() {
           setWalletAmount(data.wallet.amount);
           setCurrency(data.wallet.currency.name);
           setTransactions(data.transactions);
+          setUserId(data.wallet.userId);
         },
         (error) => {
           const message = ErrorMessage(error);
@@ -273,6 +276,19 @@ export default function Wallet() {
         >
           <Typography variant="h6">{walletName}</Typography>
           <div>
+            {userId === superUserId && (
+              <Button
+                variant="outlined"
+                size="small"
+                sx={{ mr: 1, p: 1 }}
+                onClick={() =>
+                  navigateHandler(`/wallets/${params.walletId}/click`)
+                }
+              >
+                Click
+              </Button>
+            )}
+
             <Button
               variant="outlined"
               size="small"

@@ -18,7 +18,7 @@ export class UtilsService {
     return type === TransactionType.EXPENSE ? -1 * amount : amount
   }
 
-  getMonths(date: Date) {
+  getMonths(date: Date): { currentMonth: Date; nextMonth: Date } {
     const inputDate = new Date(date)
 
     const currentMonth = new Date(

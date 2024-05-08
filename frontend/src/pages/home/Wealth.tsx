@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { NumericFormat } from "react-number-format";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import AxiosClient from "../../utils/axios";
+import { superUserId } from "../../utils/super-user";
 
 interface WealthProps {
   userId: string;
@@ -105,7 +106,7 @@ export function Wealth({ usd, uzs, userId }: WealthProps) {
       </Grid>
       <Grid item xs={12}>
         Total
-        {userId === "63801aa8-2b4c-41c3-aedb-cde71179eeca" && (
+        {userId === superUserId && (
           <Button
             variant="outlined"
             size="small"

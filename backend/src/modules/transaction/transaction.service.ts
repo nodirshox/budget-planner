@@ -13,6 +13,9 @@ import axios from 'axios'
 import { v4 as uuidv4 } from 'uuid'
 import { createReadStream } from 'fs'
 import * as csv from 'csv-parser'
+import { TransactionType } from '@prisma/client'
+import { FilterClickTransactionDto } from '@/modules/transaction/dto/filter-click-transactions.dto'
+import { superUserId } from '@/consts/super-user-id'
 
 @Injectable()
 export class TransactionService implements OnModuleInit {
@@ -138,7 +141,7 @@ export class TransactionService implements OnModuleInit {
   }
 
   async getClickBalance(userId: string) {
-    if (userId !== '63801aa8-2b4c-41c3-aedb-cde71179eeca') {
+    if (userId !== superUserId) {
       return { balance: 0 }
     }
 
@@ -160,7 +163,7 @@ export class TransactionService implements OnModuleInit {
         app_version: '1.0',
       },
     })
-    console.log('authResponse', authResponse.data)
+
     const balanceResponse = await axios({
       method: 'POST',
       url: URL,
@@ -177,9 +180,74 @@ export class TransactionService implements OnModuleInit {
         'Session-Key': authResponse.data?.result?.session_key,
       },
     })
-    console.log('balanceResponse', balanceResponse.data)
+
     return {
       balance: Math.floor(balanceResponse.data.result[0]?.balance) || 0,
+    }
+  }
+
+  async clickTransactions(userId: string, body: FilterClickTransactionDto) {
+    if (userId !== superUserId) {
+      return []
+    }
+
+    const URL = 'https://api.click.uz/evo'
+    const phoneNumber = process.env.PHONE_NUMBER
+    const deviceId = process.env.DEVICE_ID
+    const password = process.env.PASSWORD
+    const accountId = Number(process.env.ACCOUNT_ID)
+
+    const authResponse = await axios.post(URL, {
+      jsonrpc: '2.0',
+      id: uuidv4(),
+      method: 'login',
+      params: {
+        phone_number: phoneNumber,
+        device_id: deviceId,
+        password: password,
+        datetime: 1711045989,
+        app_version: '1.0',
+      },
+    })
+
+    const { currentMonth, nextMonth } = this.utils.getMonths(
+      new Date(body.month),
+    )
+
+    const balanceResponse = await axios({
+      method: 'POST',
+      url: URL,
+      data: {
+        jsonrpc: '2.0',
+        id: uuidv4(),
+        method: 'history.monitoring',
+        params: {
+          account_id: [accountId],
+          page_number: 1,
+          page_size: 30,
+          date_start: currentMonth.getTime(),
+          date_end: nextMonth.getTime(),
+        },
+      },
+      headers: {
+        'Device-Id': deviceId,
+        'Session-Key': authResponse.data?.result?.session_key,
+      },
+    })
+
+    const transactions = balanceResponse?.data?.result.filter(
+      (t) => t.state === 1,
+    )
+
+    return {
+      transactions: transactions.map((t) => {
+        return {
+          amount: Math.floor(t.amount),
+          createdAt: new Date(t.datetime * 1000),
+          description: t.service_name,
+          type: t.credit ? TransactionType.INCOME : TransactionType.EXPENSE,
+        }
+      }),
     }
   }
 }

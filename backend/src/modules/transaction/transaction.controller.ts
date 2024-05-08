@@ -18,6 +18,7 @@ import {
   UpdateTransactionDto,
 } from '@/modules/transaction/dto/create-transaction.dto'
 import { FindTransactionsDto } from '@/modules/transaction/dto/find-transactions.dto'
+import { FilterClickTransactionDto } from '@/modules/transaction/dto/filter-click-transactions.dto'
 
 @ApiBearerAuth()
 @ApiTags('Transaction')
@@ -27,9 +28,15 @@ export class TransactionController {
   constructor(private readonly service: TransactionService) {}
 
   @Get('click')
-  @ApiOperation({ summary: 'Click' })
+  @ApiOperation({ summary: 'Click balance' })
   click(@User() user) {
     return this.service.getClickBalance(user.id)
+  }
+
+  @Post('click')
+  @ApiOperation({ summary: 'Click transactions' })
+  clickTransactions(@User() user, @Body() body: FilterClickTransactionDto) {
+    return this.service.clickTransactions(user.id, body)
   }
 
   @Post()

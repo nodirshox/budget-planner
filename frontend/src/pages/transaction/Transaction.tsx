@@ -16,7 +16,7 @@ import {
   DialogContent,
   DialogActions,
 } from "@mui/material";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import AxiosClient, { AxiosError } from "../../utils/axios";
 import ErrorMessage from "../../utils/error-message";
 import LoadingBar from "../../components/loading/LoadingBar";
@@ -30,14 +30,15 @@ export default function Transaction() {
   const nav = useNavigate();
   const params = useParams();
   const isEditMode = !!params.transactionId;
-
+  const [searchParams] = useSearchParams();
   const [sendRequest, setSendRequest] = useState(false);
   const [alert, setAlert] = useState({ state: false, message: "" });
   const [expenseCategories, setExpenseCategories] = useState<ICategory[]>([]);
   const [incomeCategories, setIncomeCategories] = useState<ICategory[]>([]);
   const [category, setCategory] = useState("");
   const [date, setDate] = useState(new Date());
-  const [amount, setAmount] = useState("");
+  const existingAmount = searchParams.get("amount");
+  const [amount, setAmount] = useState(existingAmount || "");
   const [notes, setNotes] = useState("");
 
   const { handleSubmit } = useForm();
@@ -55,9 +56,14 @@ export default function Transaction() {
   const nextPageMonth = `${date.getMonth() + 1}`.padStart(2, "0");
 
   const backHandler = () => {
-    nav(
-      `/wallets/${params.walletId}?month=${nextPageYear}-${nextPageMonth}-${nextPageDay}`
-    );
+    const redirectPage = searchParams.get("redirect");
+    if (redirectPage) {
+      nav(`/wallets/${params.walletId}/click`);
+    } else {
+      nav(
+        `/wallets/${params.walletId}?month=${nextPageYear}-${nextPageMonth}-${nextPageDay}`
+      );
+    }
   };
 
   function formatDate(date: any) {

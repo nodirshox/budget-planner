@@ -18,6 +18,7 @@ import CreateCategory from "./pages/category/CreateCategory";
 import EditCategory from "./pages/category/EditCategory";
 import DeleteCategory from "./pages/category/DeleteCategory";
 import Overview from "./pages/transaction/Overview";
+import ClickTransactions from "./pages/transaction/ClickTransactions";
 
 export default function App() {
   return (
@@ -37,6 +38,7 @@ export default function App() {
             <Route path=":walletId/delete" element={<DeleteWallet />} />
             <Route path=":walletId/transactions" element={<Transaction />} />
             <Route path=":walletId/overview" element={<Overview />} />
+            <Route path=":walletId/click" element={<ClickTransactions />} />
             <Route
               path=":walletId/transactions/:transactionId"
               element={<Transaction />}
