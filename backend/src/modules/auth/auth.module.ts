@@ -6,6 +6,7 @@ import { CoreModule } from '@/core/core.module'
 import { JwtStrategy } from '@/modules/auth/auth.strategy'
 import { JwtModule } from '@nestjs/jwt'
 import { PassportModule } from '@nestjs/passport'
+import { ACCESS_TOKEN_EXPIRATION_TIME } from '@/consts/token'
 
 @Module({
   imports: [
@@ -14,7 +15,7 @@ import { PassportModule } from '@nestjs/passport'
     PassportModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: '30d' },
+      signOptions: { expiresIn: ACCESS_TOKEN_EXPIRATION_TIME },
     }),
   ],
   controllers: [AuthController],

@@ -1,9 +1,15 @@
-import { BadRequestException, Injectable } from '@nestjs/common'
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common'
 import { LoginDto } from '@/modules/auth/dto/login.dto'
 import { JwtService } from '@nestjs/jwt'
 import { PrismaService } from '@/core/prisma/prisma.service'
 import { UtilsService } from '@/core/utils/utils.service'
 import { HTTP_MESSAGES } from '@/consts/http-messages'
+import { REFRESH_TOKEN_EXPIRATION_TIME } from '@/consts/token'
+import { ReshreshTokenDto } from '@/modules/auth/dto/refresh.dto'
 
 @Injectable()
 export class AuthService {
@@ -29,12 +35,51 @@ export class AuthService {
 
     const payload = { id: user.id, email: user.email }
 
-    const jwtToken = this.jwtService.sign(payload)
+    const access = this.jwtService.sign(payload)
+
+    const refresh = this.jwtService.sign(payload, {
+      expiresIn: REFRESH_TOKEN_EXPIRATION_TIME,
+    })
+
     return {
       user,
       token: {
-        access: jwtToken,
+        access,
+        refresh,
       },
+    }
+  }
+
+  async refreshToken(body: ReshreshTokenDto) {
+    try {
+      const decodedToken = this.jwtService.decode(body.refreshToken)
+      if (!decodedToken) throw new Error('Invalid token')
+
+      const { id, exp } = decodedToken as { id; role; exp }
+
+      const isTokenExpired = Date.now() >= exp * 1000
+
+      if (isTokenExpired) {
+        throw new Error('Token expired')
+      }
+
+      const user = await this.prisma.user.findUnique({
+        where: { id },
+      })
+      if (!user) throw new Error(HTTP_MESSAGES.USER_NOT_FOUND)
+
+      const payload = { id: user.id, email: user.email }
+
+      const access = this.jwtService.sign(payload)
+      const refresh = this.jwtService.sign(payload, {
+        expiresIn: REFRESH_TOKEN_EXPIRATION_TIME,
+      })
+
+      return {
+        token: { access, refresh },
+      }
+    } catch (error) {
+      throw new ForbiddenException(error.message)
     }
   }
 }

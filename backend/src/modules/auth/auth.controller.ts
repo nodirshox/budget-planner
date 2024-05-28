@@ -2,6 +2,7 @@ import { Body, Controller, Post } from '@nestjs/common'
 import { AuthService } from '@/modules/auth/auth.service'
 import { LoginDto } from '@/modules/auth/dto/login.dto'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { ReshreshTokenDto } from '@/modules/auth/dto/refresh.dto'
 
 @ApiTags('Auth')
 @Controller({ path: 'auth', version: '1' })
@@ -12,5 +13,11 @@ export class AuthController {
   @ApiOperation({ summary: 'Sign in' })
   login(@Body() body: LoginDto) {
     return this.authService.login(body)
+  }
+
+  @Post('refresh')
+  @ApiOperation({ summary: 'Refresh token' })
+  refresh(@Body() body: ReshreshTokenDto) {
+    return this.authService.refreshToken(body)
   }
 }
