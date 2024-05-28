@@ -88,6 +88,7 @@ export default function Login() {
         password: password.value,
       });
       localStorage.setItem("token", data.token.access);
+      localStorage.setItem("refresh", data.token.refresh);
       navigate("/");
     } catch (error) {
       const axiosError = error as AxiosError;
@@ -154,6 +155,7 @@ export default function Login() {
               helperText={email.message}
               error={email.error}
               autoFocus
+              InputLabelProps={{ shrink: true }}
             />
             <TextField
               margin="normal"
@@ -170,6 +172,7 @@ export default function Login() {
               required={true}
               helperText={password.message}
               error={password.error}
+              InputLabelProps={{ shrink: true }}
             />
             <Button
               type="submit"
