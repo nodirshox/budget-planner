@@ -1,8 +1,8 @@
 import { PrismaService } from '@/core/prisma/prisma.service'
 import { Injectable } from '@nestjs/common'
 import { TransactionType } from '@prisma/client'
-import { CreateCategoryDto } from '@/modules/category/dto/create-category.dto'
-import { UpdateCategoryDto } from '@/modules/category/dto/update-category.dto'
+import { CreateCategoryDto } from '@category/dto/create-category.dto'
+import { UpdateCategoryDto } from '@category/dto/update-category.dto'
 
 @Injectable()
 export class CategoryRepository {

@@ -1,12 +1,12 @@
 import { BadRequestException, Injectable, OnModuleInit } from '@nestjs/common'
-import { TransactionRepository } from '@/modules/transaction/transaction.repository'
+import { TransactionRepository } from '@transaction/transaction.repository'
 import {
   CreateTransactionDto,
   UpdateTransactionDto,
-} from '@/modules/transaction/dto/create-transaction.dto'
-import { WalletsService } from '@/modules/wallets/wallets.service'
-import { CategoryService } from '@/modules/category/category.service'
-import { FindTransactionsDto } from '@/modules/transaction/dto/find-transactions.dto'
+} from '@transaction/dto/create-transaction.dto'
+import { WalletsService } from '@wallets/wallets.service'
+import { CategoryService } from '@category/category.service'
+import { FindTransactionsDto } from '@transaction/dto/find-transactions.dto'
 import { UtilsService } from '@/core/utils/utils.service'
 import { HTTP_MESSAGES } from '@/consts/http-messages'
 import axios from 'axios'
@@ -14,7 +14,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { createReadStream } from 'fs'
 import * as csv from 'csv-parser'
 import { TransactionType } from '@prisma/client'
-import { FilterClickTransactionDto } from '@/modules/transaction/dto/filter-click-transactions.dto'
+import { FilterClickTransactionDto } from '@transaction/dto/filter-click-transactions.dto'
 import { superUserId } from '@/consts/super-user-id'
 
 @Injectable()

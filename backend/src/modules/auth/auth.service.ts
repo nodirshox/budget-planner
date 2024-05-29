@@ -3,13 +3,13 @@ import {
   ForbiddenException,
   Injectable,
 } from '@nestjs/common'
-import { LoginDto } from '@/modules/auth/dto/login.dto'
+import { LoginDto } from '@auth/dto/login.dto'
 import { JwtService } from '@nestjs/jwt'
 import { PrismaService } from '@/core/prisma/prisma.service'
 import { UtilsService } from '@/core/utils/utils.service'
 import { HTTP_MESSAGES } from '@/consts/http-messages'
 import { REFRESH_TOKEN_EXPIRATION_TIME } from '@/consts/token'
-import { ReshreshTokenDto } from '@/modules/auth/dto/refresh.dto'
+import { ReshreshTokenDto } from '@auth/dto/refresh.dto'
 
 @Injectable()
 export class AuthService {

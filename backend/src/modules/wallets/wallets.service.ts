@@ -2,13 +2,13 @@ import { BadRequestException, Injectable } from '@nestjs/common'
 import {
   CreateWalletDto,
   UpdateWalletDto,
-} from '@/modules/wallets/dto/create-wallet.dto'
-import { CurrencyService } from '@/modules/currency/currency.service'
-import { WalletsRepository } from '@/modules/wallets/wallets.repository'
+} from '@wallets/dto/create-wallet.dto'
+import { CurrencyService } from '@currency/currency.service'
+import { WalletsRepository } from '@wallets/wallets.repository'
 import { HTTP_MESSAGES } from '@/consts/http-messages'
-import { UsersService } from '@/modules/users/users.service'
-import { WalletOverviewDto } from '@/modules/wallets//dto/wallet-overview.dto'
-import { CategoryService } from '@/modules/category/category.service'
+import { UsersService } from '@users/users.service'
+import { WalletOverviewDto } from '@wallets//dto/wallet-overview.dto'
+import { CategoryService } from '@category/category.service'
 
 @Injectable()
 export class WalletsService {

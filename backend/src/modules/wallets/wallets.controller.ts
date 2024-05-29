@@ -9,15 +9,15 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger'
-import { WalletsService } from '@/modules/wallets/wallets.service'
+import { WalletsService } from '@wallets/wallets.service'
 import {
   CreateWalletDto,
   UpdateWalletDto,
-} from '@/modules/wallets/dto/create-wallet.dto'
-import { JwtAuthGuard } from '@/modules/auth/jwt-auth.guard'
+} from '@wallets/dto/create-wallet.dto'
+import { JwtAuthGuard } from '@auth/jwt-auth.guard'
 import { User } from '@/decorators/user.decorator'
-import { IUser } from '@/modules/users/dto/user.interface'
-import { WalletOverviewDto } from '@/modules/wallets/dto/wallet-overview.dto'
+import { IUser } from '@users/dto/user.interface'
+import { WalletOverviewDto } from '@wallets/dto/wallet-overview.dto'
 
 @ApiBearerAuth()
 @ApiTags('Wallet')

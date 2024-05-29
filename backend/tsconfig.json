@@ -12,6 +12,12 @@
     "baseUrl": "./src/",
     "paths": {
       "@/*": ["*"],
+      "@auth/*": ["./modules/auth/*"],
+      "@category/*": ["./modules/category/*"],
+      "@currency/*": ["./modules/currency/*"],
+      "@transaction/*": ["./modules/transaction/*"],
+      "@users/*": ["./modules/users/*"],
+      "@wallets/*": ["./modules/wallets/*"]
     },
     "incremental": true,
     "skipLibCheck": true,

@@ -2,7 +2,7 @@ import * as bcrypt from 'bcrypt'
 import { Injectable } from '@nestjs/common'
 import { PASSWORD_SALT } from '@/consts/password-salt'
 import { TransactionType } from '@prisma/client'
-import { ITransactionWithCategory } from '@/modules/transaction/transaction.repository'
+import { ITransactionWithCategory } from '@transaction/transaction.repository'
 
 @Injectable()
 export class UtilsService {

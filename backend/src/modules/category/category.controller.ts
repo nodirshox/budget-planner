@@ -9,12 +9,12 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger'
-import { CategoryService } from '@/modules/category/category.service'
-import { JwtAuthGuard } from '@/modules/auth/jwt-auth.guard'
+import { CategoryService } from '@category/category.service'
+import { JwtAuthGuard } from '@auth/jwt-auth.guard'
 import { User } from '@/decorators/user.decorator'
-import { IUser } from '@/modules/users/dto/user.interface'
-import { CreateCategoryDto } from '@/modules/category/dto/create-category.dto'
-import { UpdateCategoryDto } from '@/modules/category/dto/update-category.dto'
+import { IUser } from '@users/dto/user.interface'
+import { CreateCategoryDto } from '@category/dto/create-category.dto'
+import { UpdateCategoryDto } from '@category/dto/update-category.dto'
 
 @ApiBearerAuth()
 @ApiTags('Category')

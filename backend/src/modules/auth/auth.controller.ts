@@ -1,8 +1,8 @@
 import { Body, Controller, Post } from '@nestjs/common'
-import { AuthService } from '@/modules/auth/auth.service'
-import { LoginDto } from '@/modules/auth/dto/login.dto'
+import { AuthService } from '@auth/auth.service'
+import { LoginDto } from '@auth/dto/login.dto'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
-import { ReshreshTokenDto } from '@/modules/auth/dto/refresh.dto'
+import { ReshreshTokenDto } from '@auth/dto/refresh.dto'
 
 @ApiTags('Auth')
 @Controller({ path: 'auth', version: '1' })

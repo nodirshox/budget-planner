@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common'
-import { CurrencyService } from '@/modules/currency/currency.service'
-import { CurrencyController } from '@/modules/currency/currency.controller'
+import { CurrencyService } from '@currency/currency.service'
+import { CurrencyController } from '@currency/currency.controller'
 import { CoreModule } from '@/core/core.module'
-import { CurrencyRepository } from '@/modules/currency/currency.repository'
+import { CurrencyRepository } from '@currency/currency.repository'
 
 @Module({
   imports: [CoreModule],

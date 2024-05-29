@@ -1,7 +1,7 @@
 import { Controller, Get, Param, UseGuards } from '@nestjs/common'
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger'
-import { CurrencyService } from '@/modules/currency/currency.service'
-import { JwtAuthGuard } from '@/modules/auth/jwt-auth.guard'
+import { CurrencyService } from '@currency/currency.service'
+import { JwtAuthGuard } from '@auth/jwt-auth.guard'
 
 @ApiBearerAuth()
 @ApiTags('Currencies')

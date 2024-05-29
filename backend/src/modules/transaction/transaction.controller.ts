@@ -9,16 +9,16 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger'
-import { JwtAuthGuard } from '@/modules/auth/jwt-auth.guard'
-import { TransactionService } from '@/modules/transaction/transaction.service'
+import { JwtAuthGuard } from '@auth/jwt-auth.guard'
+import { TransactionService } from '@transaction/transaction.service'
 import { User } from '@/decorators/user.decorator'
-import { IUser } from '@/modules/users/dto/user.interface'
+import { IUser } from '@users/dto/user.interface'
 import {
   CreateTransactionDto,
   UpdateTransactionDto,
-} from '@/modules/transaction/dto/create-transaction.dto'
-import { FindTransactionsDto } from '@/modules/transaction/dto/find-transactions.dto'
-import { FilterClickTransactionDto } from '@/modules/transaction/dto/filter-click-transactions.dto'
+} from '@transaction/dto/create-transaction.dto'
+import { FindTransactionsDto } from '@transaction/dto/find-transactions.dto'
+import { FilterClickTransactionDto } from '@transaction/dto/filter-click-transactions.dto'
 
 @ApiBearerAuth()
 @ApiTags('Transaction')

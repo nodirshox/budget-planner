@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common'
 import {
   CreateWalletDto,
   UpdateWalletDto,
-} from '@/modules/wallets/dto/create-wallet.dto'
+} from '@wallets/dto/create-wallet.dto'
 import { Prisma, TransactionType } from '@prisma/client'
 
 @Injectable()
