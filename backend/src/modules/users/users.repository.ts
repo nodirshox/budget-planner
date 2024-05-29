@@ -28,4 +28,13 @@ export class UsersRepository {
       },
     })
   }
+
+  setPassword(id: string, password: string) {
+    return this.prisma.user.update({
+      where: { id },
+      data: {
+        password,
+      },
+    })
+  }
 }

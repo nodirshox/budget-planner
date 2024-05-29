@@ -1,9 +1,11 @@
 export const HTTP_MESSAGES = {
   // Auth
   WRONG_PASSWORD: 'Incorrect password',
+  WRONG_OLD_PASSWORD: 'Incorrect old password',
 
   // User
   USER_NOT_FOUND: 'User not found',
+  PASSWORD_UPDATED: 'Password is updated',
 
   // Currency
   CURRENCY_NOT_FOUND: 'Currency not found',

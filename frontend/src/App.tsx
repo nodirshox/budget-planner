@@ -4,7 +4,7 @@ import Login from "./pages/auth/Login";
 import { ProtectRoutes } from "./utils/protected-routes";
 import DashboardLayout from "./components/layouts/Dashboard";
 import Home from "./pages/home/Home";
-import Settings from "./pages/home/Settings";
+import Settings from "./pages/settings/Settings";
 import "./App.css";
 import Logout from "./pages/auth/Logout";
 import PageNotFound from "./pages/404/PageNotFound";
@@ -19,6 +19,7 @@ import EditCategory from "./pages/category/EditCategory";
 import DeleteCategory from "./pages/category/DeleteCategory";
 import Overview from "./pages/transaction/Overview";
 import ClickTransactions from "./pages/transaction/ClickTransactions";
+import Password from "./pages/settings/Password";
 
 export default function App() {
   return (
@@ -29,7 +30,10 @@ export default function App() {
         <Route element={<ProtectRoutes />}>
           <Route path="/" element={<DashboardLayout />}>
             <Route index element={<Home />} />
-            <Route path="settings" element={<Settings />} />
+          </Route>
+          <Route path="/settings" element={<DashboardLayout />}>
+            <Route index element={<Settings />} />
+            <Route path="password" element={<Password />} />
           </Route>
           <Route path="/wallets" element={<DashboardLayout />}>
             <Route path="create" element={<CreateWallet />} />

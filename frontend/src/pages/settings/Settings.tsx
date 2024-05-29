@@ -6,6 +6,7 @@ import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import HomeIcon from "@mui/icons-material/Home";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import ReorderIcon from "@mui/icons-material/Reorder";
+import PasswordIcon from "@mui/icons-material/Password";
 
 export default function Settings() {
   const nav = useNavigate();
@@ -52,6 +53,16 @@ export default function Settings() {
             size="small"
           >
             <ReorderIcon /> Categories
+          </Button>
+        </Grid>
+        <Grid item xs={12}>
+          <Button
+            variant="outlined"
+            onClick={() => logoutHandler("/settings/password")}
+            size="small"
+            sx={{ p: 1 }}
+          >
+            <PasswordIcon /> Change password
           </Button>
         </Grid>
         <Grid item xs={12}>
