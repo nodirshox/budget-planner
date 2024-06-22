@@ -60,4 +60,12 @@ export class UtilsService {
     }))
     return groupedByDay
   }
+
+  multipleByOneHundred(num: number) {
+    return num * 100
+  }
+
+  divideToOneHundred(num: number) {
+    return num / 100
+  }
 }

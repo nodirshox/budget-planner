@@ -5,10 +5,11 @@ import {
 } from '@wallets/dto/create-wallet.dto'
 import { CurrencyService } from '@currency/currency.service'
 import { WalletsRepository } from '@wallets/wallets.repository'
-import { HTTP_MESSAGES } from '@/consts/http-messages'
+import { HTTP_MESSAGES } from '@consts/http-messages'
 import { UsersService } from '@users/users.service'
-import { WalletOverviewDto } from '@wallets//dto/wallet-overview.dto'
+import { WalletOverviewDto } from '@wallets/dto/wallet-overview.dto'
 import { CategoryService } from '@category/category.service'
+import { UtilsService } from '@core/utils/utils.service'
 
 @Injectable()
 export class WalletsService {
@@ -17,6 +18,7 @@ export class WalletsService {
     private readonly currencyService: CurrencyService,
     private readonly userService: UsersService,
     private readonly categoryService: CategoryService,
+    private readonly utils: UtilsService,
   ) {}
 
   async createWallet(userId: string, body: CreateWalletDto) {
@@ -26,9 +28,15 @@ export class WalletsService {
   }
 
   async getWallets(userId: string) {
+    const wallets = await this.repository.getUserWallets(userId)
+    const formattedWallets = wallets.map((wallet) => ({
+      ...wallet,
+      amount: this.utils.divideToOneHundred(wallet.amount),
+    }))
+
     return {
       user: await this.userService.getUser(userId),
-      wallets: await this.repository.getUserWallets(userId),
+      wallets: formattedWallets,
     }
   }
 
@@ -42,7 +50,7 @@ export class WalletsService {
     if (wallet.userId !== userId) {
       throw new BadRequestException(HTTP_MESSAGES.WALLET_NOT_BELONGS_TO_USER)
     }
-
+    wallet.amount = this.utils.divideToOneHundred(wallet.amount)
     return wallet
   }
 
@@ -60,6 +68,7 @@ export class WalletsService {
 
   async walletOverview(userId: string, id: string, body: WalletOverviewDto) {
     const wallet = await this.getWallet(userId, id)
+    wallet.amount = this.utils.divideToOneHundred(wallet.amount)
 
     const year = new Date(body.month).getFullYear()
     const month = new Date(body.month).getMonth()
@@ -78,7 +87,7 @@ export class WalletsService {
     const transactionsWithCategory = overview.map((item) => {
       total += item._sum.amount
       return {
-        total: item._sum.amount,
+        total: this.utils.divideToOneHundred(item._sum.amount),
         transactions: item._count.id,
         categoryId: item.categoryId,
         categoryName: categories.find((ct) => ct.id === item.categoryId).name,
@@ -86,7 +95,7 @@ export class WalletsService {
     })
 
     return {
-      total,
+      total: this.utils.divideToOneHundred(total),
       overview: transactionsWithCategory,
       wallet,
     }

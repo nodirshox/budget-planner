@@ -17,7 +17,9 @@
       "@currency/*": ["./modules/currency/*"],
       "@transaction/*": ["./modules/transaction/*"],
       "@users/*": ["./modules/users/*"],
-      "@wallets/*": ["./modules/wallets/*"]
+      "@wallets/*": ["./modules/wallets/*"],
+      "@core/*": ["./core/*"],
+      "@consts/*": ["./consts/*"]
     },
     "incremental": true,
     "skipLibCheck": true,

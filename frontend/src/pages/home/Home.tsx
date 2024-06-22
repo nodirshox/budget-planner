@@ -43,12 +43,7 @@ export default function Home() {
 
   const fetchUserInformation = async () => {
     const result = await AxiosClient.get("wallets");
-    const wallets = result.data.wallets.map((wallet: any) => {
-      return {
-        ...wallet,
-        amount: wallet.amount / 100,
-      };
-    });
+    const wallets = result.data.wallets;
     return {
       ...result.data,
       wallets,

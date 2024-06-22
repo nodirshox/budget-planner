@@ -32,7 +32,7 @@ export class TransactionService implements OnModuleInit {
       userId,
       body.categoryId,
     )
-
+    body.amount = this.utils.multipleByOneHundred(body.amount)
     const transaction = await this.repository.createTransaction(
       body,
       category.type,
@@ -44,8 +44,15 @@ export class TransactionService implements OnModuleInit {
   async filterTransactions(userId: string, body: FindTransactionsDto) {
     const wallet = await this.walletService.getWallet(userId, body.walletId)
     const transactions = await this.repository.filterTransactions(body)
+    const formattedTransactions = transactions.map((transaction) => ({
+      ...transaction,
+      amount: this.utils.divideToOneHundred(transaction.amount),
+    }))
 
-    return { wallet, transactions: this.utils.groupByDay(transactions) }
+    return {
+      wallet,
+      transactions: this.utils.groupByDay(formattedTransactions),
+    }
   }
 
   async getTransaction(userId: string, id: string) {
@@ -55,7 +62,7 @@ export class TransactionService implements OnModuleInit {
       throw new BadRequestException(HTTP_MESSAGES.TRANSACTION_NOT_FOUND)
     }
     await this.walletService.getWallet(userId, transaction.walletId)
-
+    transaction.amount = this.utils.divideToOneHundred(transaction.amount)
     return transaction
   }
 
@@ -77,7 +84,8 @@ export class TransactionService implements OnModuleInit {
     body.walletId = oldTransaction.walletId
     body.oldType = oldCategory.type
     body.type = category.type
-    body.oldAmount = oldTransaction.amount
+    body.oldAmount = this.utils.multipleByOneHundred(oldTransaction.amount)
+    body.amount = this.utils.multipleByOneHundred(body.amount)
 
     return this.repository.updateTranasction(id, body)
   }

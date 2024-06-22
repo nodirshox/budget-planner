@@ -98,7 +98,7 @@ export default function Transaction() {
               .then((data) => {
                 setCategory(data.categoryId);
                 setDate(new Date(data.date));
-                setAmount(`${data.amount / 100}`);
+                setAmount(`${data.amount}`);
                 setNotes(data.notes);
               })
               .catch((error) => {
@@ -127,7 +127,7 @@ export default function Transaction() {
 
       if (isEditMode) {
         await AxiosClient.put(`transactions/${params.transactionId}`, {
-          amount: Number(amount) * 100,
+          amount: Number(amount),
           walletId: params.walletId,
           categoryId: category,
           date,
@@ -135,7 +135,7 @@ export default function Transaction() {
         });
       } else {
         await AxiosClient.post("transactions", {
-          amount: Number(amount) * 100,
+          amount: Number(amount),
           walletId: params.walletId,
           categoryId: category,
           date,

@@ -75,7 +75,7 @@ export const formatDayTotal = (amount: number, currency: string) => {
   const numberFormat = new Intl.NumberFormat("en-US", {
     currency,
   });
-  let number = numberFormat.format(amount / 100);
+  let number = numberFormat.format(amount);
 
   number = `${number} ${currency}`;
 
@@ -137,7 +137,7 @@ export default function Wallet() {
   const [month, setMonth] = useState(date);
 
   const fetchTransactions = async () => {
-    const transactions = await AxiosClient.post("transactions/filter", {
+    const { data } = await AxiosClient.post("transactions/filter", {
       walletId: params.walletId,
       month,
       ...(categoryId && {
@@ -145,23 +145,7 @@ export default function Wallet() {
       }),
     });
 
-    return {
-      wallet: {
-        ...transactions.data.wallet,
-        amount: transactions.data.wallet.amount / 100,
-      },
-      transactions: transactions.data.transactions.map((transaction: any) => {
-        return {
-          ...transaction,
-          transactions: transaction.transactions.map((tr: any) => {
-            return {
-              ...tr,
-              amount: tr.amount / 100,
-            };
-          }),
-        };
-      }),
-    };
+    return data;
   };
 
   const navigateHandler = (path: string) => nav(path);
