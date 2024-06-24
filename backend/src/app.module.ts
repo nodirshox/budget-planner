@@ -6,8 +6,18 @@ import { WalletsModule } from '@wallets/wallets.module'
 import { CurrencyModule } from '@currency/currency.module'
 import { CategoryModule } from '@category/category.module'
 import { TransactionModule } from '@transaction/transaction.module'
+import { APP_GUARD } from '@nestjs/core'
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler'
 @Module({
   imports: [
+    ThrottlerModule.forRoot({
+      throttlers: [
+        {
+          limit: 100,
+          ttl: 60000,
+        },
+      ],
+    }),
     UsersModule,
     AuthModule,
     CoreModule,
@@ -17,6 +27,11 @@ import { TransactionModule } from '@transaction/transaction.module'
     TransactionModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+  ],
 })
 export class AppModule {}
