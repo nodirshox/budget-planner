@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { CurrencyRepository } from '@currency/currency.repository'
-import { HTTP_MESSAGES } from '@/consts/http-messages'
+import { HTTP_MESSAGES } from '@consts/http-messages'
 
 @Injectable()
 export class CurrencyService {

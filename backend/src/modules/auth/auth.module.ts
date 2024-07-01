@@ -2,11 +2,12 @@ import { Module } from '@nestjs/common'
 import { AuthController } from '@auth/auth.controller'
 import { AuthService } from '@auth/auth.service'
 import { UsersModule } from '@users/users.module'
-import { CoreModule } from '@/core/core.module'
+import { CoreModule } from '@core/core.module'
 import { JwtStrategy } from '@auth/auth.strategy'
 import { JwtModule } from '@nestjs/jwt'
 import { PassportModule } from '@nestjs/passport'
-import { ACCESS_TOKEN_EXPIRATION_TIME } from '@/consts/token'
+import { ACCESS_TOKEN_EXPIRATION_TIME } from '@consts/token'
+import { AuthRepository } from '@auth/auth.repository'
 
 @Module({
   imports: [
@@ -19,6 +20,6 @@ import { ACCESS_TOKEN_EXPIRATION_TIME } from '@/consts/token'
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy],
+  providers: [AuthService, AuthRepository, JwtStrategy],
 })
 export class AuthModule {}

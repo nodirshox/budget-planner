@@ -20,6 +20,8 @@ import DeleteCategory from "./pages/category/DeleteCategory";
 import Overview from "./pages/transaction/Overview";
 import ClickTransactions from "./pages/transaction/ClickTransactions";
 import Password from "./pages/settings/Password";
+import Registration from "./pages/auth/Registration";
+import Verify from "./pages/auth/Verify";
 
 export default function App() {
   return (
@@ -27,6 +29,8 @@ export default function App() {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/logout" element={<Logout />} />
+        <Route path="/registration" element={<Registration />} />
+        <Route path="/verify" element={<Verify />} />
         <Route element={<ProtectRoutes />}>
           <Route path="/" element={<DashboardLayout />}>
             <Route index element={<Home />} />

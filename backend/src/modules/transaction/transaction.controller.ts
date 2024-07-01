@@ -11,7 +11,7 @@ import {
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger'
 import { JwtAuthGuard } from '@auth/jwt-auth.guard'
 import { TransactionService } from '@transaction/transaction.service'
-import { User } from '@/decorators/user.decorator'
+import { User } from '@decorators/user.decorator'
 import { IUser } from '@users/dto/user.interface'
 import {
   CreateTransactionDto,

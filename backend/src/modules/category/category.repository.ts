@@ -1,4 +1,4 @@
-import { PrismaService } from '@/core/prisma/prisma.service'
+import { PrismaService } from '@core/prisma/prisma.service'
 import { Injectable } from '@nestjs/common'
 import { TransactionType } from '@prisma/client'
 import { CreateCategoryDto } from '@category/dto/create-category.dto'

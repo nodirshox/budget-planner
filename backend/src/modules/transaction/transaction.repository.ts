@@ -1,4 +1,4 @@
-import { PrismaService } from '@/core/prisma/prisma.service'
+import { PrismaService } from '@core/prisma/prisma.service'
 import { Injectable } from '@nestjs/common'
 import {
   CreateTransactionDto,
@@ -6,7 +6,7 @@ import {
 } from '@transaction/dto/create-transaction.dto'
 import { Prisma, TransactionType } from '@prisma/client'
 import { FindTransactionsDto } from '@transaction/dto/find-transactions.dto'
-import { UtilsService } from '@/core/utils/utils.service'
+import { UtilsService } from '@core/utils/utils.service'
 
 export type ITransactionWithCategory = Prisma.TransactionGetPayload<{
   select: {

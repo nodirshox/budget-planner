@@ -1,15 +1,23 @@
 import {
   BadRequestException,
   ForbiddenException,
+  HttpException,
+  HttpStatus,
   Injectable,
 } from '@nestjs/common'
 import { LoginDto } from '@auth/dto/login.dto'
 import { JwtService } from '@nestjs/jwt'
-import { PrismaService } from '@/core/prisma/prisma.service'
-import { UtilsService } from '@/core/utils/utils.service'
-import { HTTP_MESSAGES } from '@/consts/http-messages'
-import { REFRESH_TOKEN_EXPIRATION_TIME } from '@/consts/token'
+import { PrismaService } from '@core/prisma/prisma.service'
+import { UtilsService } from '@core/utils/utils.service'
+import { HTTP_MESSAGES } from '@consts/http-messages'
+import { REFRESH_TOKEN_EXPIRATION_TIME } from '@consts/token'
 import { ReshreshTokenDto } from '@auth/dto/refresh.dto'
+import {
+  RegistrationDto,
+  VerifyRegistrationOtp,
+} from '@auth/dto/registration.dto'
+import { AuthRepository } from '@auth/auth.repository'
+import { EmailService } from '@core/email/email.service'
 
 @Injectable()
 export class AuthService {
@@ -17,6 +25,8 @@ export class AuthService {
     private readonly utils: UtilsService,
     private readonly jwtService: JwtService,
     private readonly prisma: PrismaService,
+    private readonly repository: AuthRepository,
+    private readonly emailService: EmailService,
   ) {}
 
   async login(body: LoginDto) {
@@ -35,19 +45,23 @@ export class AuthService {
 
     const payload = { id: user.id, email: user.email }
 
+    return {
+      user,
+      token: this.generateTokens(payload),
+    }
+  }
+
+  private generateTokens(payload: { id: string; email: string }): {
+    access: string
+    refresh: string
+  } {
     const access = this.jwtService.sign(payload)
 
     const refresh = this.jwtService.sign(payload, {
       expiresIn: REFRESH_TOKEN_EXPIRATION_TIME,
     })
 
-    return {
-      user,
-      token: {
-        access,
-        refresh,
-      },
-    }
+    return { access, refresh }
   }
 
   async refreshToken(body: ReshreshTokenDto) {
@@ -70,16 +84,96 @@ export class AuthService {
 
       const payload = { id: user.id, email: user.email }
 
-      const access = this.jwtService.sign(payload)
-      const refresh = this.jwtService.sign(payload, {
-        expiresIn: REFRESH_TOKEN_EXPIRATION_TIME,
-      })
-
       return {
-        token: { access, refresh },
+        token: this.generateTokens(payload),
       }
     } catch (error) {
       throw new ForbiddenException(error.message)
+    }
+  }
+
+  async registration({
+    firstName,
+    lastName,
+    email,
+    password,
+  }: RegistrationDto): Promise<{ token: string }> {
+    const existingUser = await this.repository.getUserByEmail(email)
+
+    if (existingUser) {
+      throw new BadRequestException(HTTP_MESSAGES.USER_EXISTS)
+    }
+
+    const otp = this.utils.generateOtp()
+
+    await this.emailService.sendRegistrationOtp(email, otp)
+
+    const result = await this.prisma.verificationCodes.upsert({
+      where: { email },
+      update: {
+        firstName,
+        lastName,
+        otp,
+        password: await this.utils.generateBcrypt(password),
+        createdAt: new Date(),
+      },
+      create: {
+        firstName,
+        lastName,
+        otp,
+        email,
+        password: await this.utils.generateBcrypt(password),
+      },
+    })
+
+    return { token: result.id }
+  }
+
+  async verifyRegistrationOtp(body: VerifyRegistrationOtp) {
+    try {
+      const verificationCode = await this.prisma.verificationCodes.findUnique({
+        where: {
+          id: body.token,
+        },
+      })
+
+      if (!verificationCode) throw new Error('Incorrect OTP')
+
+      if (this.utils.isOtpExpired(verificationCode.createdAt)) {
+        await this.prisma.verificationCodes.delete({
+          where: { id: body.token },
+        })
+        throw new Error('OTP is expired')
+      }
+
+      if (body.otp !== verificationCode.otp) {
+        throw new Error('Incorrect OTP')
+      }
+
+      const deleteVerificationCode = this.prisma.verificationCodes.delete({
+        where: { id: verificationCode.id },
+      })
+      const createUser = this.prisma.user.create({
+        data: {
+          firstName: verificationCode.firstName,
+          lastName: verificationCode.lastName,
+          email: verificationCode.email,
+          password: verificationCode.password,
+        },
+      })
+      const result = await this.prisma.$transaction([
+        deleteVerificationCode,
+        createUser,
+      ])
+      const user = result[1]
+      delete user.password
+
+      return {
+        user,
+        token: this.generateTokens({ id: user.id, email: user.email }),
+      }
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST)
     }
   }
 }

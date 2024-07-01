@@ -33,6 +33,10 @@ services:
       - DEVICE_ID=${DEVICE_ID}
       - PASSWORD=${PASSWORD}
       - ACCOUNT_ID=${ACCOUNT_ID}
+      - EMAIL_HOST=${EMAIL_HOST}
+      - EMAIL_USER=${EMAIL_USER}
+      - EMAIL_FROM=${EMAIL_FROM}
+      - EMAIL_PASSWORD=${EMAIL_PASSWORD}
     ports:
       - "2001:4000"
     labels:

@@ -7,15 +7,13 @@ import {
 import { WalletsService } from '@wallets/wallets.service'
 import { CategoryService } from '@category/category.service'
 import { FindTransactionsDto } from '@transaction/dto/find-transactions.dto'
-import { UtilsService } from '@/core/utils/utils.service'
-import { HTTP_MESSAGES } from '@/consts/http-messages'
+import { UtilsService } from '@core/utils/utils.service'
+import { HTTP_MESSAGES } from '@consts/http-messages'
 import axios from 'axios'
 import { v4 as uuidv4 } from 'uuid'
-import { createReadStream } from 'fs'
-import * as csv from 'csv-parser'
 import { TransactionType } from '@prisma/client'
 import { FilterClickTransactionDto } from '@transaction/dto/filter-click-transactions.dto'
-import { superUserId } from '@/consts/super-user-id'
+import { superUserId } from '@consts/super-user-id'
 
 @Injectable()
 export class TransactionService implements OnModuleInit {
@@ -112,6 +110,8 @@ export class TransactionService implements OnModuleInit {
     const userId = 'uuid'
     const walletId = 'uuid'
     /*
+    import { createReadStream } from 'fs'
+    import * as csv from 'csv-parser'
     createReadStream(csvFilePath)
       .pipe(csv())
       .on('data', async (row) => {

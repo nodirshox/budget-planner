@@ -5,6 +5,7 @@ import { PASSWORD_SALT } from '../src/consts/password-salt'
 const prisma = new PrismaClient()
 
 async function main() {
+  /*
   const user = await prisma.user.create({
     data: {
       firstName: 'John',
@@ -38,8 +39,7 @@ async function main() {
       },
     ],
   })
-
-  /*
+  */
   await prisma.currency.createMany({
     data: [
       {
@@ -50,7 +50,6 @@ async function main() {
       },
     ],
   })
-  */
 }
 main()
   .then(async () => {

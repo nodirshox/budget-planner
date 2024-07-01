@@ -9,10 +9,10 @@ datasource db {
 
 model User {
   id        String   @id @default(uuid())
-  firstName String   @map("first_name") @db.VarChar(100)
-  lastName  String   @map("last_name") @db.VarChar(100)
-  email     String   @unique @db.VarChar(150)
-  password  String   @db.VarChar(100)
+  firstName String   @map("first_name")
+  lastName  String   @map("last_name")
+  email     String   @unique
+  password  String
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
@@ -24,7 +24,7 @@ model User {
 
 model Wallet {
   id        String   @id @default(uuid())
-  name      String   @db.VarChar(100)
+  name      String
   amount    Int      @default(0)
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -54,7 +54,7 @@ model Transaction {
   amount    Int
   type      TransactionType
   date      DateTime
-  notes     String          @default("") @db.VarChar(100)
+  notes     String          @default("")
   createdAt DateTime        @default(now()) @map("created_at")
   updatedAt DateTime        @updatedAt @map("updated_at")
 
@@ -84,4 +84,16 @@ model Category {
 enum TransactionType {
   EXPENSE
   INCOME
+}
+
+model VerificationCodes {
+  id        String   @id @default(uuid())
+  firstName String   @map("first_name")
+  lastName  String   @map("last_name")
+  email     String   @unique
+  otp       String
+  password  String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("verification_codes")
 }

@@ -15,7 +15,7 @@ import {
   UpdateWalletDto,
 } from '@wallets/dto/create-wallet.dto'
 import { JwtAuthGuard } from '@auth/jwt-auth.guard'
-import { User } from '@/decorators/user.decorator'
+import { User } from '@decorators/user.decorator'
 import { IUser } from '@users/dto/user.interface'
 import { WalletOverviewDto } from '@wallets/dto/wallet-overview.dto'
 

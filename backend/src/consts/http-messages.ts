@@ -6,6 +6,7 @@ export const HTTP_MESSAGES = {
   // User
   USER_NOT_FOUND: 'User not found',
   PASSWORD_UPDATED: 'Password is updated',
+  USER_EXISTS: 'User exists with this email',
 
   // Currency
   CURRENCY_NOT_FOUND: 'Currency not found',

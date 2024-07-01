@@ -1,4 +1,4 @@
-import { MAXIMUM_PASSWORD, MINIMUM_PASSWORD } from '@/consts/password-salt'
+import { MAXIMUM_PASSWORD, MINIMUM_PASSWORD } from '@consts/password-salt'
 import { ApiProperty } from '@nestjs/swagger'
 import { IsNotEmpty, IsString, MaxLength, MinLength } from 'class-validator'
 

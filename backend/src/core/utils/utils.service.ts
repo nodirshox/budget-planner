@@ -1,8 +1,9 @@
 import * as bcrypt from 'bcrypt'
 import { Injectable } from '@nestjs/common'
-import { PASSWORD_SALT } from '@/consts/password-salt'
+import { PASSWORD_SALT } from '@consts/password-salt'
 import { TransactionType } from '@prisma/client'
 import { ITransactionWithCategory } from '@transaction/transaction.repository'
+import { OTP_VALID_DURATION_MINUTES } from '@consts/token'
 
 @Injectable()
 export class UtilsService {
@@ -67,5 +68,20 @@ export class UtilsService {
 
   divideToOneHundred(num: number) {
     return num / 100
+  }
+
+  generateOtp(): string {
+    let otp = ''
+    for (let i = 0; i < 6; i++) {
+      otp += Math.floor(Math.random() * 100) % 10
+    }
+    return otp
+  }
+
+  isOtpExpired(createdAt: Date): boolean {
+    return (
+      (new Date().getTime() - createdAt.getTime()) / (60 * 1000) >
+      OTP_VALID_DURATION_MINUTES
+    )
   }
 }

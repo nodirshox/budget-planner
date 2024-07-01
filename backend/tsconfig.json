@@ -19,7 +19,8 @@
       "@users/*": ["./modules/users/*"],
       "@wallets/*": ["./modules/wallets/*"],
       "@core/*": ["./core/*"],
-      "@consts/*": ["./consts/*"]
+      "@consts/*": ["./consts/*"],
+      "@decorators/*": ["./decorators/*"]
     },
     "incremental": true,
     "skipLibCheck": true,

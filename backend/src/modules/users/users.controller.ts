@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common'
 import { JwtAuthGuard } from '@auth/jwt-auth.guard'
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger'
-import { User } from '@/decorators/user.decorator'
+import { User } from '@decorators/user.decorator'
 import { IUser } from '@users/dto/user.interface'
 import { UsersService } from '@users/users.service'
 import { SetPasswordDto } from '@users/dto/password.dto'

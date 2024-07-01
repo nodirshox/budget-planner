@@ -11,7 +11,7 @@ import {
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger'
 import { CategoryService } from '@category/category.service'
 import { JwtAuthGuard } from '@auth/jwt-auth.guard'
-import { User } from '@/decorators/user.decorator'
+import { User } from '@decorators/user.decorator'
 import { IUser } from '@users/dto/user.interface'
 import { CreateCategoryDto } from '@category/dto/create-category.dto'
 import { UpdateCategoryDto } from '@category/dto/update-category.dto'

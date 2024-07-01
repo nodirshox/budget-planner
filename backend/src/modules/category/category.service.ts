@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { CategoryRepository } from '@category/category.repository'
-import { HTTP_MESSAGES } from '@/consts/http-messages'
+import { HTTP_MESSAGES } from '@consts/http-messages'
 import { TransactionType } from '@prisma/client'
 import { CreateCategoryDto } from '@category/dto/create-category.dto'
 import { UpdateCategoryDto } from '@category/dto/update-category.dto'
