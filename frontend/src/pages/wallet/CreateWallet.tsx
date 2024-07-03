@@ -40,6 +40,9 @@ export default function CreateWallet() {
     formState: { errors },
   } = useForm({
     resolver: yupResolver(validationSchema),
+    defaultValues: {
+      title: "My Main Wallet",
+    },
   });
 
   const backHandler = () => navigate("/settings");

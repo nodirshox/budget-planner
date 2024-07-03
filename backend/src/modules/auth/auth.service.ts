@@ -18,6 +18,7 @@ import {
 } from '@auth/dto/registration.dto'
 import { AuthRepository } from '@auth/auth.repository'
 import { EmailService } from '@core/email/email.service'
+import { USER_CATEGORIES } from '@consts/transaction-category'
 
 @Injectable()
 export class AuthService {
@@ -159,6 +160,11 @@ export class AuthService {
           lastName: verificationCode.lastName,
           email: verificationCode.email,
           password: verificationCode.password,
+          categories: {
+            createMany: {
+              data: USER_CATEGORIES,
+            },
+          },
         },
       })
       const result = await this.prisma.$transaction([
