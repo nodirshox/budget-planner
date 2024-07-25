@@ -22,6 +22,7 @@ import ClickTransactions from "./pages/transaction/ClickTransactions";
 import Password from "./pages/settings/Password";
 import Registration from "./pages/auth/Registration";
 import Verify from "./pages/auth/Verify";
+import LandingPage from "./pages/landing/LandingPage";
 
 export default function App() {
   return (
@@ -31,8 +32,9 @@ export default function App() {
         <Route path="/logout" element={<Logout />} />
         <Route path="/registration" element={<Registration />} />
         <Route path="/verify" element={<Verify />} />
+        <Route path="/" element={<LandingPage />} />
         <Route element={<ProtectRoutes />}>
-          <Route path="/" element={<DashboardLayout />}>
+          <Route path="/home" element={<DashboardLayout />}>
             <Route index element={<Home />} />
           </Route>
           <Route path="/settings" element={<DashboardLayout />}>

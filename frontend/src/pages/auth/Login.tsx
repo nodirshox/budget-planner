@@ -91,7 +91,7 @@ export default function Login() {
       });
       localStorage.setItem("token", data.token.access);
       localStorage.setItem("refresh", data.token.refresh);
-      navigate("/");
+      navigate("/home");
     } catch (error) {
       const axiosError = error as AxiosError;
       setSendRequest(false);
@@ -136,7 +136,7 @@ export default function Login() {
           </Avatar>
 
           <Typography component="h1" variant="h5">
-            Budget Planner
+            BudgetMate
           </Typography>
           <Box
             component="form"

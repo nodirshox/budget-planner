@@ -1,0 +1,87 @@
+/* style.css */
+body {
+  font-family: sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #121212; /* Dark background for the body */
+  color: #E0E0E0; /* Light grey text for better readability on dark background */
+}
+
+a {
+  text-decoration: none;
+}
+
+header {
+  background-color: #333333; /* Dark grey background for the header */
+  padding: 20px;
+  text-align: center;
+}
+
+header h1, header p {
+  color: #FFFFFF; /* White text for header */
+}
+
+.btn {
+  background-color: #6200EE; /* Deep purple background for buttons */
+  color: #FFFFFF;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.screenshots {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center; /* Centers screenshots in the container */
+  padding: 20px;
+  background-color: #222222; /* Slightly lighter dark shade for the screenshot section background */
+}
+
+.screenshots h2 {
+  color: #FFFFFF;
+  width: 100%; /* Ensures the title spans the full width */
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.screenshot {
+  flex: 1 1 250px; /* Allows flex items to grow and shrink but not smaller than 250px */
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Aligns items centrally within each .screenshot div */
+  margin: 10px;
+  background-color: #333333; /* Dark grey background for individual screenshot */
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.screenshot img {
+  width: 100%; /* Adjusts image width to be fully responsive within its container */
+  height: auto;
+  object-fit: cover;
+}
+
+.screenshot p {
+  font-size: 0.8em;
+  margin-top: 5px;
+  color: #E0E0E0; /* Light grey text for description */
+}
+
+footer {
+  padding: 10px;
+  text-align: center;
+  background-color: #222222;
+  color: #E0E0E0;
+}
+
+/* Media Queries for Responsive Design */
+@media only screen and (max-width: 600px) {
+  .screenshots {
+    flex-direction: column; /* Stacks screenshots vertically on smaller screens */
+  }
+
+  .screenshot {
+    flex-basis: 100%; /* Ensures each screenshot takes full width of the container */
+  }
+}

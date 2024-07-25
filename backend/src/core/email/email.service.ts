@@ -18,7 +18,7 @@ export class EmailService {
     return this.transporter.sendMail({
       from: process.env.EMAIL_FROM,
       to: email,
-      subject: 'Budget Planner',
+      subject: 'BudgetMate',
       html: `<body><p>Your OTP: <b>${otp}</b></p><p>It expires in ${OTP_VALID_DURATION_MINUTES} minutes.</p></body>`,
     })
   }

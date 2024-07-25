@@ -12,7 +12,7 @@ export default function Logout() {
     const logoutDelay = setTimeout(() => {
       localStorage.removeItem("token");
       setIsLoggingOut(false);
-      navigate("/login");
+      navigate("/");
     }, 500);
 
     return () => clearTimeout(logoutDelay);

@@ -25,7 +25,7 @@ export default function DeleteWallet() {
   const deleteHandler = async () => {
     try {
       await AxiosClient.delete(`/wallets/${params.walletId}`);
-      nav("/");
+      nav("/home");
     } catch (error) {
       const axiosError = error as AxiosError;
       setSendRequest(false);

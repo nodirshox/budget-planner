@@ -72,7 +72,7 @@ export default function Verify() {
       });
       localStorage.setItem("token", data.token.access);
       localStorage.setItem("refresh", data.token.refresh);
-      navigate("/");
+      navigate("/home");
     } catch (error) {
       const axiosError = error as AxiosError;
       setSendRequest(false);

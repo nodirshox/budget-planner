@@ -150,7 +150,7 @@ export default function Wallet() {
 
   const navigateHandler = (path: string) => nav(path);
   const editHandler = () => nav(`/wallets/${params.walletId}/edit`);
-  const backHandler = () => nav(`/`);
+  const backHandler = () => nav(`/home`);
   const overviewHandler = () => {
     const day = "01";
     const monthDate = `${month.getMonth() + 1}`.padStart(2, "0");

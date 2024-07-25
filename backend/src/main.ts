@@ -16,7 +16,7 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
     .addBearerAuth()
-    .setTitle('Budget planner API')
+    .setTitle('BudgetMate API')
     .setVersion('1.0')
     .build()
   const document = SwaggerModule.createDocument(app, config)

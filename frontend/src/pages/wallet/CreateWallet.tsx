@@ -53,7 +53,7 @@ export default function CreateWallet() {
         name: data.title,
         currencyId: currency,
       });
-      navigate("/");
+      navigate("/home");
     } catch (error) {
       const axiosError = error as AxiosError;
       setSendRequest(false);

@@ -27,7 +27,7 @@ export default function Settings() {
           <div>
             <Button
               variant="outlined"
-              onClick={() => logoutHandler("/")}
+              onClick={() => logoutHandler("/home")}
               size="small"
               sx={{ p: 1 }}
             >
