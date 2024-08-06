@@ -4,7 +4,7 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger'
 import { User } from '@decorators/user.decorator'
 import { IUser } from '@users/dto/user.interface'
 import { UsersService } from '@users/users.service'
-import { SetPasswordDto } from '@users/dto/password.dto'
+import { SetNewPasswordDto, SetPasswordDto } from '@users/dto/password.dto'
 
 @ApiTags('User')
 @ApiBearerAuth()
@@ -23,5 +23,11 @@ export class UsersController {
   @ApiOperation({ summary: 'Set new password' })
   setPassword(@User() user: IUser, @Body() body: SetPasswordDto) {
     return this.service.setPassword(user.id, body)
+  }
+
+  @Post('new-password')
+  @ApiOperation({ summary: 'Set new password without old password' })
+  setNewPassword(@User() user: IUser, @Body() body: SetNewPasswordDto) {
+    return this.service.setNewPassword(user.id, body)
   }
 }

@@ -36,3 +36,20 @@ export class VerifyRegistrationOtp {
   @ApiProperty({ description: 'OTP', example: '123456' })
   otp: string
 }
+
+export class RestoreAccountDto {
+  @IsEmail()
+  @ApiProperty({ required: true, example: 'user@mail.com' })
+  email: string
+}
+
+export class RestoreAccountVerifyDto {
+  @IsEmail()
+  @ApiProperty({ required: true, example: 'user@mail.com' })
+  email: string
+
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty({ description: 'OTP', example: '123456' })
+  otp: string
+}

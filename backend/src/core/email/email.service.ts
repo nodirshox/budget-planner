@@ -22,4 +22,13 @@ export class EmailService {
       html: `<body><p>Your OTP: <b>${otp}</b></p><p>It expires in ${OTP_VALID_DURATION_MINUTES} minutes.</p></body>`,
     })
   }
+
+  sendRestoreAccountOtp = async (email: string, otp: string) => {
+    return this.transporter.sendMail({
+      from: process.env.EMAIL_FROM,
+      to: email,
+      subject: 'BudgetMate',
+      html: `<body><p>Your OTP: <b>${otp}</b></p><p>It expires in ${OTP_VALID_DURATION_MINUTES} minutes.</p></body>`,
+    })
+  }
 }

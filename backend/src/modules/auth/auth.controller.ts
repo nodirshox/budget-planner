@@ -5,6 +5,8 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger'
 import { ReshreshTokenDto } from '@auth/dto/refresh.dto'
 import {
   RegistrationDto,
+  RestoreAccountDto,
+  RestoreAccountVerifyDto,
   VerifyRegistrationOtp,
 } from '@auth/dto/registration.dto'
 
@@ -35,5 +37,17 @@ export class AuthController {
   @ApiOperation({ summary: '2-step: Verify registration OTP' })
   verifyRegistrationOtp(@Body() body: VerifyRegistrationOtp) {
     return this.service.verifyRegistrationOtp(body)
+  }
+
+  @Post('restore')
+  @ApiOperation({ summary: 'Restore account' })
+  restoreAccount(@Body() body: RestoreAccountDto) {
+    return this.service.restoreAccount(body)
+  }
+
+  @Post('restore/verify')
+  @ApiOperation({ summary: 'Restore account verify' })
+  restoreAccountVerify(@Body() body: RestoreAccountVerifyDto) {
+    return this.service.restoreAccountVerify(body)
   }
 }

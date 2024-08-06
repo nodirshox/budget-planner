@@ -13,65 +13,46 @@ import {
   Link,
 } from "@mui/material";
 import AxiosClient, { AxiosError } from "../../utils/axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import LoadingBar from "../../components/loading/LoadingBar";
 import HttpErrorNotification from "../../components/notifications/HttpErrorNotification";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 
 const theme = createTheme();
 
-export default function Login() {
+export default function RestoreAccountVerify() {
+  const [searchParams] = useSearchParams();
+  const [email] = useState(searchParams.get("email"));
+
   const navigate = useNavigate();
-  const [email, setEmail] = useState({
+  const [otp, setOtp] = useState({
     value: "",
     error: false,
     message: "",
   });
-  const [password, setPassword] = useState({
-    value: "",
-    error: false,
-    message: "",
-  });
+
   const [alert, setAlert] = useState({ state: false, message: "" });
   const [sendRequest, setSendRequest] = useState(false);
 
   const validateFields = () => {
     let isValid = true;
 
-    if (!email.value) {
-      setEmail((prev) => ({
+    if (!otp.value) {
+      setOtp((prev) => ({
         ...prev,
         error: true,
-        message: "Email is required",
+        message: "Verification code is required",
       }));
       isValid = false;
-    } else if (!/\S+@\S+\.\S+/.test(email.value)) {
-      setEmail((prev) => ({
+    } else if (otp.value.length < 6) {
+      setOtp((prev) => ({
         ...prev,
         error: true,
-        message: "Invalid email format",
-      }));
-      isValid = false;
-    } else {
-      setEmail((prev) => ({ ...prev, error: false, message: "" }));
-    }
-
-    if (!password.value) {
-      setPassword((prev) => ({
-        ...prev,
-        error: true,
-        message: "Password is required",
-      }));
-      isValid = false;
-    } else if (password.value.length < 6) {
-      setPassword((prev) => ({
-        ...prev,
-        error: true,
-        message: "Password must be at least 6 characters long",
+        message: "Verification must be at least 6 digits",
       }));
       isValid = false;
     } else {
-      setPassword((prev) => ({ ...prev, error: false, message: "" }));
+      setOtp((prev) => ({ ...prev, error: false, message: "" }));
     }
 
     return !isValid;
@@ -85,13 +66,13 @@ export default function Login() {
     setSendRequest(true);
 
     try {
-      const { data } = await AxiosClient.post("/auth/login", {
-        email: email.value,
-        password: password.value,
+      const { data } = await AxiosClient.post("/auth/restore/verify", {
+        otp: otp.value,
+        email,
       });
       localStorage.setItem("token", data.token.access);
       localStorage.setItem("refresh", data.token.refresh);
-      navigate("/home");
+      navigate("/settings/set-password");
     } catch (error) {
       const axiosError = error as AxiosError;
       setSendRequest(false);
@@ -136,7 +117,7 @@ export default function Login() {
           </Avatar>
 
           <Typography component="h1" variant="h5">
-            BudgetMate
+            Verify
           </Typography>
           <Box
             component="form"
@@ -147,33 +128,16 @@ export default function Login() {
             <TextField
               margin="normal"
               fullWidth
-              id="email"
-              label="Email"
-              name="email"
-              autoComplete="email"
-              onChange={(e) => setEmail({ ...email, value: e.target.value })}
-              value={email.value}
+              id="otp"
+              type="number"
+              label="Verification code"
+              name="otp"
+              onChange={(e) => setOtp({ ...otp, value: e.target.value })}
+              value={otp.value}
               required={true}
-              helperText={email.message}
-              error={email.error}
+              helperText={otp.message}
+              error={otp.error}
               autoFocus
-              InputLabelProps={{ shrink: true }}
-            />
-            <TextField
-              margin="normal"
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-              onChange={(e) =>
-                setPassword({ ...password, value: e.target.value })
-              }
-              value={password.value}
-              required={true}
-              helperText={password.message}
-              error={password.error}
               InputLabelProps={{ shrink: true }}
             />
             <Button
@@ -182,26 +146,17 @@ export default function Login() {
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              Sign in
+              Verify
             </Button>
 
             <Grid container>
               <Grid item xs>
                 <Link
-                  href="restore"
+                  href="/login"
                   variant="body2"
                   sx={{ textDecoration: "none" }}
                 >
-                  Forgot password?
-                </Link>
-              </Grid>
-              <Grid item>
-                <Link
-                  href="registration"
-                  variant="body2"
-                  sx={{ textDecoration: "none" }}
-                >
-                  {"Don't have an account? Sign Up"}
+                  Back to login page
                 </Link>
               </Grid>
             </Grid>

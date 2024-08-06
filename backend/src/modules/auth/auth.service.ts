@@ -14,6 +14,8 @@ import { REFRESH_TOKEN_EXPIRATION_TIME } from '@consts/token'
 import { ReshreshTokenDto } from '@auth/dto/refresh.dto'
 import {
   RegistrationDto,
+  RestoreAccountDto,
+  RestoreAccountVerifyDto,
   VerifyRegistrationOtp,
 } from '@auth/dto/registration.dto'
 import { AuthRepository } from '@auth/auth.repository'
@@ -173,6 +175,72 @@ export class AuthService {
       ])
       const user = result[1]
       delete user.password
+
+      return {
+        user,
+        token: this.generateTokens({ id: user.id, email: user.email }),
+      }
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST)
+    }
+  }
+
+  async restoreAccount(body: RestoreAccountDto) {
+    const user = await this.prisma.user.findUnique({
+      where: { email: body.email },
+    })
+    if (!user) throw new BadRequestException(HTTP_MESSAGES.USER_NOT_FOUND)
+
+    const otp = this.utils.generateOtp()
+
+    await this.prisma.restoreCodes.upsert({
+      where: { email: user.email },
+      update: {
+        otp,
+        createdAt: new Date(),
+      },
+      create: {
+        otp,
+        email: user.email,
+      },
+    })
+
+    await this.emailService.sendRestoreAccountOtp(user.email, otp)
+
+    return { message: 'Restore password sent' }
+  }
+
+  async restoreAccountVerify(body: RestoreAccountVerifyDto) {
+    try {
+      const { email } = body
+      const existingCode = await this.prisma.restoreCodes.findUnique({
+        where: { email },
+      })
+
+      if (!existingCode) {
+        throw new Error('OTP expired or not found')
+      }
+
+      if (this.utils.isOtpExpired(existingCode.createdAt)) {
+        await this.prisma.restoreCodes.delete({
+          where: { email },
+        })
+        throw new Error('OTP is expired')
+      }
+
+      if (body.otp !== existingCode.otp) {
+        throw new Error('Incorrect OTP')
+      }
+
+      const user = await this.repository.getUserByEmail(email)
+
+      if (!user) {
+        throw new Error('User not found')
+      }
+
+      await this.prisma.restoreCodes.delete({
+        where: { email },
+      })
 
       return {
         user,

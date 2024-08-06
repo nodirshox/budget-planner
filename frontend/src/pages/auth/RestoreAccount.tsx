@@ -20,18 +20,14 @@ import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 
 const theme = createTheme();
 
-export default function Login() {
+export default function RestoreAccount() {
   const navigate = useNavigate();
   const [email, setEmail] = useState({
     value: "",
     error: false,
     message: "",
   });
-  const [password, setPassword] = useState({
-    value: "",
-    error: false,
-    message: "",
-  });
+
   const [alert, setAlert] = useState({ state: false, message: "" });
   const [sendRequest, setSendRequest] = useState(false);
 
@@ -56,24 +52,6 @@ export default function Login() {
       setEmail((prev) => ({ ...prev, error: false, message: "" }));
     }
 
-    if (!password.value) {
-      setPassword((prev) => ({
-        ...prev,
-        error: true,
-        message: "Password is required",
-      }));
-      isValid = false;
-    } else if (password.value.length < 6) {
-      setPassword((prev) => ({
-        ...prev,
-        error: true,
-        message: "Password must be at least 6 characters long",
-      }));
-      isValid = false;
-    } else {
-      setPassword((prev) => ({ ...prev, error: false, message: "" }));
-    }
-
     return !isValid;
   };
 
@@ -85,13 +63,10 @@ export default function Login() {
     setSendRequest(true);
 
     try {
-      const { data } = await AxiosClient.post("/auth/login", {
+      await AxiosClient.post("/auth/restore", {
         email: email.value,
-        password: password.value,
       });
-      localStorage.setItem("token", data.token.access);
-      localStorage.setItem("refresh", data.token.refresh);
-      navigate("/home");
+      navigate(`/restore/verify?email=${email.value}`);
     } catch (error) {
       const axiosError = error as AxiosError;
       setSendRequest(false);
@@ -100,12 +75,8 @@ export default function Login() {
         axiosError.message ||
         "Unknown error";
 
-      if (
-        ["Wrong password", "User not found"].some((e) =>
-          errorMessage.includes(e)
-        )
-      ) {
-        setAlert({ state: true, message: "Email or password is incorrect" });
+      if (["User not found"].some((e) => errorMessage.includes(e))) {
+        setAlert({ state: true, message: "Account not found" });
       } else {
         setAlert({ state: true, message: errorMessage });
       }
@@ -136,7 +107,7 @@ export default function Login() {
           </Avatar>
 
           <Typography component="h1" variant="h5">
-            BudgetMate
+            Restore account
           </Typography>
           <Box
             component="form"
@@ -148,9 +119,9 @@ export default function Login() {
               margin="normal"
               fullWidth
               id="email"
+              type="text"
               label="Email"
               name="email"
-              autoComplete="email"
               onChange={(e) => setEmail({ ...email, value: e.target.value })}
               value={email.value}
               required={true}
@@ -159,49 +130,23 @@ export default function Login() {
               autoFocus
               InputLabelProps={{ shrink: true }}
             />
-            <TextField
-              margin="normal"
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-              onChange={(e) =>
-                setPassword({ ...password, value: e.target.value })
-              }
-              value={password.value}
-              required={true}
-              helperText={password.message}
-              error={password.error}
-              InputLabelProps={{ shrink: true }}
-            />
             <Button
               type="submit"
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              Sign in
+              Reset password
             </Button>
 
             <Grid container>
               <Grid item xs>
                 <Link
-                  href="restore"
+                  href="login"
                   variant="body2"
                   sx={{ textDecoration: "none" }}
                 >
-                  Forgot password?
-                </Link>
-              </Grid>
-              <Grid item>
-                <Link
-                  href="registration"
-                  variant="body2"
-                  sx={{ textDecoration: "none" }}
-                >
-                  {"Don't have an account? Sign Up"}
+                  Back to login page
                 </Link>
               </Grid>
             </Grid>

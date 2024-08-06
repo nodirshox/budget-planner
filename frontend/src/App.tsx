@@ -23,6 +23,9 @@ import Password from "./pages/settings/Password";
 import Registration from "./pages/auth/Registration";
 import Verify from "./pages/auth/Verify";
 import LandingPage from "./pages/landing/LandingPage";
+import RestoreAccount from "./pages/auth/RestoreAccount";
+import RestoreAccountVerify from "./pages/auth/RestoreAccountVerify";
+import RestoreAccountSetPassword from "./pages/auth/RestoreAccountSetPassword";
 
 export default function App() {
   return (
@@ -32,6 +35,8 @@ export default function App() {
         <Route path="/logout" element={<Logout />} />
         <Route path="/registration" element={<Registration />} />
         <Route path="/verify" element={<Verify />} />
+        <Route path="/restore" element={<RestoreAccount />} />
+        <Route path="/restore/verify" element={<RestoreAccountVerify />} />
         <Route path="/" element={<LandingPage />} />
         <Route element={<ProtectRoutes />}>
           <Route path="/home" element={<DashboardLayout />}>
@@ -40,6 +45,10 @@ export default function App() {
           <Route path="/settings" element={<DashboardLayout />}>
             <Route index element={<Settings />} />
             <Route path="password" element={<Password />} />
+            <Route
+              path="set-password"
+              element={<RestoreAccountSetPassword />}
+            />
           </Route>
           <Route path="/wallets" element={<DashboardLayout />}>
             <Route path="create" element={<CreateWallet />} />

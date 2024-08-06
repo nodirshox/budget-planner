@@ -97,3 +97,12 @@ model VerificationCodes {
 
   @@map("verification_codes")
 }
+
+model RestoreCodes {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  otp       String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("restore_codes")
+}

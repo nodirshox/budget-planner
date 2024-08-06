@@ -111,11 +111,6 @@ export default function Registration() {
 
     setSendRequest(true);
 
-    console.log("firstName", firstName.value);
-    console.log("lastName", lastName.value);
-    console.log("email", email.value);
-    console.log("password", password.value);
-
     try {
       const { data } = await AxiosClient.post("/auth/registration", {
         firstName: firstName.value,
