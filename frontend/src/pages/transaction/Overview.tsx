@@ -139,7 +139,9 @@ export default function Overview() {
             <Button
               variant="outlined"
               onClick={() =>
-                navigationHandler(`/wallets/${params.walletId}?month=${month}`)
+                navigationHandler(
+                  `/wallets/${params.walletId}?month=${formatMonth(month)}`
+                )
               }
               size="small"
               sx={{ p: 1 }}
