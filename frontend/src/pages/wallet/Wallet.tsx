@@ -10,6 +10,7 @@ import {
   ListItemSecondaryAction,
   Divider,
   Paper,
+  Fab,
 } from "@mui/material";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import AxiosClient from "../../utils/axios";
@@ -25,6 +26,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import HomeIcon from "@mui/icons-material/Home";
 import DonutSmallIcon from "@mui/icons-material/DonutSmall";
 import { superUserId } from "../../utils/super-user";
+import AutoGraphIcon from "@mui/icons-material/AutoGraph";
 
 interface ITransaction {
   day: Date;
@@ -292,24 +294,11 @@ export default function Wallet() {
           </div>
         </Grid>
 
-        <Grid
-          container
-          item
-          xs={12}
-          justifyContent="space-between"
-          alignItems="center"
-        >
+        <Grid container item xs={12} alignItems="center">
           {formatwalletAmount()}
-          <div>
-            <Button
-              variant="contained"
-              size="small"
-              sx={{ mr: 1, p: 1 }}
-              onClick={addTransactionHandler}
-            >
-              <AddIcon />
-            </Button>
-          </div>
+          <Button sx={{ mr: 0, p: 0 }} onClick={overviewHandler}>
+            <AutoGraphIcon />
+          </Button>
         </Grid>
         <Grid item xs={12}>
           <input
@@ -320,25 +309,7 @@ export default function Wallet() {
             max={formatMonth(new Date())}
           />
         </Grid>
-        <Grid
-          item
-          xs={12}
-          justifyContent="center"
-          alignItems="center"
-          container
-        >
-          <Button
-            variant="text"
-            size="small"
-            sx={{ mt: 1 }}
-            onClick={overviewHandler}
-            startIcon={<DonutSmallIcon />}
-          >
-            Overview
-          </Button>
-        </Grid>
         <Grid item xs={12}>
-          <Divider />
           <List sx={{ maxHeight: maxHeight, overflowY: "auto" }} ref={listRef}>
             {transactions.map((group, groupIndex) => (
               <li key={`section-${groupIndex}`}>
@@ -402,6 +373,19 @@ export default function Wallet() {
           {sendRequest && <LoadingBar />}
         </Grid>
       </Grid>
+
+      <Fab
+        color="primary"
+        aria-label="add"
+        onClick={addTransactionHandler}
+        sx={{
+          position: "fixed",
+          bottom: 16,
+          right: 16,
+        }}
+      >
+        <AddIcon />
+      </Fab>
     </Paper>
   );
 }
