@@ -13,7 +13,7 @@ import {
 import React, { useState, useRef, useEffect } from "react";
 import LoadingBar from "../../components/loading/LoadingBar";
 import HttpErrorNotification from "../../components/notifications/HttpErrorNotification";
-import { formatMonth, formatAmount } from "../wallet/Wallet";
+import { formatAmount } from "../wallet/Wallet";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import { useNavigate, useParams } from "react-router-dom";
 import PaidIcon from "@mui/icons-material/Paid";
@@ -21,6 +21,7 @@ import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import ErrorMessage from "../../utils/error-message";
 import AxiosClient from "../../utils/axios";
+import { formatMonth } from "../wallet/helper/utils";
 
 interface IClickTransaction {
   amount: number;

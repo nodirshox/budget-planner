@@ -22,8 +22,9 @@ import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import AxiosClient from "../../utils/axios";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import PaidIcon from "@mui/icons-material/Paid";
-import { formatAmount, formatMonth } from "../wallet/Wallet";
+import { formatAmount } from "../wallet/Wallet";
 import LoadingBar from "../../components/loading/LoadingBar";
+import { formatMonth } from "../wallet/helper/utils";
 
 ChartJS.register(ArcElement, Tooltip, Legend, ChartDataLabels);
 

@@ -26,6 +26,7 @@ import LandingPage from "./pages/landing/LandingPage";
 import RestoreAccount from "./pages/auth/RestoreAccount";
 import RestoreAccountVerify from "./pages/auth/RestoreAccountVerify";
 import RestoreAccountSetPassword from "./pages/auth/RestoreAccountSetPassword";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 
 export default function App() {
   return (
@@ -72,6 +73,7 @@ export default function App() {
         </Route>
         <Route path="*" element={<PageNotFound />} />
       </Routes>
+      <SpeedInsights />
     </Router>
   );
 }

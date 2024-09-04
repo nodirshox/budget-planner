@@ -8,7 +8,6 @@ import {
   ListItemIcon,
   ListItemText,
   ListItemSecondaryAction,
-  Divider,
   Paper,
   Fab,
 } from "@mui/material";
@@ -24,25 +23,10 @@ import AddIcon from "@mui/icons-material/Add";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import HomeIcon from "@mui/icons-material/Home";
-import DonutSmallIcon from "@mui/icons-material/DonutSmall";
 import { superUserId } from "../../utils/super-user";
 import AutoGraphIcon from "@mui/icons-material/AutoGraph";
-
-interface ITransaction {
-  day: Date;
-  total: number;
-  transactions: GroupTransactions[];
-}
-
-interface GroupTransactions {
-  id: string;
-  amount: number;
-  notes: string;
-  type: string;
-  category: {
-    name: true;
-  };
-}
+import { ITransaction } from "./helper/types";
+import { formatMonth } from "./helper/utils";
 
 export const formatAmount = (
   amount: number,
@@ -93,14 +77,6 @@ export const formatDayTotal = (amount: number, currency: string) => {
     </Typography>
   );
 };
-
-export function formatMonth(date: any) {
-  const d = new Date(date),
-    month = "" + (d.getMonth() + 1),
-    year = d.getFullYear();
-
-  return [year, month.padStart(2, "0")].join("-");
-}
 
 export default function Wallet() {
   const theme = useTheme();
