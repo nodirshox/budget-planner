@@ -22,9 +22,11 @@ ORM: Prisma
 
 UI: Material UI
 
-# Live
+# Demo
 
-[Budgetmate.uz](https://budgetmate.uz)
+[Budgetmate.uz](https://budgetmate.uz){:target="\_blank"}
+
+# Screens
 
 <div style="display: flex; justify-content: space-around;">
   <img src="/frontend/src/assets/image_1.png" alt="Screen 1" width="24%">
