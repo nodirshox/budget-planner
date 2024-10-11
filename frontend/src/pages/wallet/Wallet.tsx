@@ -283,6 +283,7 @@ export default function Wallet() {
             onChange={handleMonthChange}
             className="mui-style-date-input"
             max={formatMonth(new Date())}
+            onKeyDown={(e) => e.preventDefault()}
           />
         </Grid>
         <Grid item xs={12}>
