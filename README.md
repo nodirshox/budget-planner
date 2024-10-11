@@ -1,4 +1,4 @@
-# BudgetMate - Budget Expense Tracker
+# BudgetMate - Expense Tracker
 
 • Expense Logging: Easily record and categorize daily expenses.
 

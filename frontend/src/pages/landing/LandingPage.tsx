@@ -9,7 +9,7 @@ const LandingPage = () => (
   <div>
     <header>
       <h1>BudgetMate</h1>
-      <p>Budget Expense Tracker</p>
+      <p>Expense Tracker</p>
       <a href="/home" className="btn">
         Create an account
       </a>
