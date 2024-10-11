@@ -1,4 +1,4 @@
-# BudgetMate - Take Control of Your Money
+# BudgetMate - Budget Expense Tracker
 
 • Expense Logging: Easily record and categorize daily expenses.
 
@@ -22,9 +22,13 @@ ORM: Prisma
 
 UI: Material UI
 
+Deployment: Docker container
+
+Pipeline: Github Actions
+
 # Demo
 
-<a href="https://budgetmate.uz" target="_blank">BudgetMate</a>
+[Budgetmate.uz](https://budgetmate.uz)
 
 # Screens
 
