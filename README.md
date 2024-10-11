@@ -24,7 +24,7 @@ UI: Material UI
 
 # Demo
 
-[Budgetmate.uz](https://budgetmate.uz){:target="\_blank"}
+<a href="https://budgetmate.uz" target="_blank">BudgetMate</a>
 
 # Screens
 
