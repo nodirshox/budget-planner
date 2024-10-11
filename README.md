@@ -27,8 +27,8 @@ UI: Material UI
 [Budgetmate.uz](https://budgetmate.uz)
 
 <div style="display: flex; justify-content: space-around;">
-  <img src="/frontend/src/assets/image_1.png" alt="Screen 1" width="22%">
-  <img src="/frontend/src/assets/image_2.png" alt="Screen 2" width="22%">
-  <img src="/frontend/src/assets/image_3.png" alt="Screen 3" width="22%">
-  <img src="/frontend/src/assets/image_4.png" alt="Screen 4" width="22%">
+  <img src="/frontend/src/assets/image_1.png" alt="Screen 1" width="24%">
+  <img src="/frontend/src/assets/image_2.png" alt="Screen 2" width="24%">
+  <img src="/frontend/src/assets/image_3.png" alt="Screen 3" width="24%">
+  <img src="/frontend/src/assets/image_4.png" alt="Screen 4" width="24%">
 </div>

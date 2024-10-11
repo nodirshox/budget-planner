@@ -29,7 +29,7 @@ const LandingPage = () => (
       </div>
       <div className="screenshot">
         <img src={Image4} alt="Banner" />
-        <p>Manage categories</p>
+        <p>Statistics</p>
       </div>
     </section>
     <footer>
