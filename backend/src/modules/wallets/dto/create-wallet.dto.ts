@@ -14,4 +14,10 @@ export class CreateWalletDto {
   currencyId: string
 }
 
-export class UpdateWalletDto extends CreateWalletDto {}
+export class UpdateWalletDto {
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(100)
+  @ApiProperty({ description: 'Wallet name', example: 'Main' })
+  name: string
+}

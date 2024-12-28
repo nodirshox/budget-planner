@@ -56,7 +56,6 @@ export class WalletsService {
 
   async updateWallet(userId: string, id: string, body: UpdateWalletDto) {
     await this.getWallet(userId, id)
-    await this.currencyService.getCurrency(body.currencyId)
 
     return this.repository.updateWallet(id, body)
   }

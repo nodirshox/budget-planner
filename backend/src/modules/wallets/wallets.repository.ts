@@ -54,11 +54,6 @@ export class WalletsRepository {
       where: { id },
       data: {
         name: body.name,
-        currency: {
-          connect: {
-            id: body.currencyId,
-          },
-        },
       },
     })
   }
