@@ -240,7 +240,7 @@ export default function Wallet() {
         >
           <Typography variant="h6">{walletName}</Typography>
           <div>
-            {userId === superUserId && (
+            {userId === superUserId && currency === "UZS" && (
               <Button
                 variant="outlined"
                 size="small"
