@@ -1,39 +1,19 @@
-import { Grid, TextField, Alert, Button } from "@mui/material";
+import { Grid } from "@mui/material";
 import React, { useState, useEffect } from "react";
-import { NumericFormat } from "react-number-format";
-import RefreshIcon from "@mui/icons-material/Refresh";
-import AxiosClient from "../../utils/axios";
-import { superUserId } from "../../utils/super-user";
+import { IWallet } from "./types/wallet";
 
 interface WealthProps {
-  userId: string;
-  usd: number;
-  uzs: number;
+  wallets: IWallet[];
 }
 
-export function Wealth({ usd, uzs, userId }: WealthProps) {
-  const [card, setCard] = useState(() => getInitialValue("card", 0));
-  const [cash, setCash] = useState(() => getInitialValue("cash", 0));
+export function Wealth({ wallets }: WealthProps) {
   const [totalUzs, setTotalUzs] = useState(0);
-  const [usdRate, setUsdRate] = useState(12500);
-
-  const difference = totalUzs - uzs;
-  const totalValue = totalUzs + usd * usdRate;
-
-  const setCardAmount = (amount: number) => {
-    setCard(amount);
-    setTotalUzs(amount + cash);
-    localStorage.setItem("card", JSON.stringify(amount));
-  };
-
-  const setCashAmount = (amount: number) => {
-    setCash(amount);
-    setTotalUzs(amount + card);
-    localStorage.setItem("cash", JSON.stringify(amount));
-  };
+  const [totalUsd, setTotalUsd] = useState(0);
+  const [usdRate, setUsdRate] = useState(0);
+  const [totalWealthUzs, setTotalWealthUzs] = useState(0);
+  const [totalWealthUsd, setTotalWealthUsd] = useState(0);
 
   useEffect(() => {
-    setTotalUzs(card + cash);
     fetch("https://cbu.uz/oz/arkhiv-kursov-valyut/json/")
       .then((response) => response.json())
       .then((data) => {
@@ -43,94 +23,47 @@ export function Wealth({ usd, uzs, userId }: WealthProps) {
         }
       })
       .catch((error) => console.error("Error fetching USD rate:", error));
-  }, []);
+
+    const uzsSum = wallets
+      .filter((w) => w.currency.name === "UZS")
+      .reduce((prev, w) => prev + w.amount, 0);
+    setTotalUzs(uzsSum);
+
+    const usdSum = wallets
+      .filter((w) => w.currency.name === "USD")
+      .reduce((prev, w) => prev + w.amount, 0);
+    setTotalUsd(usdSum);
+  }, [wallets]);
+
+  useEffect(() => {
+    const wealthInUzs = totalUzs + totalUsd * usdRate;
+    const wealthInUsd = totalUsd + totalUzs / usdRate;
+
+    setTotalWealthUzs(Math.floor(wealthInUzs));
+    setTotalWealthUsd(wealthInUsd);
+  }, [totalUzs, totalUsd, usdRate]);
 
   function formatNumberWithSeparator(number: number) {
     const formatter = new Intl.NumberFormat("en-US", {
       maximumFractionDigits: 2,
     });
-
     return formatter.format(number);
   }
-
-  function getInitialValue(key: string, fallbackValue: number): number {
-    const value = localStorage.getItem(key);
-    return value !== null ? Number(value) : fallbackValue;
-  }
-
-  const fetchClickBalance = async () => {
-    const { data } = await AxiosClient.get("transactions/click");
-    setCardAmount(data.balance);
-  };
 
   return (
     <Grid
       container
-      spacing={2}
       paddingLeft={1}
       paddingRight={1}
       direction="column"
       alignItems="left"
     >
       <Grid item xs={12}>
-        <NumericFormat
-          thousandSeparator
-          customInput={TextField}
-          value={cash}
-          onValueChange={(values) => setCashAmount(Number(values.value))}
-          allowNegative={false}
-          decimalScale={2}
-          required
-          fullWidth
-          id="cash"
-          label="Cash (UZS)"
-          InputLabelProps={{ shrink: true }}
-          type="tel"
-        />
-      </Grid>
-      <Grid item xs={12}>
-        <NumericFormat
-          thousandSeparator
-          customInput={TextField}
-          value={card}
-          onValueChange={(values) => setCardAmount(Number(values.value))}
-          allowNegative={false}
-          decimalScale={2}
-          required
-          fullWidth
-          id="card"
-          label="Card (UZS)"
-          InputLabelProps={{ shrink: true }}
-          type="tel"
-        />
-      </Grid>
-      <Grid item xs={12}>
-        Total
-        {userId === superUserId && (
-          <Button
-            variant="outlined"
-            size="small"
-            sx={{ marginLeft: 1 }}
-            onClick={fetchClickBalance}
-          >
-            <RefreshIcon />
-          </Button>
-        )}
+        Wealth:
         <br />
-        <b>{formatNumberWithSeparator(totalUzs)} UZS</b>
-        {totalUzs !== uzs && (
-          <Alert
-            severity="warning"
-            style={{ display: "inline-flex", marginLeft: "10px" }}
-          >
-            {formatNumberWithSeparator(difference)}
-          </Alert>
-        )}
-      </Grid>
-      <Grid item xs={12}>
-        Total wealth
+        <b>{formatNumberWithSeparator(totalWealthUzs)} UZS</b>
         <br />
-        <b>{formatNumberWithSeparator(totalValue)} UZS</b>
+        <b>{formatNumberWithSeparator(totalWealthUsd)} USD</b>
       </Grid>
     </Grid>
   );
