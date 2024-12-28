@@ -1,15 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  Paper,
-  Grid,
-  TextField,
-  Button,
-  Typography,
-  FormControl,
-  Select,
-  InputLabel,
-  MenuItem,
-} from "@mui/material";
+import { Paper, Grid, TextField, Button, Typography } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import AxiosClient, { AxiosError } from "../../utils/axios";
 import LoadingBar from "../../components/loading/LoadingBar";
@@ -17,6 +7,9 @@ import HttpErrorNotification from "../../components/notifications/HttpErrorNotif
 import * as Yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { Calculator } from "./Calculator";
+import Divider from "@mui/material/Divider";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 
 interface Currency {
   id: string;
@@ -26,10 +19,11 @@ interface Currency {
 export default function EditWallet() {
   const navigate = useNavigate();
   const params = useParams();
-  const [currencies, setCurrencies] = useState<Currency[]>([]);
   const [currency, setCurrency] = useState("");
   const [sendRequest, setSendRequest] = useState(false);
   const [alert, setAlert] = useState({ state: false, message: "" });
+  const [walletAmount, setWalletAmount] = useState(0);
+  const [userId, setUserId] = useState("");
 
   const validationSchema = Yup.object().shape({
     title: Yup.string().required("Enter wallet name"),
@@ -50,7 +44,6 @@ export default function EditWallet() {
     try {
       await AxiosClient.put(`/wallets/${params.walletId}`, {
         name: data.title,
-        currencyId: currency,
       });
       navigate(`/wallets/${params.walletId}`);
     } catch (error) {
@@ -69,33 +62,18 @@ export default function EditWallet() {
     }
   };
 
-  const handleCurrencyChange = async (event: any) => {
-    setCurrency(event.target.value);
-  };
-
   const fetchCurrency = async () => {
-    const currencies = await AxiosClient.get("/currencies");
-
     const wallet = await AxiosClient.get(`/wallets/${params.walletId}`);
 
-    return { currencies: currencies.data.currencies, wallet: wallet.data };
+    return { wallet: wallet.data };
   };
 
   useEffect(() => {
     fetchCurrency().then(
       (data) => {
-        setCurrencies(data.currencies);
-
-        if (data.currencies.length > 0) {
-          setCurrency(data.currencies[0].id);
-        } else {
-          setAlert({
-            state: true,
-            message: "Currency not found",
-          });
-        }
-
-        setCurrency(data.wallet.currencyId);
+        setCurrency(data.wallet.currency.name);
+        setWalletAmount(data.wallet.amount);
+        setUserId(data.wallet.userId);
         setValue("title", data.wallet.name);
       },
       (error) => {
@@ -126,36 +104,21 @@ export default function EditWallet() {
 
           <Button
             variant="outlined"
+            onClick={backHandler}
             size="small"
             sx={{ p: 1 }}
-            onClick={deleteHandler}
-            color="error"
           >
-            Delete wallet
+            <ArrowBackIosIcon />
           </Button>
         </Grid>
         <Grid item xs={12}>
-          <FormControl>
-            <InputLabel id="currency-label">Currency</InputLabel>
-            <Select
-              labelId="currency-label"
-              id="currency"
-              value={currency}
-              label="Currency"
-              onChange={handleCurrencyChange}
-              autoWidth
-            >
-              {currencies.map((cn, index) => {
-                return (
-                  <MenuItem key={index} value={cn.id}>
-                    {cn.name}
-                  </MenuItem>
-                );
-              })}
-            </Select>
-          </FormControl>
+          <Calculator
+            totalAmount={walletAmount}
+            currency={currency}
+            userId={userId}
+          />
         </Grid>
-
+        <Divider sx={{ mt: 2, mb: 2 }} style={{ width: "100%" }} />
         <Grid item xs={12}>
           <TextField
             required
@@ -175,10 +138,15 @@ export default function EditWallet() {
             color="primary"
             onClick={handleSubmit(onSubmit)}
           >
-            Update
+            Save
           </Button>
-          <Button variant="outlined" onClick={backHandler} sx={{ ml: 1 }}>
-            Back
+          <Button
+            variant="outlined"
+            sx={{ ml: 1 }}
+            onClick={deleteHandler}
+            color="error"
+          >
+            Delete wallet
           </Button>
         </Grid>
         <Grid item xs={12}>

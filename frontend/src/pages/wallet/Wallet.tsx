@@ -28,6 +28,8 @@ import AutoGraphIcon from "@mui/icons-material/AutoGraph";
 import { ITransaction } from "./helper/types";
 import { formatMonth } from "./helper/utils";
 
+import AttachMoneyOutlinedIcon from "@mui/icons-material/AttachMoneyOutlined";
+
 export const formatAmount = (
   amount: number,
   type: string,
@@ -103,8 +105,8 @@ export default function Wallet() {
   const [alert, setAlert] = useState({ state: false, message: "" });
   const [transactions, setTransactions] = useState<ITransaction[]>([]);
   const [categoryId] = useState(searchParams.get("categoryId"));
-  const [userId, setUserId] = useState(null);
   const listRef = useRef<HTMLUListElement | null>(null);
+  const [userId, setUserId] = useState<string>("");
 
   const monthParam = searchParams.get("month");
   let date = new Date();
@@ -276,6 +278,7 @@ export default function Wallet() {
             <AutoGraphIcon />
           </Button>
         </Grid>
+
         <Grid item xs={12}>
           <input
             type="month"

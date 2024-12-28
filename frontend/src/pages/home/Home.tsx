@@ -17,29 +17,16 @@ import LoadingBar from "../../components/loading/LoadingBar";
 import HttpErrorNotification from "../../components/notifications/HttpErrorNotification";
 import { red, green } from "@mui/material/colors";
 import { Wealth } from "./Wealth";
-import AttachMoneyOutlinedIcon from "@mui/icons-material/AttachMoneyOutlined";
 import SettingsIcon from "@mui/icons-material/Settings";
-
-interface IWallet {
-  id: string;
-  name: string;
-  amount: number;
-  currency: {
-    name: string;
-  };
-}
+import { IWallet } from "./types/wallet";
 
 export default function Home() {
   const nav = useNavigate();
 
-  const [showWealth, setShowWealth] = useState(false);
   const [fullName, setFullName] = useState("");
-  const [userId, setUserId] = useState("");
   const [wallets, setWallets] = useState<IWallet[]>([]);
   const [sendRequest, setSendRequest] = useState(false);
   const [alert, setAlert] = useState({ state: false, message: "" });
-  const [usd, setUsd] = useState(0);
-  const [uzs, setUzs] = useState(0);
 
   const fetchUserInformation = async () => {
     const result = await AxiosClient.get("wallets");
@@ -58,16 +45,7 @@ export default function Home() {
       .then(
         (data) => {
           setFullName(`${data.user.firstName} ${data.user.lastName}`);
-          setUserId(data.user.id);
           setWallets(data.wallets);
-
-          data.wallets.forEach((wallet: IWallet) => {
-            if (wallet.currency.name === "UZS") {
-              setUzs(wallet.amount);
-            } else if (wallet.currency.name === "USD") {
-              setUsd(wallet.amount);
-            }
-          });
         },
         (error) => {
           const message = ErrorMessage(error);
@@ -101,9 +79,6 @@ export default function Home() {
       </Typography>
     );
   };
-  const toggleWealthVisibility = () => {
-    setShowWealth(!showWealth);
-  };
 
   return (
     <Paper sx={{ p: 1, mt: 2 }}>
@@ -119,15 +94,6 @@ export default function Home() {
           <div>
             <Button
               variant="outlined"
-              onClick={toggleWealthVisibility}
-              size="small"
-              sx={{ mr: 1, ml: 1, p: 1 }}
-            >
-              <AttachMoneyOutlinedIcon />
-              {showWealth ? "Hide" : "Check"}
-            </Button>
-            <Button
-              variant="outlined"
               onClick={settingsHandler}
               size="small"
               sx={{ p: 1 }}
@@ -136,11 +102,7 @@ export default function Home() {
             </Button>
           </div>
         </Grid>
-        {showWealth && (
-          <Grid item xs={12}>
-            <Wealth usd={usd} uzs={uzs} userId={userId} />
-          </Grid>
-        )}
+
         {sendRequest ? (
           <Grid item xs={12}>
             <LoadingBar />
@@ -169,6 +131,9 @@ export default function Home() {
                     </Card>
                   </Grid>
                 ))}
+                <Grid item xs={12}>
+                  <Wealth wallets={wallets} />
+                </Grid>
               </>
             ) : (
               <Grid item xs={12}>
@@ -179,6 +144,7 @@ export default function Home() {
             )}
           </>
         )}
+
         <Grid item xs={12}>
           {alert.state && <HttpErrorNotification message={alert.message} />}
         </Grid>
