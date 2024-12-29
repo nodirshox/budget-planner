@@ -18,6 +18,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import HttpErrorNotification from "../../components/notifications/HttpErrorNotification";
 import LoadingBar from "../../components/loading/LoadingBar";
 import { ICategory } from "./Category";
+import { TransactionType } from "../../types/transaction-type";
 
 interface CategoryType {
   id: string;
@@ -34,11 +35,11 @@ export default function EditCategory() {
   const [canDelete, setCanDelete] = useState(true);
   const [types] = useState<CategoryType[]>([
     {
-      id: "EXPENSE",
-      name: "Expence",
+      id: TransactionType.EXPENSE,
+      name: "Expense",
     },
     {
-      id: "INCOME",
+      id: TransactionType.INCOME,
       name: "Income",
     },
   ]);

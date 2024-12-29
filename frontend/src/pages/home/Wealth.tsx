@@ -1,6 +1,8 @@
 import { Grid } from "@mui/material";
 import React, { useState, useEffect } from "react";
 import { IWallet } from "./types/wallet";
+import { formatNumberWithSeparator } from "../../utils/number-formatter";
+import { CurrencyType } from "../../types/currency";
 
 interface WealthProps {
   wallets: IWallet[];
@@ -25,12 +27,12 @@ export function Wealth({ wallets }: WealthProps) {
       .catch((error) => console.error("Error fetching USD rate:", error));
 
     const uzsSum = wallets
-      .filter((w) => w.currency.name === "UZS")
+      .filter((w) => w.currency.name === CurrencyType.UZS)
       .reduce((prev, w) => prev + w.amount, 0);
     setTotalUzs(uzsSum);
 
     const usdSum = wallets
-      .filter((w) => w.currency.name === "USD")
+      .filter((w) => w.currency.name === CurrencyType.USD)
       .reduce((prev, w) => prev + w.amount, 0);
     setTotalUsd(usdSum);
   }, [wallets]);
@@ -43,13 +45,6 @@ export function Wealth({ wallets }: WealthProps) {
     setTotalWealthUsd(wealthInUsd);
   }, [totalUzs, totalUsd, usdRate]);
 
-  function formatNumberWithSeparator(number: number) {
-    const formatter = new Intl.NumberFormat("en-US", {
-      maximumFractionDigits: 2,
-    });
-    return formatter.format(number);
-  }
-
   return (
     <Grid
       container
@@ -59,7 +54,7 @@ export function Wealth({ wallets }: WealthProps) {
       alignItems="left"
     >
       <Grid item xs={12}>
-        Wealth:
+        Wealth
         <br />
         <b>{formatNumberWithSeparator(totalWealthUzs)} UZS</b>
         <br />

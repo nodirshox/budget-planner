@@ -25,45 +25,15 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import HomeIcon from "@mui/icons-material/Home";
 import { superUserId } from "../../utils/super-user";
 import AutoGraphIcon from "@mui/icons-material/AutoGraph";
-import { ITransaction } from "./helper/types";
-import { formatMonth } from "./helper/utils";
 
-import AttachMoneyOutlinedIcon from "@mui/icons-material/AttachMoneyOutlined";
-
-export const formatAmount = (
-  amount: number,
-  type: string,
-  currency: string
-) => {
-  const numberFormat = new Intl.NumberFormat("en-US", {
-    currency,
-  });
-  let number = numberFormat.format(amount);
-
-  if (type === "EXPENSE") {
-    number = `-${number} ${currency}`;
-  } else {
-    number = `${number} ${currency}`;
-  }
-
-  return (
-    <Typography
-      component="span"
-      style={{
-        color: type === "EXPENSE" ? red[500] : green[500],
-      }}
-      sx={{ fontWeight: 500 }}
-    >
-      {number}
-    </Typography>
-  );
-};
+import { formatNumberWithSeparator } from "../../utils/number-formatter";
+import TransactionAmount from "../../components/amount/TransactionAmount";
+import { formatMonth } from "../../utils/format-month";
+import { ITransaction } from "../../types/transaction";
+import { CurrencyType } from "../../types/currency";
 
 export const formatDayTotal = (amount: number, currency: string) => {
-  const numberFormat = new Intl.NumberFormat("en-US", {
-    currency,
-  });
-  let number = numberFormat.format(amount);
+  let number = formatNumberWithSeparator(amount);
 
   number = `${number} ${currency}`;
 
@@ -100,7 +70,7 @@ export default function Wallet() {
 
   const [walletName, setWalletName] = useState("");
   const [walletAmount, setWalletAmount] = useState(0);
-  const [currency, setCurrency] = useState("USD");
+  const [currency, setCurrency] = useState(CurrencyType.USD);
   const [sendRequest, setSendRequest] = useState(false);
   const [alert, setAlert] = useState({ state: false, message: "" });
   const [transactions, setTransactions] = useState<ITransaction[]>([]);
@@ -203,10 +173,7 @@ export default function Wallet() {
   };
 
   const formatwalletAmount = () => {
-    const numberFormat = new Intl.NumberFormat("en-US", {
-      currency,
-    });
-    let number = numberFormat.format(walletAmount);
+    let number = formatNumberWithSeparator(walletAmount);
 
     number = `${number} ${currency}`;
 
@@ -240,11 +207,11 @@ export default function Wallet() {
         >
           <Typography variant="h6">{walletName}</Typography>
           <div>
-            {userId === superUserId && currency === "UZS" && (
+            {userId === superUserId && currency === CurrencyType.UZS && (
               <Button
                 variant="outlined"
                 size="small"
-                sx={{ mr: 1, p: 1 }}
+                sx={{ ml: 1, p: 1 }}
                 onClick={() =>
                   navigateHandler(`/wallets/${params.walletId}/click`)
                 }
@@ -256,7 +223,7 @@ export default function Wallet() {
             <Button
               variant="outlined"
               size="small"
-              sx={{ mr: 1, p: 1 }}
+              sx={{ ml: 1, p: 1 }}
               onClick={editHandler}
             >
               <ModeEditIcon />
@@ -264,7 +231,7 @@ export default function Wallet() {
             <Button
               variant="outlined"
               size="small"
-              sx={{ mr: 1, p: 1 }}
+              sx={{ ml: 1, p: 1 }}
               onClick={backHandler}
             >
               <HomeIcon />
@@ -334,11 +301,11 @@ export default function Wallet() {
                         }}
                         onClick={() => transactionHandler(transaction.id)}
                       >
-                        {formatAmount(
-                          transaction.amount,
-                          transaction.type,
-                          currency
-                        )}
+                        <TransactionAmount
+                          amount={transaction.amount}
+                          type={transaction.type}
+                          currency={currency}
+                        />
                       </ListItemSecondaryAction>
                     </ListItem>
                   ))}

@@ -1,9 +1,3 @@
-export interface ITransaction {
-  day: Date;
-  total: number;
-  transactions: GroupTransactions[];
-}
-
 interface GroupTransactions {
   id: string;
   amount: number;
@@ -12,4 +6,10 @@ interface GroupTransactions {
   category: {
     name: true;
   };
+}
+
+export interface ITransaction {
+  day: Date;
+  total: number;
+  transactions: GroupTransactions[];
 }

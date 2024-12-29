@@ -2,15 +2,15 @@ import { ApiProperty } from '@nestjs/swagger'
 import { TransactionType } from '@prisma/client'
 import {
   IsDateString,
-  IsInt,
   IsNotEmpty,
+  IsNumber,
   IsPositive,
   IsString,
   MaxLength,
 } from 'class-validator'
 
 export class CreateTransactionDto {
-  @IsInt()
+  @IsNumber()
   @IsPositive()
   @ApiProperty({ description: 'Transaction amount', example: 1000 })
   amount: number

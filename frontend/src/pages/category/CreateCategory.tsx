@@ -18,6 +18,7 @@ import AxiosClient, { AxiosError } from "../../utils/axios";
 import { useNavigate } from "react-router-dom";
 import HttpErrorNotification from "../../components/notifications/HttpErrorNotification";
 import LoadingBar from "../../components/loading/LoadingBar";
+import { TransactionType } from "../../types/transaction-type";
 
 interface CategoryType {
   id: string;
@@ -32,15 +33,15 @@ export default function CreateCategory() {
   const [sendRequest, setSendRequest] = useState(false);
   const [types] = useState<CategoryType[]>([
     {
-      id: "EXPENSE",
-      name: "Expence",
+      id: TransactionType.EXPENSE,
+      name: "Expense",
     },
     {
-      id: "INCOME",
+      id: TransactionType.INCOME,
       name: "Income",
     },
   ]);
-  const [type, setType] = useState("EXPENSE");
+  const [type, setType] = useState(TransactionType.EXPENSE);
 
   const handleTypeChange = async (event: any) => {
     setType(event.target.value);

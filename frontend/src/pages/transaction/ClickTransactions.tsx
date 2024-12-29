@@ -13,7 +13,6 @@ import {
 import React, { useState, useRef, useEffect } from "react";
 import LoadingBar from "../../components/loading/LoadingBar";
 import HttpErrorNotification from "../../components/notifications/HttpErrorNotification";
-import { formatAmount } from "../wallet/Wallet";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import { useNavigate, useParams } from "react-router-dom";
 import PaidIcon from "@mui/icons-material/Paid";
@@ -21,7 +20,10 @@ import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import ErrorMessage from "../../utils/error-message";
 import AxiosClient from "../../utils/axios";
-import { formatMonth } from "../wallet/helper/utils";
+
+import TransactionAmount from "../../components/amount/TransactionAmount";
+import { formatMonth } from "../../utils/format-month";
+import { CurrencyType } from "../../types/currency";
 
 interface IClickTransaction {
   amount: number;
@@ -34,7 +36,7 @@ export default function ClickTransactions() {
   const nav = useNavigate();
   const navigateHandler = (path: string) => nav(path);
   const [month, setMonth] = useState(new Date());
-  const [currency] = useState("UZS");
+  const [currency] = useState(CurrencyType.UZS);
   const [sendRequest, setSendRequest] = useState(false);
   const [alert, setAlert] = useState({ state: false, message: "" });
   const [transactions, setTransactions] = useState<IClickTransaction[]>([]);
@@ -168,7 +170,11 @@ export default function ClickTransactions() {
                     cursor: "pointer",
                   }}
                 >
-                  {formatAmount(transaction.amount, transaction.type, currency)}
+                  <TransactionAmount
+                    amount={transaction.amount}
+                    type={transaction.type}
+                    currency={currency}
+                  />
                 </ListItemSecondaryAction>
               </ListItem>
             ))}

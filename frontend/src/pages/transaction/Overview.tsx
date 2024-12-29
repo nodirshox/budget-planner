@@ -22,9 +22,12 @@ import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import AxiosClient from "../../utils/axios";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import PaidIcon from "@mui/icons-material/Paid";
-import { formatAmount } from "../wallet/Wallet";
 import LoadingBar from "../../components/loading/LoadingBar";
-import { formatMonth } from "../wallet/helper/utils";
+
+import TransactionAmount from "../../components/amount/TransactionAmount";
+import { TransactionType } from "../../types/transaction-type";
+import { formatMonth } from "../../utils/format-month";
+import { CurrencyType } from "../../types/currency";
 
 ChartJS.register(ArcElement, Tooltip, Legend, ChartDataLabels);
 
@@ -43,8 +46,10 @@ export default function Overview() {
   const [categories, setCategories] = useState<IOverview[]>([]);
   const [backgroundColors, setBackgroundColors] = useState<string[]>([]);
   const [total, setTotal] = useState(0);
-  const [transactionType, setTransactiontype] = useState("EXPENSE");
-  const [currency, setCurrency] = useState("USD");
+  const [transactionType, setTransactiontype] = useState(
+    TransactionType.EXPENSE
+  );
+  const [currency, setCurrency] = useState(CurrencyType.USD);
   const [sendRequest, setSendRequest] = useState(false);
 
   const monthParam = searchParams.get("month");
@@ -55,7 +60,7 @@ export default function Overview() {
   const [month, setMonth] = useState(date);
 
   const handleChange = (event: any) => {
-    setTransactiontype(event.target.value as string);
+    setTransactiontype(event.target.value as TransactionType);
   };
 
   const generateBackgroundColor = (length: number) => {
@@ -154,7 +159,11 @@ export default function Overview() {
         <Grid item xs={12}>
           Total
           <br />
-          {formatAmount(total, transactionType, currency)}
+          <TransactionAmount
+            amount={total}
+            type={transactionType}
+            currency={currency}
+          />
         </Grid>
         <Grid item xs={12}>
           {sendRequest && <LoadingBar />}
@@ -179,8 +188,8 @@ export default function Overview() {
               label="Type"
               onChange={handleChange}
             >
-              <MenuItem value={"EXPENSE"}>Expense</MenuItem>
-              <MenuItem value={"INCOME"}>Income</MenuItem>
+              <MenuItem value={TransactionType.EXPENSE}>Expense</MenuItem>
+              <MenuItem value={TransactionType.INCOME}>Income</MenuItem>
             </Select>
           </FormControl>
         </Grid>
@@ -224,7 +233,11 @@ export default function Overview() {
                 secondary={setText(category.transactions)}
               />
               <ListItemSecondaryAction>
-                {formatAmount(category.total, transactionType, currency)}
+                <TransactionAmount
+                  amount={category.total}
+                  type={transactionType}
+                  currency={currency}
+                />
               </ListItemSecondaryAction>
             </ListItem>
           ))}

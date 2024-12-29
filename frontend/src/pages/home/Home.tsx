@@ -15,10 +15,10 @@ import AxiosClient from "../../utils/axios";
 import ErrorMessage from "../../utils/error-message";
 import LoadingBar from "../../components/loading/LoadingBar";
 import HttpErrorNotification from "../../components/notifications/HttpErrorNotification";
-import { red, green } from "@mui/material/colors";
 import { Wealth } from "./Wealth";
 import SettingsIcon from "@mui/icons-material/Settings";
 import { IWallet } from "./types/wallet";
+import WalletAmount from "../../components/amount/WalletAmount";
 
 export default function Home() {
   const nav = useNavigate();
@@ -57,28 +57,6 @@ export default function Home() {
       )
       .then(() => setSendRequest(false));
   }, []);
-
-  const formatAmount = (wallet: IWallet) => {
-    const numberFormat = new Intl.NumberFormat("en-US", {
-      currency: wallet.currency.name,
-    });
-    let number = numberFormat.format(wallet.amount);
-
-    number = `${number} ${wallet.currency.name}`;
-
-    return (
-      <Typography
-        style={{
-          color: wallet.amount < 0 ? red[500] : green[500],
-        }}
-        sx={{ fontWeight: 500 }}
-        variant="subtitle1"
-        component="div"
-      >
-        {number}
-      </Typography>
-    );
-  };
 
   return (
     <Paper sx={{ p: 1, mt: 2 }}>
@@ -125,7 +103,10 @@ export default function Home() {
                           <Typography variant="h6" component="div">
                             {wallet.name}
                           </Typography>
-                          {formatAmount(wallet)}
+                          <WalletAmount
+                            amount={wallet.amount}
+                            currency={wallet.currency.name}
+                          />
                         </CardContent>
                       </Link>
                     </Card>

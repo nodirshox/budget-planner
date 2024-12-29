@@ -4,6 +4,8 @@ import { NumericFormat } from "react-number-format";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import AxiosClient from "../../utils/axios";
 import { superUserId } from "../../utils/super-user";
+import { formatNumberWithSeparator } from "../../utils/number-formatter";
+import { CurrencyType } from "../../types/currency";
 
 interface WealthProps {
   userId: string;
@@ -24,14 +26,6 @@ export function Calculator({ totalAmount, userId, currency }: WealthProps) {
   const setCashAmount = (amount: number) => {
     setCash(amount);
   };
-
-  function formatNumberWithSeparator(number: number) {
-    const formatter = new Intl.NumberFormat("en-US", {
-      maximumFractionDigits: 2,
-    });
-
-    return formatter.format(number);
-  }
 
   const fetchClickBalance = async () => {
     const { data } = await AxiosClient.get("transactions/click");
@@ -73,7 +67,7 @@ export function Calculator({ totalAmount, userId, currency }: WealthProps) {
         />
       </Grid>
       <Grid item xs={12}>
-        {userId === superUserId && currency === "UZS" && (
+        {userId === superUserId && currency === CurrencyType.UZS && (
           <Button variant="outlined" onClick={fetchClickBalance}>
             <RefreshIcon />
           </Button>
