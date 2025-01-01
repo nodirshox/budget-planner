@@ -86,20 +86,26 @@ export default function Overview() {
         endDate,
       }
     );
+    setCategories(data.overview);
+    setBackgroundColors(generateBackgroundColor(data.overview.length));
+    setTotal(data.total);
+    setCurrency(data.wallet.currency.name);
     return data;
+  };
+
+  const handleConfirmDateChange = () => {
+    setSendRequest(true);
+    fetchOverview()
+      .then((data) => {})
+      .finally(() => setSendRequest(false));
   };
 
   useEffect(() => {
     setSendRequest(true);
     fetchOverview()
-      .then((data) => {
-        setCategories(data.overview);
-        setBackgroundColors(generateBackgroundColor(data.overview.length));
-        setTotal(data.total);
-        setCurrency(data.wallet.currency.name);
-      })
+      .then((data) => {})
       .finally(() => setSendRequest(false));
-  }, [transactionType, startDate, endDate]);
+  }, [transactionType]);
 
   const data = {
     labels: categories.map((ov: any) => ov.categoryName),
@@ -187,7 +193,6 @@ export default function Overview() {
             InputLabelProps={{ shrink: true }}
           />
         </Grid>
-
         <Grid item xs={12}>
           <FormControl fullWidth>
             <InputLabel>Type</InputLabel>
@@ -201,22 +206,50 @@ export default function Overview() {
             </Select>
           </FormControl>
         </Grid>
+        <Grid item xs={12}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleConfirmDateChange}
+            fullWidth
+          >
+            Apply Dates
+          </Button>
+        </Grid>
 
         <Grid item xs={12}>
           <Doughnut data={data} />
         </Grid>
       </Grid>
 
-      {/* Categories List */}
       <Divider />
       <Grid item xs={12}>
         <List>
           {categories.map((category, index) => (
-            <ListItem key={index} sx={{ cursor: "pointer" }}>
+            <ListItem
+              key={index}
+              sx={{ cursor: "pointer" }}
+              onClick={() =>
+                navigationHandler(
+                  `/wallets/${params.walletId}?categoryId=${category.categoryId}&startDate=${startDate}&endDate=${endDate}`
+                )
+              }
+            >
               <ListItemIcon>
                 <PaidIcon color="primary" />
               </ListItemIcon>
-              <ListItemText primary={category.categoryName} />
+              <ListItemText
+                primary={category.categoryName}
+                secondary={setText(category.transactions)}
+                sx={{
+                  ".MuiListItemText-multiline": {
+                    maxWidth: "60%",
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  },
+                }}
+              />
               <ListItemSecondaryAction>
                 <TransactionAmount
                   amount={category.total}

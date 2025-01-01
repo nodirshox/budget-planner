@@ -78,18 +78,38 @@ export default function Wallet() {
   const listRef = useRef<HTMLUListElement | null>(null);
   const [userId, setUserId] = useState<string>("");
 
-  const monthParam = searchParams.get("month");
-  let date = new Date();
-  if (monthParam) {
-    date = new Date(monthParam);
-  }
+  const [startDate, setStartDate] = useState<string>(() => {
+    const currentDate = new Date();
+    const firstDayOfMonth = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth(),
+      1
+    );
+    return (
+      searchParams.get("startDate") ||
+      firstDayOfMonth.toLocaleDateString("en-CA")
+    );
+  });
 
-  const [month, setMonth] = useState(date);
+  const [endDate, setEndDate] = useState<string>(() => {
+    const currentDate = new Date();
+    const lastDayOfMonth = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth() + 1,
+      0
+    );
+    return (
+      searchParams.get("endDate") || lastDayOfMonth.toLocaleDateString("en-CA")
+    );
+  });
+  console.log("startDate", startDate);
+  console.log("endDate", endDate);
 
   const fetchTransactions = async () => {
     const { data } = await AxiosClient.post("transactions/filter", {
       walletId: params.walletId,
-      month,
+      startDate: new Date(startDate),
+      endDate: new Date(endDate),
       ...(categoryId && {
         categoryId,
       }),
@@ -102,20 +122,8 @@ export default function Wallet() {
   const editHandler = () => nav(`/wallets/${params.walletId}/edit`);
   const backHandler = () => nav(`/home`);
   const overviewHandler = () => {
-    const year = month.getFullYear();
-    const monthIndex = month.getMonth();
-    const monthDate = `${monthIndex + 1}`.padStart(2, "0");
-
-    const firstDay = `${year}-${monthDate}-01`;
-
-    const lastDay = `${year}-${monthDate}-${new Date(
-      year,
-      monthIndex + 1,
-      0
-    ).getDate()}`;
-
     nav(
-      `/wallets/${params.walletId}/overview?startDate=${firstDay}&endDate=${lastDay}`
+      `/wallets/${params.walletId}/overview?startDate=${startDate}&endDate=${endDate}`
     );
   };
   const addTransactionHandler = () =>
@@ -149,7 +157,7 @@ export default function Wallet() {
     if (listRef.current) {
       listRef.current.scrollTop = 0;
     }
-  }, [month]);
+  }, [startDate, endDate]);
 
   const formatDate = (input: Date) => {
     const date = new Date(input);
@@ -201,7 +209,28 @@ export default function Wallet() {
   };
 
   const handleMonthChange = (event: any) => {
-    setMonth(new Date(event.target.value));
+    const selectedDate = new Date(event.target.value);
+
+    // Set start date to the first day of the month
+    const startOfMonth = new Date(
+      selectedDate.getFullYear(),
+      selectedDate.getMonth(),
+      1
+    )
+      .toISOString()
+      .split("T")[0];
+
+    // Set end date to the last day of the month
+    const endOfMonth = new Date(
+      selectedDate.getFullYear(),
+      selectedDate.getMonth() + 1,
+      0
+    )
+      .toISOString()
+      .split("T")[0];
+
+    setStartDate(startOfMonth);
+    setEndDate(endOfMonth);
   };
 
   return (
@@ -258,7 +287,7 @@ export default function Wallet() {
         <Grid item xs={12}>
           <input
             type="month"
-            value={formatMonth(month)}
+            value={startDate.slice(0, 7)}
             onChange={handleMonthChange}
             className="mui-style-date-input"
             max={formatMonth(new Date())}

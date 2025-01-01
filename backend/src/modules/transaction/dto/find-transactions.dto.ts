@@ -8,8 +8,12 @@ export class FindTransactionsDto {
   walletId: string
 
   @IsDateString()
-  @ApiProperty({ description: 'Month', example: new Date() })
-  month: string
+  @ApiProperty({ description: 'Start date', example: new Date() })
+  startDate: string
+
+  @IsDateString()
+  @ApiProperty({ description: 'End date', example: new Date() })
+  endDate: string
 
   @IsString()
   @IsOptional()

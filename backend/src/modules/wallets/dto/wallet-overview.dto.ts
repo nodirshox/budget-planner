@@ -5,12 +5,12 @@ import { IsDateString, IsEnum, IsNotEmpty } from 'class-validator'
 export class WalletOverviewDto {
   @IsNotEmpty()
   @IsDateString()
-  @ApiProperty({ description: 'Month', example: new Date() })
+  @ApiProperty({ description: 'Start date', example: new Date() })
   startDate: string
 
   @IsNotEmpty()
   @IsDateString()
-  @ApiProperty({ description: 'Month', example: new Date() })
+  @ApiProperty({ description: 'End date', example: new Date() })
   endDate: string
 
   @IsEnum(TransactionType)

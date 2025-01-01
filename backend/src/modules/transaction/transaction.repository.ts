@@ -71,16 +71,16 @@ export class TransactionRepository {
   async filterTransactions(
     body: FindTransactionsDto,
   ): Promise<ITransactionWithCategory[]> {
-    const { currentMonth, nextMonth } = this.utils.getMonths(
-      new Date(body.month),
-    )
     return this.prisma.transaction.findMany({
       where: {
         walletId: body.walletId,
-        date: {
-          gte: currentMonth,
-          lt: nextMonth,
-        },
+        ...(body.startDate &&
+          body.endDate && {
+            date: {
+              gte: new Date(body.startDate),
+              lte: new Date(body.endDate),
+            },
+          }),
         ...(body.categoryId && {
           categoryId: body.categoryId,
         }),
