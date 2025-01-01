@@ -69,14 +69,18 @@ export class WalletsService {
     const wallet = await this.getWallet(userId, id)
     wallet.amount = this.utils.divideToOneHundred(wallet.amount)
 
-    const year = new Date(body.month).getFullYear()
-    const month = new Date(body.month).getMonth()
+    const startDate = new Date(body.startDate)
+    const endDate = new Date(body.endDate)
+
+    if (startDate > endDate) {
+      throw new BadRequestException('start date should less than end date')
+    }
 
     const overview = await this.repository.getWalletOverview(
       id,
       body.categoryType,
-      new Date(year, month, 1),
-      new Date(year, month + 1, 1),
+      startDate,
+      endDate,
     )
 
     const categories = await this.categoryService.getCategoriesByIds(

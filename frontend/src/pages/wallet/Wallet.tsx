@@ -102,11 +102,20 @@ export default function Wallet() {
   const editHandler = () => nav(`/wallets/${params.walletId}/edit`);
   const backHandler = () => nav(`/home`);
   const overviewHandler = () => {
-    const day = "01";
-    const monthDate = `${month.getMonth() + 1}`.padStart(2, "0");
     const year = month.getFullYear();
+    const monthIndex = month.getMonth();
+    const monthDate = `${monthIndex + 1}`.padStart(2, "0");
+
+    const firstDay = `${year}-${monthDate}-01`;
+
+    const lastDay = `${year}-${monthDate}-${new Date(
+      year,
+      monthIndex + 1,
+      0
+    ).getDate()}`;
+
     nav(
-      `/wallets/${params.walletId}/overview?month=${year}-${monthDate}-${day}`
+      `/wallets/${params.walletId}/overview?startDate=${firstDay}&endDate=${lastDay}`
     );
   };
   const addTransactionHandler = () =>

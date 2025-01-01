@@ -16,6 +16,7 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  TextField,
 } from "@mui/material";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
@@ -26,7 +27,6 @@ import LoadingBar from "../../components/loading/LoadingBar";
 
 import TransactionAmount from "../../components/amount/TransactionAmount";
 import { TransactionType } from "../../types/transaction-type";
-import { formatMonth } from "../../utils/format-month";
 import { CurrencyType } from "../../types/currency";
 
 ChartJS.register(ArcElement, Tooltip, Legend, ChartDataLabels);
@@ -43,24 +43,25 @@ export default function Overview() {
   const params = useParams();
   const [searchParams] = useSearchParams();
   const navigationHandler = (path: string) => nav(path);
+
   const [categories, setCategories] = useState<IOverview[]>([]);
   const [backgroundColors, setBackgroundColors] = useState<string[]>([]);
   const [total, setTotal] = useState(0);
-  const [transactionType, setTransactiontype] = useState(
+  const [transactionType, setTransactionType] = useState(
     TransactionType.EXPENSE
   );
   const [currency, setCurrency] = useState(CurrencyType.USD);
   const [sendRequest, setSendRequest] = useState(false);
 
-  const monthParam = searchParams.get("month");
-  let date = new Date();
-  if (monthParam) {
-    date = new Date(monthParam);
-  }
-  const [month, setMonth] = useState(date);
+  const [startDate, setStartDate] = useState<string>(
+    searchParams.get("startDate") || new Date().toISOString().split("T")[0]
+  );
+  const [endDate, setEndDate] = useState<string>(
+    searchParams.get("endDate") || new Date().toISOString().split("T")[0]
+  );
 
   const handleChange = (event: any) => {
-    setTransactiontype(event.target.value as TransactionType);
+    setTransactionType(event.target.value as TransactionType);
   };
 
   const generateBackgroundColor = (length: number) => {
@@ -81,7 +82,8 @@ export default function Overview() {
       `wallets/${params.walletId}/overview`,
       {
         categoryType: transactionType,
-        month: new Date(`${month}`),
+        startDate,
+        endDate,
       }
     );
     return data;
@@ -97,7 +99,7 @@ export default function Overview() {
         setCurrency(data.wallet.currency.name);
       })
       .finally(() => setSendRequest(false));
-  }, [transactionType, month]);
+  }, [transactionType, startDate, endDate]);
 
   const data = {
     labels: categories.map((ov: any) => ov.categoryName),
@@ -126,10 +128,6 @@ export default function Overview() {
     return `${transactions} ${text}`;
   };
 
-  const handleMonthChange = (event: any) => {
-    setMonth(new Date(event.target.value));
-  };
-
   return (
     <Paper sx={{ p: 1, mt: 2 }}>
       <Grid container spacing={2} direction="row">
@@ -144,11 +142,7 @@ export default function Overview() {
           <div>
             <Button
               variant="outlined"
-              onClick={() =>
-                navigationHandler(
-                  `/wallets/${params.walletId}?month=${formatMonth(month)}`
-                )
-              }
+              onClick={() => navigationHandler(`/wallets/${params.walletId}`)}
               size="small"
               sx={{ p: 1 }}
             >
@@ -156,6 +150,7 @@ export default function Overview() {
             </Button>
           </div>
         </Grid>
+
         <Grid item xs={12}>
           Total
           <br />
@@ -165,25 +160,38 @@ export default function Overview() {
             currency={currency}
           />
         </Grid>
-        <Grid item xs={12}>
-          {sendRequest && <LoadingBar />}
-        </Grid>
-        <Grid item xs={12}>
-          <input
-            type="month"
-            value={formatMonth(month)}
-            onChange={handleMonthChange}
-            className="mui-style-date-input"
-            max={formatMonth(new Date())}
-            onKeyDown={(e) => e.preventDefault()}
+
+        {sendRequest && (
+          <Grid item xs={12}>
+            <LoadingBar />
+          </Grid>
+        )}
+
+        <Grid item xs={6}>
+          <TextField
+            label="Start Date"
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            fullWidth
+            InputLabelProps={{ shrink: true }}
           />
         </Grid>
+        <Grid item xs={6}>
+          <TextField
+            label="End Date"
+            type="date"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+            fullWidth
+            InputLabelProps={{ shrink: true }}
+          />
+        </Grid>
+
         <Grid item xs={12}>
           <FormControl fullWidth>
-            <InputLabel id="demo-simple-select-label">Type</InputLabel>
+            <InputLabel>Type</InputLabel>
             <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
               value={transactionType}
               label="Type"
               onChange={handleChange}
@@ -193,45 +201,22 @@ export default function Overview() {
             </Select>
           </FormControl>
         </Grid>
+
         <Grid item xs={12}>
           <Doughnut data={data} />
         </Grid>
       </Grid>
+
+      {/* Categories List */}
       <Divider />
       <Grid item xs={12}>
         <List>
           {categories.map((category, index) => (
-            <ListItem
-              key={index}
-              onClick={() =>
-                navigationHandler(
-                  `/wallets/${params.walletId}?categoryId=${category.categoryId}&month=${month}`
-                )
-              }
-              sx={{
-                "&:hover": {
-                  backgroundColor: "action.hover",
-                },
-                display: "flex",
-                alignItems: "center",
-                cursor: "pointer",
-              }}
-            >
+            <ListItem key={index} sx={{ cursor: "pointer" }}>
               <ListItemIcon>
                 <PaidIcon color="primary" />
               </ListItemIcon>
-              <ListItemText
-                primary={category.categoryName}
-                sx={{
-                  ".MuiListItemText-multiline": {
-                    maxWidth: "60%",
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                  },
-                }}
-                secondary={setText(category.transactions)}
-              />
+              <ListItemText primary={category.categoryName} />
               <ListItemSecondaryAction>
                 <TransactionAmount
                   amount={category.total}

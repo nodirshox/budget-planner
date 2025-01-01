@@ -6,7 +6,12 @@ export class WalletOverviewDto {
   @IsNotEmpty()
   @IsDateString()
   @ApiProperty({ description: 'Month', example: new Date() })
-  month: string
+  startDate: string
+
+  @IsNotEmpty()
+  @IsDateString()
+  @ApiProperty({ description: 'Month', example: new Date() })
+  endDate: string
 
   @IsEnum(TransactionType)
   @ApiProperty({

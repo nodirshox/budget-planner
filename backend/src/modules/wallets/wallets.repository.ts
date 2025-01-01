@@ -79,8 +79,8 @@ export class WalletsRepository {
   async getWalletOverview(
     walletId: string,
     transactionType: TransactionType,
-    month: Date,
-    nextMonth: Date,
+    startDate: Date,
+    endDate: Date,
   ) {
     const result = await this.prisma.transaction.groupBy({
       by: ['categoryId'],
@@ -88,8 +88,8 @@ export class WalletsRepository {
         walletId,
         type: transactionType,
         date: {
-          gte: month,
-          lt: nextMonth,
+          gte: startDate,
+          lte: endDate,
         },
       },
       _sum: {
