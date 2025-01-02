@@ -78,6 +78,7 @@ export default function Wallet() {
   const listRef = useRef<HTMLUListElement | null>(null);
   const [userId, setUserId] = useState<string>("");
 
+  const [month, setMonth] = useState<Date>(new Date());
   const [startDate, setStartDate] = useState<string>(() => {
     const currentDate = new Date();
     const firstDayOfMonth = new Date(
@@ -96,14 +97,12 @@ export default function Wallet() {
     const lastDayOfMonth = new Date(
       currentDate.getFullYear(),
       currentDate.getMonth() + 1,
-      0
+      1
     );
     return (
       searchParams.get("endDate") || lastDayOfMonth.toLocaleDateString("en-CA")
     );
   });
-  console.log("startDate", startDate);
-  console.log("endDate", endDate);
 
   const fetchTransactions = async () => {
     const { data } = await AxiosClient.post("transactions/filter", {
@@ -210,27 +209,23 @@ export default function Wallet() {
 
   const handleMonthChange = (event: any) => {
     const selectedDate = new Date(event.target.value);
-
     // Set start date to the first day of the month
     const startOfMonth = new Date(
       selectedDate.getFullYear(),
       selectedDate.getMonth(),
       1
-    )
-      .toISOString()
-      .split("T")[0];
+    );
 
     // Set end date to the last day of the month
     const endOfMonth = new Date(
       selectedDate.getFullYear(),
       selectedDate.getMonth() + 1,
-      0
-    )
-      .toISOString()
-      .split("T")[0];
+      1
+    );
 
-    setStartDate(startOfMonth);
-    setEndDate(endOfMonth);
+    setMonth(selectedDate);
+    setStartDate(startOfMonth.toLocaleDateString("en-CA"));
+    setEndDate(endOfMonth.toLocaleDateString("en-CA"));
   };
 
   return (
@@ -287,7 +282,7 @@ export default function Wallet() {
         <Grid item xs={12}>
           <input
             type="month"
-            value={startDate.slice(0, 7)}
+            value={formatMonth(month)}
             onChange={handleMonthChange}
             className="mui-style-date-input"
             max={formatMonth(new Date())}
