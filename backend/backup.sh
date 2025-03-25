@@ -29,7 +29,7 @@ cd backup
 echo "Backup saved: $FILE_NAME"
 
 # Upload to storage
-mc cp "./$FILE_NAME" "$MC_ALIAS/$FILE_NAME"
+mc cp "./$FILE_NAME" "$MC_ALIAS/budget-planner/$FILE_NAME"
 
 rm $FILE_NAME
 
