@@ -19,6 +19,7 @@ import {
 } from '@transaction/dto/create-transaction.dto'
 import { FindTransactionsDto } from '@transaction/dto/find-transactions.dto'
 import { FilterClickTransactionDto } from '@transaction/dto/filter-click-transactions.dto'
+import { TransferTransactionDto } from './dto/transfer-transaction.dto'
 
 @ApiBearerAuth()
 @ApiTags('Transaction')
@@ -71,5 +72,14 @@ export class TransactionController {
   @ApiOperation({ summary: 'Delete transaction' })
   deleteTransaction(@User() user: IUser, @Param('id') id: string) {
     return this.service.deleteTransaction(user.id, id)
+  }
+
+  @Post('transfer')
+  @ApiOperation({ summary: 'Transfer transaction to another wallet' })
+  transferTransaction(
+    @User() user: IUser,
+    @Body() body: TransferTransactionDto,
+  ) {
+    return this.service.transferTransaction(user.id, body)
   }
 }

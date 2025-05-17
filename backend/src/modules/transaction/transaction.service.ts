@@ -14,6 +14,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { TransactionType } from '@prisma/client'
 import { FilterClickTransactionDto } from '@transaction/dto/filter-click-transactions.dto'
 import { superUserId } from '@consts/super-user-id'
+import { TransferTransactionDto } from './dto/transfer-transaction.dto'
 
 @Injectable()
 export class TransactionService implements OnModuleInit {
@@ -257,5 +258,48 @@ export class TransactionService implements OnModuleInit {
         }
       }),
     }
+  }
+
+  async transferTransaction(userId: string, body: TransferTransactionDto) {
+    const transaction = await this.repository.getTransaction(body.transactionId)
+
+    if (!transaction) {
+      throw new BadRequestException(HTTP_MESSAGES.TRANSACTION_NOT_FOUND)
+    }
+
+    const sourceWallet = await this.walletService.getWallet(
+      userId,
+      transaction.walletId,
+    )
+
+    const targetWallet = await this.walletService.getWallet(
+      userId,
+      body.targetWalletId,
+    )
+
+    if (transaction.walletId === body.targetWalletId) {
+      throw new BadRequestException(HTTP_MESSAGES.SAME_WALLET_TRANSFER)
+    }
+
+    if (sourceWallet.currencyId !== targetWallet.currencyId) {
+      throw new BadRequestException(HTTP_MESSAGES.WALLET_CURRENCY_MISMATCH)
+    }
+
+    const targetCategory = await this.categoryService.getCategory(
+      userId,
+      body.targetCategoryId,
+    )
+
+    if (targetCategory.type !== transaction.type) {
+      throw new BadRequestException(HTTP_MESSAGES.CATEGORY_TYPE_MISMATCH)
+    }
+
+    await this.repository.transferTransaction(
+      transaction,
+      body.targetWalletId,
+      body.targetCategoryId,
+    )
+
+    return { message: 'OK' }
   }
 }

@@ -25,6 +25,7 @@ import { useForm } from "react-hook-form";
 import { red, green, grey } from "@mui/material/colors";
 import { NumericFormat } from "react-number-format";
 import { ICategory } from "../category/Category";
+import SyncAltIcon from "@mui/icons-material/SyncAlt";
 
 export default function Transaction() {
   const nav = useNavigate();
@@ -166,6 +167,12 @@ export default function Transaction() {
   const [open, setOpen] = useState(false);
   const handleClickOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
+  const transferHandler = () => {
+    nav(
+      `/wallets/${params.walletId}/transactions/${params.transactionId}/transfer`
+    );
+  };
 
   const handleDelete = async () => {
     try {
@@ -309,6 +316,16 @@ export default function Transaction() {
                 className="mui-style-date-input"
                 max={formatDate(new Date())}
               />
+            </Grid>
+            <Grid item xs={12}>
+              <Button
+                variant="outlined"
+                color="primary"
+                fullWidth
+                onClick={transferHandler}
+              >
+                <SyncAltIcon /> Transfer
+              </Button>
             </Grid>
             <Grid item xs={12}>
               <Button

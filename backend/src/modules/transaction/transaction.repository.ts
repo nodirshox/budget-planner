@@ -167,4 +167,66 @@ export class TransactionRepository {
 
     return result[result.length - 1]
   }
+
+  async transferTransaction(
+    transaction: any,
+    targetWalletId: string,
+    targetCategoryId: string,
+  ) {
+    const updateSourceWallet = this.prisma.wallet.update({
+      where: { id: transaction.walletId },
+      data: {
+        amount: {
+          decrement: this.utils.calculateWalletAmount(
+            transaction.type,
+            transaction.amount,
+          ),
+        },
+      },
+    })
+
+    const updateTargetWallet = this.prisma.wallet.update({
+      where: { id: targetWalletId },
+      data: {
+        amount: {
+          increment: this.utils.calculateWalletAmount(
+            transaction.type,
+            transaction.amount,
+          ),
+        },
+      },
+    })
+
+    const updateTransaction = this.prisma.transaction.update({
+      where: { id: transaction.id },
+      data: {
+        wallet: {
+          connect: {
+            id: targetWalletId,
+          },
+        },
+        category: {
+          connect: {
+            id: targetCategoryId,
+          },
+        },
+      },
+      include: {
+        category: true,
+        wallet: {
+          include: {
+            currency: true,
+          },
+        },
+      },
+    })
+
+    const result = await this.prisma.$transaction([
+      updateSourceWallet,
+      updateTargetWallet,
+      updateTransaction,
+    ])
+
+    return result[result.length - 1]
+  }
 }

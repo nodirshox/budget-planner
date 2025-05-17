@@ -27,6 +27,7 @@ import RestoreAccount from "./pages/auth/RestoreAccount";
 import RestoreAccountVerify from "./pages/auth/RestoreAccountVerify";
 import RestoreAccountSetPassword from "./pages/auth/RestoreAccountSetPassword";
 import { SpeedInsights } from "@vercel/speed-insights/react";
+import TransferTransaction from "./pages/transaction/TransferTransaction";
 
 export default function App() {
   return (
@@ -62,6 +63,10 @@ export default function App() {
             <Route
               path=":walletId/transactions/:transactionId"
               element={<Transaction />}
+            />
+            <Route
+              path=":walletId/transactions/:transactionId/transfer"
+              element={<TransferTransaction />}
             />
           </Route>
           <Route path="/categories" element={<DashboardLayout />}>
