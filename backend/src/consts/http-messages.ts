@@ -22,4 +22,8 @@ export const HTTP_MESSAGES = {
 
   // Transaction
   TRANSACTION_NOT_FOUND: 'Transaction not found',
+  WALLET_CURRENCY_MISMATCH:
+    'Wallets must have the same currency for transaction transfers',
+  CATEGORY_TYPE_MISMATCH: 'Category type must match transaction type',
+  SAME_WALLET_TRANSFER: 'Cannot transfer transaction to the same wallet',
 }
