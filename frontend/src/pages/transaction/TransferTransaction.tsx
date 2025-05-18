@@ -224,7 +224,7 @@ export default function TransferTransaction() {
   }, [transactionId, params.walletId]);
 
   return (
-    <Paper sx={{ p: 1, mt: 2 }}>
+    <Paper sx={{ p: 1, mt: 1 }}>
       <Grid container spacing={2} direction="row">
         <Grid
           item
@@ -234,19 +234,11 @@ export default function TransferTransaction() {
           alignItems="center"
         >
           <Typography variant="h6">Transfer Transaction</Typography>
-          <Button
-            variant="outlined"
-            onClick={backHandler}
-            size="small"
-            sx={{ p: 1 }}
-          >
-            <ArrowBackIosIcon />
-          </Button>
         </Grid>
 
         {transaction && (
           <>
-            <Grid item xs={12} sx={{ mt: 1 }}>
+            <Grid item xs={12} sx={{ mt: 0 }}>
               <Typography variant="body1">
                 Amount: {formatNumberWithSeparator(transaction.amount)}
               </Typography>
@@ -254,7 +246,7 @@ export default function TransferTransaction() {
 
             <Grid item xs={12} sx={{ mt: 1 }}>
               <FormControl fullWidth>
-                <InputLabel id="wallet-select-label">Target Wallet</InputLabel>
+                <InputLabel id="wallet-select-label">Target wallet</InputLabel>
                 <Select
                   labelId="wallet-select-label"
                   id="wallet-select"
@@ -281,7 +273,7 @@ export default function TransferTransaction() {
             <Grid item xs={12} sx={{ mt: 1 }}>
               <FormControl fullWidth>
                 <InputLabel id="category-select-label">
-                  Target Category
+                  Target category
                 </InputLabel>
                 <Select
                   labelId="category-select-label"

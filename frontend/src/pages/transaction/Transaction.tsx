@@ -317,16 +317,18 @@ export default function Transaction() {
                 max={formatDate(new Date())}
               />
             </Grid>
-            <Grid item xs={12}>
-              <Button
-                variant="outlined"
-                color="primary"
-                fullWidth
-                onClick={transferHandler}
-              >
-                <SyncAltIcon /> Transfer
-              </Button>
-            </Grid>
+            {isEditMode && (
+              <Grid item xs={12}>
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  fullWidth
+                  onClick={transferHandler}
+                >
+                  <SyncAltIcon /> Transfer
+                </Button>
+              </Grid>
+            )}
             <Grid item xs={12}>
               <Button
                 fullWidth
