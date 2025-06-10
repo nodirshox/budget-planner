@@ -36,7 +36,7 @@ export class TransactionService implements OnModuleInit {
       body,
       category.type,
     )
-
+    transaction.amount = this.utils.divideToOneHundred(transaction.amount)
     return transaction
   }
 
@@ -107,10 +107,10 @@ export class TransactionService implements OnModuleInit {
 
   // Temp function to import csv to database
   async onModuleInit() {
+    /*
     const csvFilePath = './data.csv'
     const userId = 'uuid'
     const walletId = 'uuid'
-    /*
     import { createReadStream } from 'fs'
     import * as csv from 'csv-parser'
     createReadStream(csvFilePath)
