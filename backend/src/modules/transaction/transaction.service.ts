@@ -235,7 +235,7 @@ export class TransactionService implements OnModuleInit {
           page_number: 1,
           page_size: 30,
           date_start: currentMonth.getTime(),
-          date_end: nextMonth.getTime() + 1 * 24 * 60 * 60 * 1000, // +1 days
+          date_end: nextMonth.getTime(),
         },
       },
       headers: {

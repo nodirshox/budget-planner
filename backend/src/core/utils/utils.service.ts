@@ -24,15 +24,11 @@ export class UtilsService {
 
     const currentMonth = new Date(
       inputDate.getFullYear(),
-      inputDate.getMonth(),
+      inputDate.getMonth() - 1,
       1,
     )
 
-    const nextMonth = new Date(
-      inputDate.getFullYear(),
-      inputDate.getMonth() + 1,
-      1,
-    )
+    const nextMonth = new Date(inputDate.getFullYear(), inputDate.getMonth(), 1)
 
     return { currentMonth, nextMonth }
   }
