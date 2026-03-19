@@ -26,10 +26,6 @@ Deployment: Docker container
 
 Pipeline: Github Actions
 
-# Demo
-
-[Budgetmate.uz](https://budgetmate.uz)
-
 # Screens
 
 <div style="display: flex; justify-content: space-around;">
